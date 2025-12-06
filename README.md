@@ -5,5 +5,5 @@ o corsi (es. palestra) presso il CUS. Pagamenti (simulati), gestione abbonamenti
 singoli, orari e disponibilità risorse (campi/istruttori).
 
 ## Documentazione
-- [Documentazione completa](Documentazione)
+- [Documentazione completa](Documentazione.md)
 - [Analisi dei Requisiti](Analisi%20Requisiti.md)
