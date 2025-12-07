@@ -30,3 +30,22 @@
 - **RNF02** - Accesso alle funzionalità basato su ruoli
 - **RNF03** - Interfaccia web responsive
 - **RNF04** - Nessuna doppia prenotazione della stessa risorsa
+
+
+### Dipendenze tra requisiti
+
+| Requisito                                               | Dipende da       | Descrizione della dipendenza                                           |
+| ------------------------------------------------------- | ---------------- | ---------------------------------------------------------------------- |
+| **RF01. Registrazione/Autenticazione**                  |                  | Requisito base per l'accesso al sistema                                |
+| **RF02. Gestione profilo utente**                       | RF01             | L'utente deve essere autenticato                                       |
+| **RF03. Visualizzazione storico prenotazioni e ordini** | RF01             | L'utente deve essere autenticato                                       |
+| **RF04. Ruoli**                                         | RF01             | I ruoli sono associati ad utenti autenticati                           |
+| **RF05. Visualizzazione disponibilità campo**           | RF01             | Funzione disponibile solo per utenti autenticati                       |
+| **RF06. Prenotazione campo sportivo**                   | RF01, RF04, RF05 | Richiede autenticazione, ruolo Cliente e visualizzazione disponibilità |
+| **RF07. Cancellazione prenotazione**                    | RF01, RF06       | L’utente deve essere autenticato e avere una prenotazione esistente    |
+| **RF08. Visualizzazione corsi**                         | RF01             | Accesso consentito agli utenti autenticati                             |
+| **RF09. Iscrizione a un corso**                         | RF01, RF04, RF08 | Richiede autenticazione, ruolo Cliente e visualizzazione corsi         |
+| **RF10. Pagamento singolo**                             | RF01, RF06, RF09 | Il pagamento è associato a una prenotazione o a un’iscrizione          |
+| **RF11. Gestione abbonamenti**                          | RF01, RF04       | Accessibile solo a utenti autenticati con ruolo Cliente                |
+
+https://chatgpt.com/c/69354506-1234-8328-a94b-8cf9d7005c3f
