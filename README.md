@@ -6,4 +6,4 @@ singoli, orari e disponibilità risorse (campi/istruttori).
 
 ## Documentazione
 - [Documentazione completa](Documentazione.md)
-- [Analisi dei Requisiti](documentazione/Analisi%20Requisiti.md)
+- [Analisi dei Requisiti](/documentazione/Analisi%20Requisiti.md)
