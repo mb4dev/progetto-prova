@@ -4,6 +4,7 @@ Sistema semplificato per la prenotazione di campi (es. tennis, calcetto)
 o corsi (es. palestra) presso il CUS. Pagamenti (simulati), gestione abbonamenti vs pagamenti
 singoli, orari e disponibilità risorse (campi/istruttori).
 
+--- 
 ### Requisiti Funzionali
 
 - **RF01. Registrazione/Autenticazione** - L'utente deve potersi registrare con email e password
@@ -60,3 +61,7 @@ singoli, orari e disponibilità risorse (campi/istruttori).
 | **RNF02**                                               | RF04, RF06, RF07, RF09, RF10, RF11 |                                                                        |
 | **RNF03**                                               | Tutti i requisiti funzionali       |                                                                        |
 | **RNF04**                                               | RF05, RF06, RF07                   |                                                                        |
+
+---
+
+### Casi d'uso

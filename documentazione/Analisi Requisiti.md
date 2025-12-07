@@ -33,8 +33,6 @@
 - **RNF03** - Interfaccia web responsive
 - **RNF04** - Nessuna doppia prenotazione della stessa risorsa
 
-
-
 ### Dipendenze tra requisiti
 
 | Requisito                                               | Dipende da                         | Descrizione della dipendenza                                           |
