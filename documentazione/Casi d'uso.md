@@ -1,4 +1,4 @@
-## Attori
+#### Attori
 
 - **Utente non autenticato**
     - Può registrarsi o autenticarsi
@@ -9,7 +9,7 @@
         
 - **Admin**
     - Utente autenticato con ruolo amministrativo
-### Identificazione casi d'uso
+#### Identificazione casi d'uso
 
 - **UC01** – Registrazione / Autenticazione
 - **UC02** – Visualizzare e gestire profilo utente
@@ -25,7 +25,9 @@
 - **UC12** – Gestire corsi e lezioni (Admin)
 - **UC13** – Gestire tariffe e abbonamenti (Admin)
 
-### Descrizione dettagliata casi d'uso 
+#### Descrizione dettagliata casi d'uso 
+
+##### UC01
 
 | **Caso d'uso**        | Registrazione/Autenticazione                                                                                                                                                                                                                                                                                                 |
 | --------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -37,6 +39,7 @@
 | **Postcondizioni**    | 1. L'utente è autenticato nel sistema con il proprio ruolo.<br>2. Viene mostrata la pagina principale del sistema.                                                                                                                                                                                                           |
 | **Flusso principale** | 1. L'utente selezione "Login".<br>2. Il sistema richiede email e password.<br>3. L'utente inserisce le credenziali.<br>4. Il sistema verifica le credenziali.<br>5. Il sistema autentica l'utente e mostra la pagina principale.                                                                                             |
 | **Flusso secondario** | **Flusso secondario A - Registrazione**<br>1. L'utente seleziona "Registrazione".<br>2. Il sistema richiede i dati anagrafici, email e password.<br>3. L'utente inserisce i dati richiesti.<br>4. Il sistema valida i dati.<br>5. Il sistema crea il nuovo account, conferma la registrazione e mostra la pagina principale. |
+##### UC02
 
 | **Caso d'uso**        | Gestione profilo utente                                                                                                                                                                                             |
 | --------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -48,6 +51,7 @@
 | **Postcondizioni**    | 1. I dati del profilo sono visualizzati                                                                                                                                                                             |
 | **Flusso principale** | 1. L'utente accede alla sezione profilo.<br>2. Il sistema mostra i dati attuali.<br>3. L'utente può modificare uno o più campi.<br>4. L'utente conferma le modifiche.<br>5. Il sistema valida e salva i nuovi dati. |
 | **Flusso secondario** |                                                                                                                                                                                                                     |
+##### UC03
 
 | **Caso d'uso**        | Visualizzazione disponibilità                                                                                                                                                                                                                      |
 | --------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -59,6 +63,7 @@
 | **Postcondizioni**    | 1. Viene mostra un calendario con gli slot temporali disponibili.                                                                                                                                                                                  |
 | **Flusso principale** | 1. L'utente seleziona lo sport.<br>2. Il sistema interroga il database per gli slot occupati.<br>3. Il sistema mostra un calendario settimanale con gli slot temporali disponibili.<br>4. L'utente eventualmente può mandare avanti il calendario. |
 | **Flusso secondario** |                                                                                                                                                                                                                                                    |
+##### UC04
 
 | **Caso d'uso**        | Prenotazione campo sportivo                                                                                                                                                                                                                                                                                                            |
 | --------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -70,6 +75,7 @@
 | **Postcondizioni**    | 1. Prenotazione registrata nel sistema.<br>2. Campo risulta occupato per quello slot.                                                                                                                                                                                                                                                  |
 | **Flusso principale** | 1. L'utente visualizza la disponibilità (**UC03**).<br>2. Seleziona uno slot libero.<br>3. Il sistema blocca temporaneamente lo slot.<br>4. L'utente effettua il pagamento.<br>5. Il sistema conferma la prenotazione.                                                                                                                 |
 | **Flusso secondario** | **Flusso secondario A - Slot non disponibile**<br>1. Il sistema rileva che lo slot non è più disponibile.<br>2. Viene mostrato un messaggio di errore .<br>3. La disponibilità viene aggiornata.<br><br>**Flusso secondario B - Errore pagamento**<br>1. Il pagamento non va a buon fine. <br>2. Il sistema libera lo slot temporaneo. |
+##### UC05
 
 | **Caso d'uso**        | Visualizzazione corsi                                                                                                                      |
 | --------------------- | ------------------------------------------------------------------------------------------------------------------------------------------ |
@@ -81,6 +87,7 @@
 | **Postcondizioni**    | 1. Viene mostrato l'elenco dei corsi disponibili.                                                                                          |
 | **Flusso principale** | 1. L'utente accede alla sezione corsi.<br>2. Il sistema mostra l'elenco dei corsi attivi con dettagli (orario, posti disponibili, prezzo). |
 | **Flusso secondario** |                                                                                                                                            |
+##### UC06
 
 | **Caso d'uso**        | Iscriversi a una lezione di un corso                                                                                                                                                                                                                                                                             |
 | --------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -92,6 +99,7 @@
 | **Postcondizioni**    | 1. L'utente risulta iscritto alla lezione.<br>2. Il numero di posti disponibili viene decrementato.                                                                                                                                                                                                              |
 | **Flusso principale** | 1. L'utente visualizza i corsi disponibili (**UC05**)<br>2. L'utente seleziona un corso e visualizza le lezioni<br>3. L'utente seleziona una lezione con posti disponibili<br>4. L'utente effettua il pagamento<br>5. Il sistema conferma l'iscrizione e aggiorna i posti disponibili                            |
 | **Flusso secondario** | **Flusso A - Posti esauriti**<br>1. Il sistema rileva che non ci sono più posti disponibili<br>2. Viene mostrato un messaggio di errore<br>3. L'elenco viene aggiornato<br><br>**Flusso secondario B - Errore pagamento**<br>1. Il pagamento non va a buon fine.<br>2. Il sistema mostra un messaggio di errore. |
+##### UC07
 
 | **Caso d'uso**        | Cancellare prenotazione                                                                                                                                                                                                                                                              |
 | --------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
@@ -103,6 +111,7 @@
 | **Postcondizioni**    | 1. La prenotazione è cancellata.<br>2. Database aggironato<br>3. Lo slot o il posto torna disponibile.<br>4. Eventuale rimborso.                                                                                                                                                     |
 | **Flusso principale** | 1. L'utente visualizza lo storico (**UC10**).<br>2. L'utente seleziona la prenotazione da cancellare.<br>3. Il sistema verifica le condizioni di cancellazione.<br>4. La prenotazione viene aggiornata nel database in stato "cancellata"<br>5. Il sistema conferma la cancellazione |
 | **Flusso secondario** | **Flusso secondario A - Cancellazione non consentita**<br>1. Il sistema rileva che la prenotazione non può essere cancellata<br>2. Viene mostrato un messaggio con la motivazione<br>3. La prenotazione rimane attiva                                                                |
+##### UC08
 
 | **Caso d'uso**        | Effettuare pagamento singolo                                                                                                                                                                                                   |
 | --------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
@@ -114,6 +123,7 @@
 | **Postcondizioni**    | 1. Il pagamento è registrato nel sistema.<br>2. Il servizio viene confermato.                                                                                                                                                  |
 | **Flusso principale** | 1. Il sistema mostra il riepilogo e l'importo.<br>2. L'utente seleziona il metodo di pagamento.<br>2. L'utente inserisce i dati di pagamento.<br>3. Il sistema processa la transazione.<br>4. Il sistema conferma il pagamento |
 | **Flusso secondario** | **Flusso secondario A - Pagamento fallito**<br>1. Il sistema notifica l'errore.<br>2. L'utente può riprovare o annullare l'operazione                                                                                          |
+##### UC09
 
 | **Caso d'uso**        | Acquistare abbonamento                                                                                                                                                                                                                                             |
 | --------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
@@ -125,6 +135,7 @@
 | **Postcondizioni**    | 1. Abbonamento attivo associato al profilo utente.<br>2. L'utente può utilizzare l'abbonamento                                                                                                                                                                     |
 | **Flusso principale** | 1. L'utente accede alla sezione abbonamenti.<br>2. Il sistema mostra gli abbonamenti disponibili con dettagli.<br>2. L'utente selezione un abbonamento.<br>3. L'utente effettua il pagamento (**UC08**).<br>4. Il sistema attiva l'abbonamento.                    |
 | **Flusso secondario** | **Flusso secondario A - Abbonamento già attivo**<br>1. Il sistema rileva che l'utente ha già un abbonamento attivo<br>2. Viene mostrato un messaggio informativo<br>3. L'acquisto viene bloccato<br><br>**Flusso secondario B - Errore pagamento** (vedi **UC08**) |
+##### UC10
 
 | **Caso d'uso**        | Visualizzare storico prenotazioni e pagamenti                                                                                                       |
 | --------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -136,6 +147,7 @@
 | **Postcondizioni**    | 1. Viene visualizzato lo storico completo                                                                                                           |
 | **Flusso principale** | 1. L'utente accede alla sezione storico.<br>2. Il sistema recupera i dati dal database.<br>3. Il sistema mostra l'elenco ordinato cronologicamente. |
 | **Flusso secondario** | **Flusso secondario A - Visualizzazione dettaglio**<br>1. L'utente seleziona una voce dello storico<br>2. Il sistema mostra i dettagli completi     |
+##### UC11
 
 | **Caso d'uso**        | Gestire campi sportivi (Admin)                                                                                                                                                                                                      |
 | --------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -147,7 +159,7 @@
 | **Postcondizioni**    | 1. I campi sportivi sono aggiornati nel sistema                                                                                                                                                                                     |
 | **Flusso principale** | 1. L'admin accede alla sezione gestione campi.<br>2. Il sistema mostra l'elenco dei campi esistenti.<br>3. L'admin può creare un nuovo campo, modificare o eliminare campi esistenti.<br>4. Il sistema valida e salva le modifiche. |
 | **Flusso secondario** | **Flusso secondario A - Eliminazione con prenotazioni attive**<br>1. L'admin tenta di eliminare un campo con prenotazioni attive.<br>2. Il sistema mostra un avviso.<br>3. 3. L'admin può confermare o annullare.                   |
-|                       |                                                                                                                                                                                                                                     |
+##### UC12
 
 | **Caso d'uso**        | Gestire corsi e lezioni (Admin)                                                                                                                                                                                                                                    |
 | --------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
@@ -159,6 +171,7 @@
 | **Postcondizioni**    | 1. I corsi sono aggiornati e visibili agli utenti.                                                                                                                                                                                                                 |
 | **Flusso principale** | 1. L'admin accede alla sezione gestione corsi.<br>2. Il sistema mostra l'elenco dei corsi.<br>3. L'admin può creare, modificare o eliminare corsi e lezioni<br>4. L'admin definisce orari, posti disponibili e prezzi<br>5. Il sistema valida e salva le modifiche |
 | **Flusso secondario** | **Flusso secondario A - Modifica corso con iscrizioni**<br>1. L'admin modifica un corso con iscrizioni attive.<br>2. L'admin conferma o annulla.<br>3. Se confermato, gli utenti iscritti vengono notificati.                                                      |
+##### UC13
 
 | **Caso d'uso**        | Gestire tariffe e abbonamenti                                                                                                                                                                                                          |
 | --------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
