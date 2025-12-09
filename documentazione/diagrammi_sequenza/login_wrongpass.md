@@ -16,7 +16,8 @@ sequenceDiagram
     DB -->> Auth: Dati utente + password cifrata
 
     Auth ->> Auth: verificaPassword(password)
-    Auth -->> API: Eccezione: PasswordErrata
-    API -->> GUI: 400 BadRequest
-    GUI -->> Utente: Mostra errore
+    Auth ->> Auth: generaToken()
+    Auth -->> API: token
+    API -->> GUI: 200 OK + token
+    GUI -->> Utente: Mostra home page
 ```

@@ -1,4 +1,3 @@
-
 ```mermaid
 sequenceDiagram
     autonumber
@@ -10,13 +9,7 @@ sequenceDiagram
 
     Utente ->> GUI: Inserisce email e password
     GUI ->> API: POST /auth/login (email, password)
-    API ->> API: verificaBody()
-    API ->> Auth: autenticaUtente(email, password)
-    Auth ->> DB: getUtenteByEmail(email)
-    DB -->> Auth: Dati utente + password cifrata
-
-    Auth ->> Auth: verificaPassword(password)
-    Auth -->> API: Eccezione: PasswordErrata
+	API ->> API: verificaBody()
     API -->> GUI: 400 BadRequest
     GUI -->> Utente: Mostra errore
 ```
