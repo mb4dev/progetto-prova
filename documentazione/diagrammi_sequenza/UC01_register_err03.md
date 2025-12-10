@@ -15,10 +15,13 @@ GUI ->> API: POST auth/register (dati utente)
 API ->> API: verificaBody()
 API ->> Auth: registraUtente(dati utente)
 Auth ->> DB: getUtenteByEmail(email)
-DB -->> Auth:  Utente trovato
-Auth -->> API: Eccezione: UtenteGiaRegistrato
-API -->> GUI: 400 BadRequest
+DB -->> Auth:  Nessun utente trovato
+Auth ->> Auth: encryptPassword()
+Auth ->> DB: salvaUtente(utente)
+DB -->> Auth: Errore salvataggio
+Auth -->> API: Eccezione: ErroreSalvataggio
+API -->> GUI: 500 InternalServerError
 GUI -->> Utente: Mostra errore
-
+    
 
 ```
