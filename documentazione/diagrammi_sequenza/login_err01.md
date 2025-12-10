@@ -1,4 +1,6 @@
 
+
+
 ```mermaid
 sequenceDiagram
     autonumber
@@ -16,8 +18,7 @@ sequenceDiagram
     DB -->> Auth: Dati utente + password cifrata
 
     Auth ->> Auth: verificaPassword(password)
-    Auth ->> Auth: generaToken()
-    Auth -->> API: token
-    API -->> GUI: 200 OK + token
-    GUI -->> Utente: Mostra home page
+    Auth -->> API: Eccezione: PasswordErrata
+    API -->> GUI: 400 BadRequest
+    GUI -->> Utente: Mostra errore
 ```
