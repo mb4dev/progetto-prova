@@ -8,4 +8,4 @@ singoli, orari e disponibilità risorse (campi/istruttori).
 - [Documentazione completa](Documentazione.md)
 - [Analisi dei Requisiti](/documentazione/Analisi%20Requisiti.md)
 - [Casi d'uso](/documentazione/Casi%20d'uso.md)
-- 
+- [Diagrammi di sequenza](/documentazione/Diagrammi%20di%20sequenza.md)
