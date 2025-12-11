@@ -1,35 +1,193 @@
-```mermaid
+``` mermaid 
+
 flowchart TD
-    Start([start]) --> first_question{Login o Registrazione?}
+    Start([Inizio])
+    
+    subgraph Frontend["FRONTEND"]
+        Start --> Choice{Scegli azione}
+        Choice -->|Login| LoginForm[Inserisci credenziali]
+        Choice -->|Registrazione| RegisterForm[Inserisci dati]
+        
+        LoginForm --> SendLogin[Invia richiesta login]
+        RegisterForm --> SendRegister[Invia richiesta registrazione]
+        
+        ShowError[Mostra messaggio errore]
+        ShowHome[Mostra Home Page]
+        
+        ShowError --> Choice
+    end
+    
+    subgraph Backend["BACKEND"]
+        ValidateLogin[Valida credenziali]
+        ValidateRegister[Valida dati registrazione]
+        
+        CheckComplete{Dati completi?}
+        CheckUser{Utente esistente?}
+        CheckPwd{Password corretta?}
+        
+        SaveDB[Salva in database]
+        CheckSave{Salvato con successo?}
+        
+        ErrorResponse[Error Response]
+        OkResponse[OK Response]
+    end
+    
+    SendLogin -.->|API call| ValidateLogin
+    ValidateLogin --> CheckComplete
+    CheckComplete -->|No| ErrorResponse
+    CheckComplete -->|Sì| CheckUser
+    CheckUser -->|No| ErrorResponse
+    CheckUser -->|Sì| CheckPwd
+    CheckPwd -->|No| ErrorResponse
+    CheckPwd -->|Sì| OkResponse
+    
+    SendRegister -.->|API call| ValidateRegister
+    ValidateRegister --> CheckComplete
+    CheckComplete -->|Sì| SaveDB
+    SaveDB --> CheckSave
+    CheckSave -->|No| ErrorResponse
+    CheckSave -->|Sì| OkResponse
+    
+    ErrorResponse -.->|Response| ShowError
+    OkResponse -.->|Response| ShowHome
+    
+    ShowHome --> End([Fine])
+    
+  
+    style Frontend fill:#f0f9ff,stroke:#0284c7,stroke-width:2px
+    style Backend fill:#fef3c7,stroke:#d97706,stroke-width:2px
+```
 
-        first_question --> |Login| login_start[Mostra View di Login]
 
-            login_start --> login_insert[Utente inserisce username e password]
-            login_insert --> confirm[Conferma]
-            confirm --> chiamata[Chiamata backend]
-            chiamata --> body_verify{Dati richiesti inseriti?}
-            
-            body_verify --> |No| backend_error[Errore dal backend]
-            
-             body_verify --> |Si| user_in_db{Utente già registrato? }
-                user_in_db --> |No| backend_error
-                 user_in_db --> |Si| password_verify{Password corretta?}
-                    password_verify --> |Si| show_home[Mostrata pagina home]
-                    password_verify --> |No| backend_error
+``` mermaid 
 
-    first_question --> |Registrazione| register_start[Mostra View di Registrazione]
-        register_start --> insert_register[Utente inserisce dati richiesti]
-        insert_register --> register_confirm[Conferma]
-        register_confirm --> register_backend[Chiamata backend]
-        register_backend --> register_verify{Dati richiesti inseriti?}
-        register_verify --> |Si| db_save{Salvataggio in database riuscito?}
-            db_save --> |Si| show_home
-            db_save --> |No| backend_error
+flowchart TD
+    Start([Inizio])
+    
+    subgraph Frontend["🖥️ FRONTEND"]
+        Start --> Choice{Scegli azione}
+        Choice -->|Login| LoginForm[Inserisci credenziali]
+        Choice -->|Registrazione| RegisterForm[Inserisci dati]
+        
+        LoginForm --> SendLogin[Invia richiesta login]
+        RegisterForm --> SendRegister[Invia richiesta registrazione]
+    end
+    
+    ShowError[Mostra messaggio errore]
+    ShowHome[Mostra Home Page]
+    
+    ShowError --> Choice
+    
+    subgraph Backend["⚙️ BACKEND"]
+        ValidateLogin[Valida credenziali]
+        ValidateRegister[Valida dati registrazione]
+        
+        CheckComplete{Dati completi?}
+        CheckUser{Utente esistente?}
+        CheckPwd{Password corretta?}
+        
+        SaveDB[Salva in database]
+        CheckSave{Salvato con successo?}
+        
+        ErrorResponse[Error Response]
+        OkResponse[OK Response]
+    end
+    
+    SendLogin -.->|API call| ValidateLogin
+    ValidateLogin --> CheckComplete
+    CheckComplete -->|No| ErrorResponse
+    CheckComplete -->|Sì| CheckUser
+    CheckUser -->|No| ErrorResponse
+    CheckUser -->|Sì| CheckPwd
+    CheckPwd -->|No| ErrorResponse
+    CheckPwd -->|Sì| OkResponse
+    
+    SendRegister -.->|API call| ValidateRegister
+    ValidateRegister --> CheckComplete
+    CheckComplete -->|Sì| SaveDB
+    SaveDB --> CheckSave
+    CheckSave -->|No| ErrorResponse
+    CheckSave -->|Sì| OkResponse
+    
+    ErrorResponse -.->|Response| ShowError
+    OkResponse -.->|Response| ShowHome
+    
+    ShowHome --> End([Fine])
+    
+    style Start fill:#e1f5e1
+    style End fill:#e1f5e1
+    style ShowError fill:#ffe1e1
+    style ShowHome fill:#e1e5ff
+    style ErrorResponse fill:#ffe1e1
+    style OkResponse fill:#d1fae5
+    style Frontend fill:#f0f9ff,stroke:#0284c7,stroke-width:2px
+    style Backend fill:#fef3c7,stroke:#d97706,stroke-width:2px
 
-        register_verify --> |No| backend_error
+```
 
 
-    backend_error --> error_message[Mostrato messaggio di errore]
-    error_message --> first_question
-    show_home --> End
+``` mermaid 
+
+flowchart LR
+    Start([Inizio])
+    
+    subgraph Frontend["🖥️ FRONTEND"]
+        Start --> Choice{Scegli azione}
+        Choice -->|Login| LoginForm[Inserisci credenziali]
+        Choice -->|Registrazione| RegisterForm[Inserisci dati]
+        
+        LoginForm --> SendLogin[Invia richiesta login]
+        RegisterForm --> SendRegister[Invia richiesta registrazione]
+    end
+    
+    ShowError[Mostra messaggio errore]
+    ShowHome[Mostra Home Page]
+    
+    ShowError --> Choice
+    
+    subgraph Backend["⚙️ BACKEND"]
+        ValidateLogin[Valida credenziali]
+        ValidateRegister[Valida dati registrazione]
+        
+        CheckComplete{Dati completi?}
+        CheckUser{Utente esistente?}
+        CheckPwd{Password corretta?}
+        
+        SaveDB[Salva in database]
+        CheckSave{Salvato con successo?}
+        
+        ErrorResponse[Error Response]
+        OkResponse[OK Response]
+    end
+    
+    SendLogin -.->|API call| ValidateLogin
+    ValidateLogin --> CheckComplete
+    CheckComplete -->|No| ErrorResponse
+    CheckComplete -->|Sì| CheckUser
+    CheckUser -->|No| ErrorResponse
+    CheckUser -->|Sì| CheckPwd
+    CheckPwd -->|No| ErrorResponse
+    CheckPwd -->|Sì| OkResponse
+    
+    SendRegister -.->|API call| ValidateRegister
+    ValidateRegister --> CheckComplete
+    CheckComplete -->|Sì| SaveDB
+    SaveDB --> CheckSave
+    CheckSave -->|No| ErrorResponse
+    CheckSave -->|Sì| OkResponse
+    
+    ErrorResponse -.->|Response| ShowError
+    OkResponse -.->|Response| ShowHome
+    
+    ShowHome --> End([Fine])
+    
+    style Start fill:#e1f5e1
+    style End fill:#e1f5e1
+    style ShowError fill:#ffe1e1
+    style ShowHome fill:#e1e5ff
+    style ErrorResponse fill:#ffe1e1
+    style OkResponse fill:#d1fae5
+    style Frontend fill:#f0f9ff,stroke:#0284c7,stroke-width:2px
+    style Backend fill:#fef3c7,stroke:#d97706,stroke-width:2px
+
 ```
