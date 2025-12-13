@@ -29,7 +29,7 @@ sequenceDiagram
     main->>+router: <<create>>(parser, factory)
     router-->>main: Router Instance
 
-    main->>router: route()
+    main->>router: dispatch(url)
     
     router->>parser: parse(url)
     parser-->>-router: [controller, action]
