@@ -1,4 +1,5 @@
-export default class LoginView extends HTMLElement {
+import View from "../View.js"
+export default class LoginView extends View {
     #submitBtn
 
     constructor(){
