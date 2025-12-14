@@ -1,0 +1,19 @@
+:root{
+    --bg-dark: hsl(0, 0%, 18%);
+    --bg-med: hsl(0, 0%, 28%);
+    --bg-light: hsl(0, 0%, 38%);
+
+    --border-color: hsl(0, 0%, 52%);
+    --text-primary: hsl(0, 0%, 100%);
+
+    --accent: hsl(22, 100%, 50%);
+}
+
+
+
+html, body {
+    overflow: hidden;
+    background-color: var(--bg-dark);
+}
+
+
