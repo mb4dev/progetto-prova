@@ -287,5 +287,126 @@ StandardLoginStrategy --> IAuthRepository
 
 ```  
 
+```  mermaid  
+
+classDiagram
+    direction TB
+    
+    subgraph
+        Router --> ControllerFactory
+        Router --> URLParser
+        URLParser *-- ParsedURL
+        
+        ControllerFactory ..> Controller
+        
+        Controller <|-- AuthController
+        AuthController --> AuthService
+    end
+
+    subgraph
+        AuthService <|-- DefaultAuthService
+        AuthService ..> Response
+        AuthService ..> User
+    end
+
+    subgraph
+        AuthRepository <|-- DefaultAuthRepository
+        AuthRepository ..> User
+        
+        PasswordValidator <|-- DefaultPasswordValidator
+        
+        JwtTokenManager <|-- DefaultJwtTokenManager
+    end
+    
+    %% Connessioni tra i Livelli
+    
+    %% Livello Servizio dipende da Infrastruttura
+    DefaultAuthService --> AuthRepository : usa
+    DefaultAuthService --> PasswordValidator : usa
+    DefaultAuthService --> JwtTokenManager : usa
+    
+    %% Controller dipende da Servizio
+    AuthController --> AuthService : usa
+    
+    %% Repository dipende da User per la creazione/ritorno
+    DefaultAuthRepository ..> User : crea/ritorna
+
+    class Controller {
+        <<abstract>>
+        +resolveAction(action: string)
+        #response(response: Response)
+    }
+    class AuthController {
+        -service: AuthService
+        +resolveAction(action: string)
+        -getBody() array
+    }
+    class AuthRepository {
+        <<interface>>
+        +findByEmail(email) User
+    }
+    class DefaultAuthRepository{
+        -connection : PDOConnection
+        +findByEmail(email) User
+    }
+    class User {
+        +email: string
+        +name: string
+        +password: string
+    }
+    class PasswordValidator {
+        <<interface>>
+        +validate(password: string) bool
+    }
+    class DefaultPasswordValidator {
+        +validate(password: string) bool
+    }
+    class AuthService {
+        <<interface>>
+        +login(email : string, password: string) Response
+        +register(user: User) Response
+    }
+    class DefaultAuthService {
+        -repository: AuthRepository
+        -encoder: JwtTokenManager
+        -passcheker: PasswordValidator
+        +login(email: string, password: string) Response
+        +register(user: User) Response
+    }
+    class Response{
+        +code : int
+        +success : bool
+        +jsonData : string
+    }
+    class ControllerFactory {
+        +create(controllerName) Controller
+    }
+    class URLParser {
+        +parse(url) ParsedURL
+    }
+    class ParsedURL {
+        +controller: string
+        +action: string
+        +params: string
+    }
+    class Router {
+        -parser: URLParser
+        -factory: ControllerFactory
+        +dispatch(url)
+    }
+    class JwtTokenManager{
+        <<interface>>
+        +encode(data) string
+        +decode(token) object
+    }
+    class DefaultJwtTokenManager {
+        +encode(data) token
+        +decode(token) object
+    }
+
+```  
+
+
+
 
 
