@@ -5,8 +5,8 @@ class MockBackend {
     }
 }
 
-import LoginView from "./js/login/LoginView.js"
-import LoginPresenter from "./js/login/LoginPresenter.js"
+import LoginView from "./js/auth/LoginView.js"
+import LoginPresenter from "./js/auth/LoginPresenter.js"
 
 document.addEventListener("DOMContentLoaded", () => {
     const app = document.getElementById("app");

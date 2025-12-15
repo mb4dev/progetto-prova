@@ -1,6 +1,9 @@
 import View from "../View.js"
+import Events from "../../Events.js";
+
 export default class LoginView extends View {
     #submitBtn
+    #registerLink
 
     constructor(){
         super();
@@ -14,6 +17,7 @@ export default class LoginView extends View {
         this.innerHTML = this.template()
 
         this.#submitBtn = this.querySelector("#login-submit")
+        this.#registerLink = this.querySelector("#register-link")
 
         this.registerEvents();
     }
@@ -27,7 +31,7 @@ export default class LoginView extends View {
             <div class="flex flex-col text-center bg-[var(--bg-med)] p-6 rounded-2xl shadow-2xl w-11/12 max-w-sm md:max-w-md mx-auto"> 
                 <h1 class="text-3xl font-extrabold mb-4 text-[var(--text-color)]">Accedi</h1>
                 <p class="mb-6 text-sm text-[var(--text-muted)]">Non hai un account? 
-                    <a class="text-[var(--accent)] hover:underline cursor-pointer font-medium">Registrati</a>.
+                    <a id="register-link" class="text-[var(--accent)] hover:underline cursor-pointer font-medium">Registrati</a>.
                 </p>
                 <div id="login-fields" class="flex flex-col items-center space-y-5 px-0">
                     <input 
@@ -54,13 +58,17 @@ export default class LoginView extends View {
 
 
     registerEvents(){
-        this.#submitBtn.addEventListener("click", (event) => {
+        this.#handleSubmit()
+        this.#handleRegisterRouting()
+    }
 
+    #handleSubmit(){
+        this.#submitBtn.addEventListener("click", (event) => {
             event.preventDefault();
 
             const email = this.querySelector("#login-email").value;
             const password = this.querySelector("#login-password").value;
-            const submitEvent = new CustomEvent("login-submit", {
+            const submitEvent = new CustomEvent(Events.SUBMIT_LOGIN_EVENT, {
                 bubbles: true, 
                 detail: {
                     email: email,
@@ -70,6 +78,17 @@ export default class LoginView extends View {
             this.dispatchEvent(submitEvent)
         })
     }
+
+    #handleRegisterRouting(){
+        this.#registerLink.addEventListener("click", (e) => {
+            const event = new CustomEvent(Events.REGISTER_ROUTING_EVENT, {
+                bubbles: true
+            })
+
+            this.dispatchEvent(event)
+        })
+    }
+
 }
 
 customElements.define("login-view", LoginView);
