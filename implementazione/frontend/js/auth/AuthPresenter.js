@@ -21,6 +21,8 @@ export default class AuthPresenter extends Presenter{
         })
 	}
 
+    update(){}
+
     #validateInput(eventDetail){
         if(!eventDetail) throw new Error("dati inseriti non validi")
         if(!eventDetail.email || !eventDetail.password) throw new Error("email o password sono vuoti");
