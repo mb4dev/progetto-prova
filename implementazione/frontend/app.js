@@ -1,19 +1,56 @@
-class MockBackend {
-    #token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoiSm9obiBEb2UiLCJhZG1pbiI6ZmFsc2UsImlhdCI6MTUxNjIzOTAyMn0.ISViWxHK_jvGDtUR6q8cwU9HRXz522lKxg-jtM00sYM"
-    login(email, password){
-        return this.#token;
-    }
+import Events from "./js/utility/Events.js"
+import Routes from "./js/utility/Routes.js"
+import LoginView from "./js/auth/LoginView.js"
+import RegisterView from "./js/auth/RegisterView.js"
+import AuthPresenter from "./js/auth/AuthPresenter.js"
+
+
+class App {
+	#root
+	constructor(root){
+		if(!root) throw new Error("root non può essere null");
+		if(!(root instanceof HTMLElement)) throw new Error("root deve essere un HTMLElement")
+
+		this.#root = root;
+	}
+
+	start(){
+		document.addEventListener(Events.ROUTING_EVENT, (e) => {
+			this.router(e.detail.route)
+		})
+		
+		this.router(Routes.LOGIN);
+	}
+
+	router(route){
+		this.#root.innerHTML = ""
+
+		switch (route) {
+			case Routes.LOGIN : {}
+				const loginView = new LoginView();
+				this.#root.appendChild(loginView);
+				const loginPresenter = new AuthPresenter(loginView);
+				loginPresenter.init();
+				break;
+
+			case Routes.REGISTER:
+				const registerView = new RegisterView()
+				this.#root.appendChild(registerView);
+				const registerPresenter = new AuthPresenter(registerView)
+				registerPresenter.init()
+				break;
+		}
+	}
 }
 
-import LoginView from "./js/auth/LoginView.js"
-import LoginPresenter from "./js/auth/LoginPresenter.js"
+
+
 
 document.addEventListener("DOMContentLoaded", () => {
-    const app = document.getElementById("app");
-    const loginView = new LoginView()
-    app.appendChild(loginView)
-    
-    const presenter = new LoginPresenter(loginView);
+    const root = document.getElementById("app")
+    const app = new App(root)
+
+    app.start()
 })
 
 

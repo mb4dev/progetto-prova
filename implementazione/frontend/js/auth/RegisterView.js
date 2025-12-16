@@ -1,5 +1,7 @@
-import View from "../View.js"
-import Events from "../../Events.js";
+import View from "../interfaces/View.js"
+
+import Events from "../utility/Events.js";
+import Routes from "../utility/Routes.js";
 
 
 export default class RegisterView extends View {
@@ -17,15 +19,14 @@ export default class RegisterView extends View {
 
 		this.innerHTML = this.template()
 
-		this.#submitBtn = this.querySelector("#login-submit")
+		this.#submitBtn = this.querySelector("#auth-submit")
 		this.#loginLink = this.querySelector("#login-link")
 
-		this.registerEvents();
+		this._bindEvents();
 	}
 
 
-	display(){
-	}
+	display(){}
 
 	template(){
 		return `
@@ -63,7 +64,7 @@ export default class RegisterView extends View {
 						required 
 						class="w-full p-3 bg-[var(--bg-dark)] border border-[var(--border-color)] text-[var(--text-primary)] shadow-inner rounded-lg focus:outline-none focus:ring-2 focus:ring-[var(--accent)] text-black placeholder-gray-500 transition duration-150 ease-in-out">
 				
-					<button id="login-submit" class="w-full mt-4 p-3 bg-[var(--bg-light)] text-[var(--text-primary)] font-bold rounded-lg hover:bg-[var(--accent)] transition duration-150 ease-in-out">
+					<button id="auth-submit" class="w-full mt-4 p-3 bg-[var(--bg-light)] text-[var(--text-primary)] font-bold rounded-lg hover:bg-[var(--accent)] transition duration-150 ease-in-out">
 						Registrati
 					</button>
 				</div>
@@ -72,37 +73,44 @@ export default class RegisterView extends View {
 	}
 
 
-	registerEvents(){
-		this.#handleSubmit()
-		this.#handleRegisterRouting()
+	_bindEvents(){
+		this.#bindSubmit()
+		this.#bindRouting()
 	}
 
-	#handleSubmit(){
+	#bindSubmit(){
 		this.#submitBtn.addEventListener("click", (event) => {
 			event.preventDefault();
 
-			const email = this.querySelector("#login-email").value;
-			const password = this.querySelector("#login-password").value;
-			const submitEvent = new CustomEvent(Events.REGISTER_SUBMIT_EVENT, {
+			const email = this.querySelector("#register-email").value;
+			const password = this.querySelector("#register-password").value;
+			const passwordConfirm = this.querySelector("#register-password-confirm").value;
+			const name = this.querySelector("#register-name").value;
+			const submitEvent = new CustomEvent(Events.AUTH_SUBMIT_EVENT, {
 				bubbles: true, 
 				detail: {
 					email: email,
-					password: password
+					password: password, 
+					passwordConfirm : passwordConfirm,
+					name: name
 				}
 			})
 			this.dispatchEvent(submitEvent)
 		})
 	}
 
-	#handleRegisterRouting(){
-		this.#loginLink.addEventListener("click", (e) => {
-			const event = new CustomEvent("login-routing", {
-				bubbles: true
-			})
+	#bindRouting(){
+        this.#loginLink.addEventListener("click", (e) => {
+            const event = new CustomEvent(Events.ROUTING_EVENT, {
+                bubbles: true,
+                detail: {
+                    route: Routes.LOGIN
+                }
+            })
 
-			this.dispatchEvent(event)
-		})
-	}
+            this.dispatchEvent(event)
+        })
+    }
 
 }
 
