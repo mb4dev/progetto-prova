@@ -1,4 +1,3 @@
-### Diagramama classi backend
 ``` mermaid
 classDiagram
 
@@ -112,5 +111,5 @@ AuthRepository ..> User
 
 ``` 
 
-### Diagramma classi frontend
+
 

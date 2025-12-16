@@ -1,27 +1,29 @@
 ### Sommario
 
+- [Sommario](#sommario)
 - [Introduzione](#introduzione)
-- [Analisi dei requisiti](#Analisi%20requisiti)
-	- [Requisiti funzionali](#Requisiti%20funzionali)
-	- [Requisiti non funzionali](#Requisiti%20non%20funzionali)
-	- [Dipendenze tra requisisti](#Dipendenze%20tra%20requisiti)
-- [Casi d'uso](#Casi%20d'uso)
-	- [Attori](#Attori)
-	- [Identificazione casi d'uso](#Identificazione%20casi%20d'uso)
-	- [Descrizione dettagliata casi d'uso](#Descrizione%20dettagliata%20casi%20d'uso)
-		- [UC01 - Registrazione / Autenticazione](#UC01)
-		- [UC02 – Visualizzare e gestire profilo utente](#UC02)
-		- [UC03 - Visualizzare disponibilità campi](#UC03)
-		- [UC04 - Prenotare campo sportivo](#UC04)
-		- [UC05 - Visualizzare corsi](#UC05)
-		- [UC06 – Iscriversi a una lezione di un corso](#UC06)
-		- [UC07 – Cancellare prenotazione](#UC07)
-		- [UC08 – Effettuare pagamento singolo](#UC08)
-		- [UC09 – Acquistare abbonamento](#UC09)
-		- [UC10 – Visualizzare storico prenotazioni e pagamenti](#UC10)
-		- [UC11 – Gestire campi sportivi](#UC11)
-		- [UC12 – Gestire corsi e lezioni](#UC12)
-		- [UC13 – Gestire tariffe e abbonamenti](#UC13)
+	- [Gestione CUS PARMA](#gestione-cus-parma)
+- [Analisi requisiti](#analisi-requisiti)
+	- [Requisiti Funzionali](#requisiti-funzionali)
+	- [Requisiti non funzionali](#requisiti-non-funzionali)
+	- [Dipendenze tra requisiti](#dipendenze-tra-requisiti)
+- [Casi d'uso](#casi-duso)
+	- [Attori](#attori)
+	- [Identificazione casi d'uso](#identificazione-casi-duso)
+	- [Descrizione dettagliata casi d'uso](#descrizione-dettagliata-casi-duso)
+		- [UC01](#uc01)
+		- [UC02](#uc02)
+		- [UC03](#uc03)
+		- [UC04](#uc04)
+		- [UC05](#uc05)
+		- [UC06](#uc06)
+		- [UC07](#uc07)
+		- [UC08](#uc08)
+		- [UC09](#uc09)
+		- [UC10](#uc10)
+		- [UC11](#uc11)
+		- [UC12](#uc12)
+		- [UC13](#uc13)
 
 
 ### Introduzione 
@@ -124,7 +126,9 @@ singoli, orari e disponibilità risorse (campi/istruttori).
 
 #### Descrizione dettagliata casi d'uso 
 
-<a id="UC01"></a>
+##### UC01
+
+
 
 | **Caso d'uso**        | Registrazione/Autenticazione                                                                                                                                                                                                                                                                                                 |
 | --------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -280,8 +284,3 @@ singoli, orari e disponibilità risorse (campi/istruttori).
 | **Postcondizioni**    | 1. Le tariffe e gli abbonamenti sono aggiornati nel sistema<br>2. Le nuove tariffe si applicano alle prenotazioni successive                                                                                                           |
 | **Flusso principale** | 1. L'admin accede alla sezione gestione tariffe.<br>2. Il sistema mostra le tariffe e gli abbonamenti attuali.<br>3. L'admin può creare, modificare o disattivare tariffe e abbonamenti.<br>4. Il sistema valida e salva le modifiche. |
 | **Flusso secondario** |                                                                                                                                                                                                                                        |
-
-
-
-
-

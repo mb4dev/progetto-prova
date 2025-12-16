@@ -1,0 +1,50 @@
+# Consigli per le modifiche al progetto
+
+Ecco una lista di miglioramenti consigliati per rendere il codice più pulito, scalabile e gestibile:
+
+## 1. Pulizia dei file inutilizzati
+Poiché hai aggiornato `App.js` per utilizzare `AuthPresenter`, i vecchi presenter non servono più.
+- **Eliminare**: `js/auth/LoginPresenter.js`
+- **Eliminare**: `js/auth/RegisterPresenter.js`
+
+## 2. Creazione di un AuthService (Service Layer)
+Invece di gestire le chiamate API direttamente dentro `AuthPresenter`, è meglio delegare questa responsabilità a una classe dedicata.
+- **Creare**: `js/services/AuthService.js`
+- **Responsabilità**: Questa classe dovrebbe contenere metodi come `login(email, password)` e `register(data)` che restituiscono Promise.
+- **Vantaggio**: Mantiene il Presenter leggero e permette di riutilizzare la logica di chiamata API.
+
+## 3. Gestione Errori e Feedback Utente
+Attualmente `AuthPresenter` lancia errori (`throw new Error`) che potrebbero bloccare l'esecuzione o non essere visibili all'utente se non catturati.
+- **Modifica Presenter**: Invece di `throw`, cattura l'errore (try-catch) e chiama un metodo della View per mostrare l'errore.
+- **Modifica View**: Aggiungi un metodo `showError(message)` in `LoginView` e `RegisterView` (o nella classe base `View`) per visualizzare un messaggio di errore nell'interfaccia (es. un testo rosso o un toast notification).
+
+## 4. Validazione più robusta
+La validazione in `AuthPresenter` è un buon inizio. Potresti estenderla per verificare:
+- Formato email valido (regex).
+- Lunghezza minima password.
+
+## 5. Struttura Cartelle
+Hai iniziato a creare `js/utility` e `js/interfaces`. È un'ottima pratica.
+- Considera di spostare `App.js` dentro una cartella `js/core` o mantenerlo in `js/` come entry point.
+- Raggruppa le view e i presenter per feature (es. `js/features/auth/`) se il progetto cresce molto, altrimenti l'attuale `js/auth` va benissimo.
+
+## Esempio di Refactoring AuthPresenter con AuthService
+
+```javascript
+// Esempio ipotetico
+import AuthService from "../services/AuthService.js";
+
+// ... nel presenter
+async #callApi(data) {
+    try {
+        if (this._view instanceof LoginView) {
+            await AuthService.login(data.email, data.password);
+        } else {
+            await AuthService.register(data);
+        }
+        // Redirect o successo
+    } catch (error) {
+        this._view.showError(error.message); // Gestione errore UI
+    }
+}
+```
