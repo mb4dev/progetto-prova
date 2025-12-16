@@ -4,8 +4,8 @@ import LoginView from "./LoginView.js";
 import RegisterView from "./RegisterView.js";
 
 export default class AuthPresenter extends Presenter{
-    constructor(view) {
-        super(view)
+    constructor(view, service) {
+        super(view, service)
     }
 
     _handleViewEvents(){
@@ -14,10 +14,15 @@ export default class AuthPresenter extends Presenter{
 
 	#handleSubmit(){
 		this._view.addEventListener(Events.AUTH_SUBMIT_EVENT, (e) => {
-            const data = this.#validateInput(e.detail)
-            console.log(data)
+            try {
+                const data = this.#validateInput(e.detail)
+                const response = this.#callApi(data)
+                this.#handleResponse(response)
+            }
+            catch(error){
+                this._view.display({error: error.message})
+            }
 
-            this.#callApi(data);
         })
 	}
 
@@ -44,14 +49,21 @@ export default class AuthPresenter extends Presenter{
 
     #callApi(data){
         if(!data) throw new Error("dati chiamata non validi");
-
-        //TODO inserire la logica per la chiamata API
-        if(this._view instanceof LoginView){
-
+        
+        if(this._view instanceof RegisterView){
+            return this._service.register(data.name, data.email, data.password)
         }
-        else {
+        return this._service.login(data.email, data.password)
+    }
 
-        }
+    #handleResponse(response){
+        if(!response) throw new Error("risposta non valida");
+
+        response.then((response) => {
+            if (response.success === false) throw new Error(response.message)
+        }).catch((error) => {
+            this._view.display({error: error.message})
+        })
     }
 
 }

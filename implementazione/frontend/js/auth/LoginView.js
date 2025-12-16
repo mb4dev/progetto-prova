@@ -5,6 +5,7 @@ import Routes from "../utility/Routes.js"
 export default class LoginView extends View {
     #submitBtn
     #registerLink
+    #errorMessage
 
     constructor(){
         super();
@@ -19,20 +20,28 @@ export default class LoginView extends View {
 
         this.#submitBtn = this.querySelector("#auth-submit")
         this.#registerLink = this.querySelector("#register-link")
+		this.#errorMessage = this.querySelector("#error")
+
 
         this._bindEvents();
     }
 
 
-    display(){}
+    display(data){
+        if(data && data.error){
+            this.#errorMessage.classList.remove("hidden")
+            this.#errorMessage.textContent = data.error
+        }
+	}
 
     template(){
         return `
             <div class="flex flex-col text-center bg-[var(--bg-med)] p-6 rounded-2xl shadow-2xl w-11/12 max-w-sm md:max-w-md mx-auto"> 
                 <h1 class="text-3xl font-extrabold mb-4 text-[var(--text-color)]">Accedi</h1>
-                <p class="mb-6 text-sm text-[var(--text-muted)]">Non hai un account? 
+                <p class="mb-3 text-sm text-[var(--text-muted)]">Non hai un account? 
                     <a id="register-link" class="text-[var(--accent)] hover:underline cursor-pointer font-medium">Registrati</a>.
                 </p>
+				<p id="error" class="mb-3 text-md text-[var(--text-error)] hidden"></p>
                 <div id="login-fields" class="flex flex-col items-center space-y-5 px-0">
                     <input 
                         type="email" 

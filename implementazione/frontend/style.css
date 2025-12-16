@@ -7,6 +7,8 @@
     --text-primary: hsl(0, 0%, 100%);
 
     --accent: hsl(22, 100%, 50%);
+
+    --text-error: hsl(0, 100%, 50%);
 }
 
 

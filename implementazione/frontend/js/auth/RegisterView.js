@@ -7,6 +7,7 @@ import Routes from "../utility/Routes.js";
 export default class RegisterView extends View {
 	#submitBtn
 	#loginLink
+	#errorMessage
 
 	constructor(){
 		super();
@@ -21,20 +22,27 @@ export default class RegisterView extends View {
 
 		this.#submitBtn = this.querySelector("#auth-submit")
 		this.#loginLink = this.querySelector("#login-link")
+		this.#errorMessage = this.querySelector("#error")
 
 		this._bindEvents();
 	}
 
 
-	display(){}
+	display(data){
+        if(data && data.error){
+            this.#errorMessage.classList.remove("hidden")
+            this.#errorMessage.textContent = data.error
+        }
+	}
 
 	template(){
 		return `
 			<div class="flex flex-col text-center bg-[var(--bg-med)] p-6 rounded-2xl shadow-2xl w-11/12 max-w-sm md:max-w-md mx-auto"> 
 				<h1 class="text-3xl font-extrabold mb-4 text-[var(--text-color)]">Registrazione</h1>
-				<p class="mb-6 text-sm text-[var(--text-muted)]">Sei già registrato?
+				<p class="mb-3 text-sm text-[var(--text-muted)]">Sei già registrato?
 					<a id="login-link" class="text-[var(--accent)] hover:underline cursor-pointer font-medium">Login</a>.
 				</p>
+				<p id="error" class="mb-3 text-md text-[var(--text-error)] hidden"></p>
 				<div id="login-fields" class="flex flex-col items-center space-y-5 px-0">
 					<input 
 						type="email" 
@@ -86,6 +94,7 @@ export default class RegisterView extends View {
 			const password = this.querySelector("#register-password").value;
 			const passwordConfirm = this.querySelector("#register-password-confirm").value;
 			const name = this.querySelector("#register-name").value;
+			
 			const submitEvent = new CustomEvent(Events.AUTH_SUBMIT_EVENT, {
 				bubbles: true, 
 				detail: {
