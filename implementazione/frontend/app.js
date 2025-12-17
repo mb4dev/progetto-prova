@@ -5,6 +5,7 @@ import RegisterView from "./js/auth/RegisterView.js"
 import AuthPresenter from "./js/auth/AuthPresenter.js"
 import APIService from "./js/interfaces/APIService.js"
 import {SuccessAPIService, ErrorAPIService} from "./js/utility/MockAPIService.js"
+import { eventBus } from "./js/utility/DefaultObserver.js"
 
 class App {
 	#root
@@ -22,8 +23,8 @@ class App {
 	}
 
 	start(){
-		document.addEventListener(Events.ROUTING_EVENT, (e) => {
-			this.router(e.detail.route)
+		eventBus.subscribe(Events.ROUTING_EVENT, data => {
+			this.router(data.route)
 		})
 		
 		this.router(Routes.LOGIN);
@@ -54,6 +55,8 @@ class App {
 
 
 document.addEventListener("DOMContentLoaded", () => {
+
+	
     const root = document.getElementById("app")
 
 	const service = new ErrorAPIService()

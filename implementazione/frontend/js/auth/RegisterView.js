@@ -2,6 +2,7 @@ import View from "../interfaces/View.js"
 
 import Events from "../utility/Events.js";
 import Routes from "../utility/Routes.js";
+import { eventBus } from "../utility/DefaultObserver.js";
 
 
 export default class RegisterView extends View {
@@ -11,7 +12,6 @@ export default class RegisterView extends View {
 
 	constructor(){
 		super();
-
 	}
 
 	connectedCallback(){
@@ -95,29 +95,20 @@ export default class RegisterView extends View {
 			const passwordConfirm = this.querySelector("#register-password-confirm").value;
 			const name = this.querySelector("#register-name").value;
 			
-			const submitEvent = new CustomEvent(Events.AUTH_SUBMIT_EVENT, {
-				bubbles: true, 
-				detail: {
-					email: email,
-					password: password, 
-					passwordConfirm : passwordConfirm,
-					name: name
-				}
-			})
-			this.dispatchEvent(submitEvent)
+			eventBus.notify(Events.AUTH_SUBMIT_EVENT, {
+				email: email,
+				password: password, 
+				passwordConfirm : passwordConfirm,
+				name: name
+			});
 		})
 	}
 
 	#bindRouting(){
         this.#loginLink.addEventListener("click", (e) => {
-            const event = new CustomEvent(Events.ROUTING_EVENT, {
-                bubbles: true,
-                detail: {
-                    route: Routes.LOGIN
-                }
-            })
-
-            this.dispatchEvent(event)
+            eventBus.notify(Events.ROUTING_EVENT, {
+                route: Routes.LOGIN
+            });
         })
     }
 

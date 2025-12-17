@@ -1,3 +1,6 @@
 .obsidian
-
+node_modules
+package-lock.json
+package.json
+jest.config.js
 documentazione/diagrammi_sequenza/backend.pdf

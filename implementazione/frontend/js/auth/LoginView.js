@@ -1,6 +1,7 @@
 import View from "../interfaces/View.js"
 import Events from "../utility/Events.js";
 import Routes from "../utility/Routes.js"
+import { eventBus } from "../utility/DefaultObserver.js";
 
 export default class LoginView extends View {
     #submitBtn
@@ -9,7 +10,6 @@ export default class LoginView extends View {
 
     constructor(){
         super();
-
     }
 
     connectedCallback(){
@@ -21,7 +21,6 @@ export default class LoginView extends View {
         this.#submitBtn = this.querySelector("#auth-submit")
         this.#registerLink = this.querySelector("#register-link")
 		this.#errorMessage = this.querySelector("#error")
-
 
         this._bindEvents();
     }
@@ -77,27 +76,19 @@ export default class LoginView extends View {
 
             const email = this.querySelector("#login-email").value;
             const password = this.querySelector("#login-password").value;
-            const submitEvent = new CustomEvent(Events.AUTH_SUBMIT_EVENT, {
-                bubbles: true, 
-                detail: {
-                    email: email,
-                    password: password
-                }
-            })
-            this.dispatchEvent(submitEvent)
+            
+            eventBus.notify(Events.AUTH_SUBMIT_EVENT, {
+                email: email,
+                password: password
+            });
         })
     }
 
     #bindRouting(){
         this.#registerLink.addEventListener("click", (e) => {
-            const event = new CustomEvent(Events.ROUTING_EVENT, {
-                bubbles: true,
-                detail: {
-                    route: Routes.REGISTER
-                }
-            })
-
-            this.dispatchEvent(event)
+            eventBus.notify(Events.ROUTING_EVENT, {
+                route: Routes.REGISTER
+            });
         })
     }
 

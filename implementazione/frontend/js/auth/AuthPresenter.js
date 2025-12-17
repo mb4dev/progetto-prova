@@ -1,7 +1,7 @@
 import Presenter from "../interfaces/Presenter.js"
 import Events from "../utility/Events.js";
-import LoginView from "./LoginView.js";
 import RegisterView from "./RegisterView.js";
+import { eventBus } from "../utility/DefaultObserver.js";
 
 export default class AuthPresenter extends Presenter{
     constructor(view, service) {
@@ -13,11 +13,13 @@ export default class AuthPresenter extends Presenter{
     }
 
 	#handleSubmit(){
-		this._view.addEventListener(Events.AUTH_SUBMIT_EVENT, (e) => {
+		eventBus.subscribe(Events.AUTH_SUBMIT_EVENT, (data) => {
             try {
-                const data = this.#validateInput(e.detail)
-                const response = this.#callApi(data)
-                this.#handleResponse(response)
+                const validatedData = this.#validateInput(data)
+                this._view.display(validatedData)
+            
+                //const response = this.#callApi(validatedData)
+                //this.#handleResponse(response)
             }
             catch(error){
                 this._view.display({error: error.message})
