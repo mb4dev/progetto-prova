@@ -16,6 +16,5 @@ class DefaultAuthService implements AuthService {
 	public function register(string $name, string $username, string $password) : Response{
 		return new Response(200, true, ["message" => "Registrazione effettuata"]);
 	}
-
-
+	
 }

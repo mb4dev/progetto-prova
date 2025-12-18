@@ -9,7 +9,7 @@ final class DefaultRouter extends Router {
 		$parsedURL = $this->urlParser->parse();
 		$controllerType = ControllerTypes::tryFrom(strtolower($parsedURL->controller));
 		if ($controllerType === null) {
-			$this->sendResponse(new Response(404, false, "Controller non trovato"));
+			$this->sendResponse(new Response(404, false, ["error" => "Controller non trovato"]));
 			return;
 		}
 		
