@@ -18,7 +18,7 @@ final class Autoloader {
 			foreach ($this->directories as $directory) {
 				$file = $directory . DIRECTORY_SEPARATOR . $classPath . '.php';
 				if (file_exists($file)) {
-					echo "File caricato: $file\n";
+					//echo "File caricato: $file\n";
 					require_once $file;
 					return;
 				}

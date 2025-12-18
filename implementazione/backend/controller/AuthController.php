@@ -12,12 +12,33 @@ final class AuthController extends Controller {
 	public function resolveAction(string $action): Response{
 		$body = $this->getBody();
 
+		print_r($body);
 		return match (strtolower($action)) {
-			"login" => $this->authService->login($body["email"], $body["password"]),
-			"register" => $this->authService->register($body["name"], $body["email"], $body["password"]),
-			default => new Response(404, false, "Action non trovata")
+			"login" => $this->login($body),
+			"register" => $this->register($body),
+			default => new Response(404, false, ["error" => "Action non trovata"])
 		};
 	}
 
+	private function login(array $body): Response {
+		if($_SERVER['REQUEST_METHOD'] !== "POST") {
+			return new Response(405, false, ["error" => "Metodo non consentito"]);
+		}
+		if(empty($body["email"]) || empty($body["password"])) {
+			return new Response(400, false, ["error" => "Parametri non validi"]);
+		}
+		return $this->authService->login($body["email"], $body["password"]);
+	}
+
+	private function register(array $body) : Response {
+		if($_SERVER['REQUEST_METHOD'] !== "POST") {
+			return new Response(405, false, ["error" => "Metodo non consentito"]);
+		}
+		if(empty($body["email"]) || empty($body["password"]) || empty($body["name"])) {
+			return new Response(400, false, ["error" => "Parametri non validi"]);
+		}
+
+		return $this->authService->register($body["name"], $body["email"], $body["password"]);
+	}
 
 }

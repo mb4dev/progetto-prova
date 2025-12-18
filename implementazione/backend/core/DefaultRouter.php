@@ -1,9 +1,10 @@
 <?php
 
 final class DefaultRouter extends Router {
-		public function __construct(URLParser $urlParser, ControllerFactory $controllerFactory) {
-			parent::__construct($urlParser, $controllerFactory);
-		}
+	public function __construct(URLParser $urlParser, ControllerFactory $controllerFactory, ResponseStrategy $responseStrategy) {
+		parent::__construct($urlParser, $controllerFactory, $responseStrategy);
+	}
+
 	public function dispatch(): void {
 		$parsedURL = $this->urlParser->parse();
 		$controllerType = ControllerTypes::tryFrom(strtolower($parsedURL->controller));

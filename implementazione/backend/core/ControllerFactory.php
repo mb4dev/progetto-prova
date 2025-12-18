@@ -1,11 +1,18 @@
 <?php
 
 final class ControllerFactory {
-	public function __construct() {}
+	public function __construct(private PDO $dbConnection) {}
 	public function create($type): Controller {
-		return match($type){
-			ControllerTypes::AUTH => new AuthController(null),
-			default => throw new InvalidArgumentException("Controller $type non esistente")
-		};
+		$controller = null;
+		switch ($type) {
+			case ControllerTypes::AUTH :
+				$repository = new DefaultAuthRepository($this->dbConnection);
+				$service = new DefaultAuthService($repository, new DefaultPasswordValidator());
+				$controller = new AuthController($service);
+				break;
+			
+			default: throw new InvalidArgumentException("Controller $type non esistente");
+		}
+		return $controller;	
 	}
 }
