@@ -4,10 +4,12 @@
 class DefaultAuthService implements AuthService {
 	private AuthRepository $authRepository;
 	private PasswordValidator $passwordValidator;
+	private JwtTokenManager $jwtTokenManager;
 
-	public function __construct(AuthRepository $authRepository, PasswordValidator $passwordValidator) {
+	public function __construct(AuthRepository $authRepository, PasswordValidator $passwordValidator, JwtTokenManager $jwtTokenManager) {
 		$this->authRepository = $authRepository;
 		$this->passwordValidator = $passwordValidator;
+		$this->jwtTokenManager = $jwtTokenManager;
 	}
 
 	public function login(string $email, string $password) : Response{	
@@ -15,10 +17,12 @@ class DefaultAuthService implements AuthService {
 			$user = $this->authRepository->login($email, $password);
 
 			if (!$this->passwordValidator->validate($password, $user->password)) {
-				return new Response(400, false, ["error" => "Password non valida"]);
+				return new Response(401, false, ["error" => "Password non valida"]);
 			}
 
-			return new Response(200, true, ["message" => "Login effettuato"]);
+			$token = $this->jwtTokenManager->encode();
+
+			return new Response(200, true, ["message" => "Login effettuato", "token" => $token]);
 		}
 		catch(Exception $e){
 			if ($e instanceof UserNotFoundException) {
@@ -30,8 +34,9 @@ class DefaultAuthService implements AuthService {
 
 	public function register(string $name, string $email, string $password) : Response{
 		try{
-			$this->authRepository->register($name, $email, $password);
-			return new Response(200, true, ["message" => "Registrazione effettuata"]);
+			$user = $this->authRepository->register($name, $email, $password);
+			$token = $this->jwtTokenManager->encode();
+			return new Response(200, true, ["message" => "Registrazione effettuata", "token"=> $token]);
 		}
 		catch(Exception $e){
 			if ($e instanceof UserAlreadyExistsException) {

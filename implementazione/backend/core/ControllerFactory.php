@@ -7,7 +7,7 @@ final class ControllerFactory {
 		switch ($type) {
 			case ControllerTypes::AUTH :
 				$repository = new DefaultAuthRepository($this->dbConnection);
-				$service = new DefaultAuthService($repository, new DefaultPasswordValidator());
+				$service = new DefaultAuthService($repository, new DefaultPasswordValidator(), new MockJwtTokenManager());
 				$controller = new AuthController($service);
 				break;
 			

@@ -13,7 +13,7 @@ class DefaultAuthRepository extends AuthRepository {
 		)");
 	}
 
-	public function login(string $email, string $password) {
+	public function login(string $email, string $password) : User{
 		$stmt = $this->db->prepare("SELECT * FROM users WHERE email = ?");
 		$stmt->execute([$email]);
 
@@ -24,7 +24,7 @@ class DefaultAuthRepository extends AuthRepository {
 		return new User($user["id"], $user["name"], $user["email"], $user["password"]);
 	}
 
-	public function register(string $name, string $email, string $password) {
+	public function register(string $name, string $email, string $password) : User {
 		$stmt = $this->db->prepare("SELECT id FROM users WHERE email = ?");
 		$stmt->execute([$email]);
 		if ($stmt->fetch()) {
@@ -33,8 +33,8 @@ class DefaultAuthRepository extends AuthRepository {
 
 		$hashedPassword = password_hash($password, PASSWORD_DEFAULT);
 		$stmt = $this->db->prepare("INSERT INTO users (name, email, password) VALUES (?, ?, ?)");
-		return $stmt->execute([$name, $email, $hashedPassword]);
-
+		$stmt->execute([$name, $email, $hashedPassword]);
+		return new User($this->db->lastInsertId(), $name, $email, $hashedPassword);
 	}
 }
 
