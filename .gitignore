@@ -4,3 +4,6 @@ package-lock.json
 package.json
 jest.config.js
 documentazione/diagrammi_sequenza/backend.pdf
+temp
+*.db
+file_temporanei
