@@ -3,7 +3,7 @@ import { describe, test, expect, vi, beforeEach, afterEach } from "vitest";
 import DefaultObserver  from "../js/utility/DefaultObserver";
 import Events  from "../js/utility/Events";
 
-describe("LoginViewTest", () => {
+describe("ObserverTest", () => {
 	
 	let observer;
 	beforeEach(() => {

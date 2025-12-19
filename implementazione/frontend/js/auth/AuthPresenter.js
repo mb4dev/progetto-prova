@@ -2,6 +2,7 @@ import Presenter from "../interfaces/Presenter.js"
 import Events from "../utility/Events.js";
 import RegisterView from "./RegisterView.js";
 import { eventBus } from "../utility/DefaultObserver.js";
+import Routes from "../utility/Routes.js";
 
 export default class AuthPresenter extends Presenter{
     constructor(view, service) {
@@ -18,8 +19,8 @@ export default class AuthPresenter extends Presenter{
                 const validatedData = this.#validateInput(data)
                 this._view.display(validatedData)
             
-                //const response = this.#callApi(validatedData)
-                //this.#handleResponse(response)
+                const response = this.#callApi(validatedData)
+                this.#handleResponse(response)
             }
             catch(error){
                 this._view.display({error: error.message})
@@ -63,9 +64,10 @@ export default class AuthPresenter extends Presenter{
 
         response.then((response) => {
             if (response.success === false) throw new Error(response.message)
+            
+            eventBus.notify(Events.ROUTING_EVENT, {route: Routes.MAIN})
         }).catch((error) => {
             this._view.display({error: error.message})
         })
     }
-
 }
