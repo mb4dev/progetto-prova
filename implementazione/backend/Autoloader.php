@@ -26,7 +26,7 @@ final class Autoloader {
 
 			$file = $classPath . '.php';
 			if (file_exists($file)) {
-					echo "File caricato: $file\n";
+					//echo "File caricato: $file\n";
 
 				require_once $file;
 			}

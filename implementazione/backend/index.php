@@ -17,16 +17,17 @@ $autoloader->addDirectory("utility");
 $autoloader->addDirectory("exceptions");
 $autoloader->register();
 
-$_SERVER["REQUEST_URI"] = "http://localhost:8008/auth/register";
-$_SERVER["REQUEST_METHOD"] = "POST";
-$_POST = [
-    "email" => "johndoe@example.com",
-    "password" => "123",
-    "name" => "John Doe"
-];
+
+if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
+    header("Access-Control-Allow-Origin: http://localhost:8080");
+    header("Access-Control-Allow-Methods: POST, GET, OPTIONS, DELETE, PUT");
+    header("Access-Control-Allow-Headers: Content-Type, Authorization, X-Requested-With");
+    http_response_code(204);
+    exit;
+}
 
 $connection = new PDO("sqlite:database.db");
 $connection->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
-$router = new DefaultRouter(new DefaultURLParser(), new ControllerFactory($connection), new ConsoleResponseStrategy());
+$router = new DefaultRouter(new DefaultURLParser(), new ControllerFactory($connection), new JsonResponseStrategy());
 $router -> dispatch();

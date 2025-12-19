@@ -12,7 +12,7 @@ final class AuthController extends Controller {
 	public function resolveAction(string $action): Response{
 		$body = $this->getBody();
 
-		print_r($body);
+		//print_r($body);
 		return match (strtolower($action)) {
 			"login" => $this->login($body),
 			"register" => $this->register($body),

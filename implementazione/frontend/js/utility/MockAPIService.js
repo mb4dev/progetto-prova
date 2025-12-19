@@ -34,7 +34,28 @@ export class SuccessAPIService extends APIService {
 			resolve(new Response(200, true, data, "Registrazione effettuata con successo"))
 		})
 	}
+
+    getProfile() {
+        const data = {
+            id: 1,
+            name: "John Doe",
+            email: "john.doe@example.com",
+            admin: false
+        }
+        return new Promise((resolve) => {
+            resolve(new Response(200, true, data, "Profilo recuperato con successo"));
+        });
+    }
+
+    updateProfile(profileData) {
+        return new Promise((resolve) => {
+            setTimeout(() => {
+                resolve(new Response(200, true, profileData, "Profilo aggiornato con successo"));
+            }, 500);
+        });
+    }
 }
+
 
 export class ErrorAPIService extends APIService {
     login(email, password) {

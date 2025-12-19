@@ -1,0 +1,11 @@
+<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Head -->
+  <circle cx="12" cy="5" r="2" stroke="currentColor" stroke-width="2"/>
+  <!-- Body/Spine -->
+  <path d="M12 7V13" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+  <!-- Arms/Barbell -->
+  <path d="M6 10L12 8L18 10" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M4 10V8M20 10V8" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+  <!-- Legs -->
+  <path d="M9 18L12 13L15 18" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>

@@ -6,4 +6,12 @@ export default class APIService {
     register(email, name, password) {
         throw new Error("register() non è implementato");
     }
+
+    getProfile() {
+        throw new Error("getProfile() non è implementato");
+    }
+
+    updateProfile(data) {
+        throw new Error("updateProfile() non è implementato");
+    }
 }
