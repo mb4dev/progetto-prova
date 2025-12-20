@@ -40,7 +40,7 @@ describe("ObserverTest", () => {
 
 	})
 
-		test("notify chiama solo la callback assocaita all'evento", () => {
+	test("notify chiama solo la callback assocaita all'evento", () => {
 		const handler = vi.fn();
 		observer.subscribe(Events.AUTH_SUBMIT_EVENT, handler);
 		observer.subscribe(Events.ROUTING_EVENT, handler);
