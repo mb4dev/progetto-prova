@@ -146,4 +146,76 @@ classDiagram
     %% Observer Usage
     View ..> DefaultObserver
     Presenter ..> DefaultObserver
+
+---
+
+### Gestione Navigazione (MainView & MainPresenter)
+
+Il sistema di navigazione principale è gestito dal `MainPresenter`, che agisce come orchestratore per le diverse sezioni dell'applicazione.
+
+#### Diagramma di Classe
+``` mermaid
+classDiagram
+    direction LR
+
+    class MainView {
+        -mainContent: HTMLElement
+        -activeRoute: string
+        +display(data)
+        -bindEvents()
+        -updateActiveTab()
+    }
+
+    class MainPresenter {
+        -registry: Object
+        +init()
+        -handleViewEvents()
+    }
+
+    class SubPresenter {
+        <<interface>>
+        +init()
+    }
+
+    class SubView {
+        <<interface>>
+        +connectedCallback()
+    }
+
+    MainView --|> View
+    MainPresenter --|> Presenter
+    MainPresenter --> MainView
+    MainPresenter ..> SubPresenter : Creates
+    MainPresenter ..> SubView : Creates
+    MainView ..> DefaultObserver : Notifies (Events.MAIN_SELECT_EVENT)
+    MainPresenter ..> DefaultObserver : Subscribes
+```
+
+#### Diagramma di Sequenza (Navigazione)
+``` mermaid
+sequenceDiagram
+    autonumber
+
+    participant User
+    participant SideMenu as MainView (SideMenu)
+    participant Observer as DefaultObserver (eventBus)
+    participant MainP as MainPresenter
+    participant SubP as SubPresenter (e.g., ProfileP)
+    participant SubV as SubView (e.g., ProfileV)
+    participant MainContent as MainView (Content Area)
+
+    User ->> SideMenu: Click Navigation Button
+    SideMenu ->> Observer: notify(MAIN_SELECT_EVENT, {main: route})
+    Observer ->> MainP: trigger callback
+    
+    Note over MainP: Look up route in registry
+    
+    MainP ->> SubV: new SubView()
+    MainP ->> SubP: new SubPresenter(view, service)
+    MainP ->> SubP: init()
+    MainP ->> MainContent: display({view, route})
+    
+    MainContent ->> MainContent: Update active tab styling
+    MainContent ->> MainContent: Append SubView to DOM
+```
 ```

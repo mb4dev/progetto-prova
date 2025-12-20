@@ -24,6 +24,11 @@ export default class MainView extends View {
         this.innerHTML = this.template()
 
 		this.#main = this.querySelector("#main-content")
+		this.#campiBtn = this.querySelector("#side-menu-campi")
+		this.#corsiBtn = this.querySelector("#side-menu-corsi")
+		this.#abbonamentoBtn = this.querySelector("#side-menu-abbonamento")
+		this.#storicoBtn = this.querySelector("#side-menu-storico")
+		this.#profileBtn = this.querySelector("#side-menu-profile")
 
         this._bindEvents();
     }
@@ -49,33 +54,33 @@ export default class MainView extends View {
 					</div>
 					
 					<nav class="flex flex-col gap-2">
-						<button class="nav-btn flex items-center gap-3 w-full p-4 rounded-2xl font-bold transition-all duration-300 hover:bg-white/5 text-gray-400" id="side-menu-campi" data-route="${Routes.MAIN_CAMPI}">
+						<button class="nav-btn flex items-center gap-3 w-full p-4 rounded-2xl font-bold transition-all duration-300 hover:bg-white/5 text-gray-400" id="side-menu-campi">
 							<span class="w-6 h-6 text-[var(--accent)]">
 								<svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="2" y="4" width="20" height="16" rx="2" stroke="currentColor" stroke-width="2"/><line x1="12" y1="4" x2="12" y2="20" stroke="currentColor" stroke-width="2"/><circle cx="12" cy="12" r="3" stroke="currentColor" stroke-width="2"/><path d="M2 9C2 9 4 9 4 12C4 15 2 15 2 15" stroke="currentColor" stroke-width="2"/><path d="M22 9C22 9 20 9 20 12C20 15 22 15 22 15" stroke="currentColor" stroke-width="2"/></svg>
 							</span> Prenota campo
 						</button>
-						<button class="nav-btn flex items-center gap-3 w-full p-4 rounded-2xl font-bold transition-all duration-300 hover:bg-white/5 text-gray-400" id="side-menu-corsi" data-route="${Routes.MAIN_CORSI}">
+						<button class="nav-btn flex items-center gap-3 w-full p-4 rounded-2xl font-bold transition-all duration-300 hover:bg-white/5 text-gray-400" id="side-menu-corsi">
 							<span class="w-6 h-6 text-[var(--accent)]">
 								<svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="12" cy="5" r="2" stroke="currentColor" stroke-width="2"/><path d="M12 7V13" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M6 10L12 8L18 10" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M4 10V8M20 10V8" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M9 18L12 13L15 18" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
 							</span> Prenota corso
 						</button>
-						<button class="nav-btn flex items-center gap-3 w-full p-4 rounded-2xl font-bold transition-all duration-300 hover:bg-white/5 text-gray-400" id="side-menu-abbonamento" data-route="${Routes.MAIN_ABBONAMENTO}">
+						<button class="nav-btn flex items-center gap-3 w-full p-4 rounded-2xl font-bold transition-all duration-300 hover:bg-white/5 text-gray-400" id="side-menu-abbonamento">
 							<span class="w-6 h-6 text-[var(--accent)]">
 								<svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="3" y="6" width="18" height="12" rx="2" stroke="currentColor" stroke-width="2"/><path d="M3 10H21" stroke="currentColor" stroke-width="2"/><path d="M7 14H9" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><circle cx="17" cy="14" r="2" stroke="currentColor" stroke-width="2"/><path d="M17 11V12" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
 							</span> Abbonamento
 						</button>
-						<button class="nav-btn flex items-center gap-3 w-full p-4 rounded-2xl font-bold transition-all duration-300 hover:bg-white/5 text-gray-400" id="side-menu-storico" data-route="${Routes.MAIN_STORICO}">
+						<button class="nav-btn flex items-center gap-3 w-full p-4 rounded-2xl font-bold transition-all duration-300 hover:bg-white/5 text-gray-400" id="side-menu-storico">
 							<span class="w-6 h-6 text-[var(--accent)]">
 								<svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 8V12L15 15" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="2"/><path d="M12 3C8 3 4.5 5.5 3 9L2 7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
 							</span> Storico
 						</button>
 					</nav>
 
-					<div id="side-menu-profile" data-route="${Routes.MAIN_PROFILE}" class="nav-btn mt-auto px-2 py-4 border-t border-white/5 cursor-pointer group hover:bg-white/5 rounded-2xl transition-all duration-300">
+					<div id="side-menu-profile" class="nav-btn mt-auto px-2 py-4 border-t border-white/5 cursor-pointer group hover:bg-white/5 rounded-2xl transition-all duration-300">
 						<div class="flex items-center gap-3">
-							<div class="profile-avatar w-10 h-10 rounded-full bg-[var(--accent)]/20 flex justify-center items-center text-sm font-bold border border-[var(--accent)]/30 group-hover:border-[var(--accent)] transition-all">JD</div>
+							<div class="profile-avatar w-10 h-10 rounded-full bg-[var(--accent)]/20 flex justify-center items-center text-sm font-bold border border-[var(--accent)]/30 group-hover:border-[var(--accent)] transition-all">TMP</div>
 							<div class="flex flex-col">
-								<span class="profile-name text-sm font-bold">John Doe</span>
+								<span class="profile-name text-sm font-bold">Temp</span>
 							</div>
 						</div>
 					</div>
@@ -87,18 +92,30 @@ export default class MainView extends View {
 
 
     _bindEvents(){
-		this.querySelectorAll(".nav-btn").forEach(btn => {
-			btn.addEventListener("click", (e) => {
-				e.preventDefault();
-				const route = btn.getAttribute("data-route");
-				eventBus.notify(Events.MAIN_SELECT_EVENT, { main: route });
-			});
-		});
+		this.#bindRoute(this.#campiBtn, Routes.MAIN_CAMPI);
+		this.#bindRoute(this.#corsiBtn, Routes.MAIN_CORSI);
+		this.#bindRoute(this.#abbonamentoBtn, Routes.MAIN_ABBONAMENTO);
+		this.#bindRoute(this.#storicoBtn, Routes.MAIN_STORICO);
+		this.#bindRoute(this.#profileBtn, Routes.MAIN_PROFILE);
     }
 
+	#bindRoute(btn, route){
+		btn.addEventListener("click", (e) => {
+			e.preventDefault();
+			eventBus.notify(Events.MAIN_SELECT_EVENT, { main: route });
+		});
+	}
+
 	_updateActiveTab(){
-		this.querySelectorAll(".nav-btn").forEach(btn => {
-			const route = btn.getAttribute("data-route");
+		const routesMap = [
+			{ btn: this.#campiBtn, route: Routes.MAIN_CAMPI },
+			{ btn: this.#corsiBtn, route: Routes.MAIN_CORSI },
+			{ btn: this.#abbonamentoBtn, route: Routes.MAIN_ABBONAMENTO },
+			{ btn: this.#storicoBtn, route: Routes.MAIN_STORICO },
+			{ btn: this.#profileBtn, route: Routes.MAIN_PROFILE }
+		];
+
+		routesMap.forEach(({ btn, route }) => {
 			if (route === this.#activeRoute) {
 				btn.classList.add("bg-[var(--bg-light)]", "text-black", "shadow-xl");
 				btn.classList.remove("text-gray-400", "hover:bg-white/5");
