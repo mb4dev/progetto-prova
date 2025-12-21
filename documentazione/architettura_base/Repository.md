@@ -50,21 +50,20 @@ class UserRepository {
     +update(user: User) bool
 }
 
+
 class FieldRepository {
     <<abstract>>
-    +getAll() Field[]
-    +getById(id: int) Field
-    +getByType(sport: string) Field[]
+    +getFields() Field[]
+    +getById(fieldId: int) Field
 }
 
 class BookingRepository {
     <<abstract>>
-    +create(booking: Booking) Booking
-    +getById(id: int) Booking
-    +checkAvailability(fieldId: int, startTime: string, endTime: string) bool
-    +getOccupiedSlotsByWeek(fieldId: int, startDate: string, endDate: string) Slot[]
-    +updateStatus(id: int, status: string) bool
+	+getOccupiedSlots(fieldId: int, startDate: Date, endDate: Date) Slot[]
+    +createBooking(booking: Booking) Booking
 }
+
+
 
 AuthRepository --|> Repository
 UserRepository --|> Repository
@@ -85,27 +84,23 @@ class Repository {
 }
 
 class PDO {
-    <<PHP>>
-    +prepare(sql: string)
-    +execute(params: array)
 }
 
 class Service {
     -repository: Repository
 }
 
-class AuthRepository {
+class IRepository {
     <<abstract>>
 }
 
-class DefaultAuthRepository {
-    +login() User
+class ImplRepository {
 }
 
 Repository --> PDO : utilizza
 Service --> Repository : utilizza
-AuthRepository --|> Repository : estende
-DefaultAuthRepository --|> AuthRepository : estende
+IRepository --|> Repository : estende
+ImplRepository --|> IRepository : estende
 ```
 
 ### Relazioni

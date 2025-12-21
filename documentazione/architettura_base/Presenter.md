@@ -61,22 +61,6 @@ class MainPresenter {
     -loadSubPresenter(route: string)
 }
 
-class CampiPresenter {
-    +init()
-    +update()
-    #handleViewEvents()
-    -loadFields()
-    -loadOccupiedSlots(fieldId: int, startDate: string, endDate: string)
-}
-
-class BookingPresenter {
-    +init()
-    +update()
-    #handleViewEvents()
-    -createBooking(slotData: Object)
-    -confirmBooking(bookingId: int)
-}
-
 class ProfilePresenter {
     +init()
     +update()
@@ -87,35 +71,8 @@ class ProfilePresenter {
 
 AuthPresenter --|> Presenter
 MainPresenter --|> Presenter
-CampiPresenter --|> Presenter
-BookingPresenter --|> Presenter
 ProfilePresenter --|> Presenter
 ```
-
-### AuthPresenter
-- **Scopo**: Gestisce la logica di autenticazione e registrazione
-- **Utilizzo**: UC01 - Login/Registrazione
-- **View associate**: `LoginView`, `RegisterView`
-
-### MainPresenter
-- **Scopo**: Orchestratore della navigazione principale
-- **Utilizzo**: Gestione routing e caricamento sotto-sezioni
-- **View associate**: `MainView`
-
-### CampiPresenter
-- **Scopo**: Gestisce la visualizzazione dei campi e disponibilità
-- **Utilizzo**: UC03 - Visualizzazione disponibilità
-- **View associate**: `CampiView`
-
-### BookingPresenter
-- **Scopo**: Gestisce la logica di prenotazione
-- **Utilizzo**: UC04 - Prenotazione campo
-- **View associate**: `BookingView`
-
-### ProfilePresenter
-- **Scopo**: Gestisce visualizzazione e modifica profilo
-- **Utilizzo**: UC02 - Gestione profilo
-- **View associate**: `ProfileView`
 
 ## Dipendenze
 

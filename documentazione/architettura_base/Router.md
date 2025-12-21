@@ -45,8 +45,6 @@ class Router {
 
 class DefaultRouter {
     +dispatch()
-    -handleRequest()
-    -routeToController(parsedURL: ParsedURL)
 }
 
 DefaultRouter --|> Router

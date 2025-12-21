@@ -42,31 +42,16 @@ class DefaultObserver {
     -listeners: Map~string, Function[]~
     +subscribe(event: string, callback: Function)
     +notify(event: string, data: Object)
-    -getListeners(event: string) Function[]
-    -addListener(event: string, callback: Function)
+
 }
 
-class LoggingObserver {
-    -listeners: Map~string, Function[]~
-    -logger: Logger
-    +subscribe(event: string, callback: Function)
-    +notify(event: string, data: Object)
-    -logEvent(event: string, data: Object)
-}
 
 DefaultObserver ..|> Observer
-LoggingObserver ..|> Observer
 ```
 
 ### DefaultObserver
 - **Scopo**: Implementazione standard del pattern Observer
 - **Utilizzo**: Comunicazione View-Presenter in tutta l'applicazione
-- **Caratteristiche**: Gestione eventi con Map, supporto multipli listener per evento
-
-### LoggingObserver
-- **Scopo**: Observer con logging degli eventi
-- **Utilizzo**: Debug e monitoraggio
-- **Caratteristiche**: Log di tutti gli eventi notificati, utile per troubleshooting
 
 ## Utilizzo
 
