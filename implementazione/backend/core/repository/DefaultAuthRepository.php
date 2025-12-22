@@ -4,13 +4,14 @@ class DefaultAuthRepository extends AuthRepository {
 
 	public function __construct(PDO $connection) {
 		parent::__construct($connection);
-
+/*
 		$this->db->exec("CREATE TABLE IF NOT EXISTS users (
 			id INTEGER PRIMARY KEY AUTOINCREMENT,
 			name TEXT NOT NULL,
 			email TEXT NOT NULL UNIQUE,
 			password TEXT NOT NULL
 		)");
+*/
 	}
 
 	public function login(string $email, string $password) : User{

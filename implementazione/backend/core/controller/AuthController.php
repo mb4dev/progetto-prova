@@ -1,6 +1,6 @@
 <?php
 
-final class AuthController extends Controller {
+class AuthController extends Controller {
 
 	public function __construct(
 		private AuthService $authService
