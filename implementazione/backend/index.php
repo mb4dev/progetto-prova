@@ -4,17 +4,18 @@ require_once "Autoloader.php";
 
 $autoloader = new Autoloader();
 
-$autoloader->addDirectory("core");
-$autoloader->addDirectory("core/controller");
-$autoloader->addDirectory("core/services");
-$autoloader->addDirectory("core/repository");
+$autoloader->addDirectory("./core");
+$autoloader->addDirectory("./core/exceptions");
+$autoloader->addDirectory("./core/interfaces");
+$autoloader->addDirectory("./core/model");
+$autoloader->addDirectory("./auth");
+$autoloader->addDirectory("./auth/interfaces");
 
-$autoloader->addDirectory("interfaces");
-$autoloader->addDirectory("interfaces/services");
-$autoloader->addDirectory("interfaces/repository");
-$autoloader->addDirectory("model");
-$autoloader->addDirectory("utility");
-$autoloader->addDirectory("exceptions");
+$autoloader->addDirectory("./profile");
+$autoloader->addDirectory("./profile/interfaces");
+
+$autoloader->addDirectory("./utility");
+
 $autoloader->register();
 
 
