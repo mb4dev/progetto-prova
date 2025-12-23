@@ -78,6 +78,23 @@ MainView ..|> View
 ProfileView ..|> View
 ```
 
+### Componenti Riutilizzabili
+- **SportCard** - Card per visualizzare singolo sport
+  - Utilizzata da: `CampiView`
+  - Responsabilità: Renderizzare un singolo sport con immagine, prezzo
+
+``` mermaid 
+classDiagram
+class SportCard {
+    -id: string
+    -title: string
+    -image: string
+    -price: string
+}
+SportCard ..|> View
+```
+
+
 ## Dipendenze
 
 Il seguente diagramma mostra le relazioni e dipendenze di questa interfaccia:

@@ -123,13 +123,18 @@ class CampiPresenter {
     -loadOccupiedSlots(fieldId: int, startDate: string, endDate: string) 
 }
 
-class BookingView {
-
+class SportCard {
+    -id: string
+    -title: string
+    -image: string
+    -price: string
+    +display(data: Object)
+    +template() string
+    #bindEvents()
 }
+SportCard ..|> View
 
-class BookingPresenter {
-}
-
+CampiView ..> SportCard : contiene
 CampiView ..|> View
 BookingView ..|> View
 CampiPresenter --|> Presenter

@@ -13,15 +13,11 @@ class App {
 	#root
 	#service
 
-	constructor(root, service){
+	constructor(root){
 		if(!root) throw new Error("root non può essere null");
 		if(!(root instanceof HTMLElement)) throw new Error("root deve essere un HTMLElement")
 
-		if(!service) throw new Error("service non può essere null");
-		if(!(service instanceof APIService)) throw new Error("service deve essere un APIService")
-
 		this.#root = root;
-		this.#service = service;
 	}
 
 	start(){
@@ -41,19 +37,19 @@ class App {
 			case Routes.LOGIN : 
 				view = new LoginView();
 				this.#root.appendChild(view);
-				presenter = new AuthPresenter(view, this.#service);
+				presenter = new AuthPresenter(view);
 				break;
 
 			case Routes.REGISTER:
 				view = new RegisterView()
 				this.#root.appendChild(view);
-				presenter = new AuthPresenter(view, this.#service);
+				presenter = new AuthPresenter(view);
 				break;
 
 			case Routes.MAIN:
 				view = new MainView()
 				this.#root.appendChild(view);
-				presenter = new MainPresenter(view, this.#service);
+				presenter = new MainPresenter(view);
 				break;
 		}
 		presenter.init();
@@ -64,11 +60,8 @@ class App {
 
 document.addEventListener("DOMContentLoaded", () => {
 
-	
     const root = document.getElementById("app")
-
-	const service = new SuccessAPIService()
-    const app = new App(root, service)
+    const app = new App(root)
 
     app.start()
 

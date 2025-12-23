@@ -16,8 +16,8 @@ import StoricoPresenter from "../storico/StoricoPresenter.js";
 export default class MainPresenter extends Presenter {
 	#registry
 
-	constructor(view, service){
-		super(view, service)
+	constructor(view){
+		super(view)
 		this.#registry = {
 			[Routes.MAIN_PROFILE]: { view: ProfileView, presenter: ProfilePresenter },
 			[Routes.MAIN_CAMPI]: { view: CampiView, presenter: CampiPresenter },
@@ -29,7 +29,7 @@ export default class MainPresenter extends Presenter {
 
 	init(){
 		this._handleViewEvents();
-		eventBus.notify(Events.MAIN_SELECT_EVENT, { main: Routes.MAIN_PROFILE });
+		eventBus.notify(Events.MAIN_SELECT_EVENT, { main: Routes.MAIN_CAMPI });
 	}
 
 	_handleViewEvents(){
@@ -38,7 +38,7 @@ export default class MainPresenter extends Presenter {
 			
 			if (route) {
 				const view = new route.view();
-				const presenter = new route.presenter(view, this._service);
+				const presenter = new route.presenter(view);
 				presenter.init();
 				this._view.display({ view: view, route: data.main });
 			} else {

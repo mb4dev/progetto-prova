@@ -5,8 +5,8 @@ import { eventBus } from "../utility/DefaultObserver.js";
 import Routes from "../utility/Routes.js";
 
 export default class AuthPresenter extends Presenter{
-    constructor(view, service) {
-        super(view, service)
+    constructor(view) {
+        super(view)
     }
 
     _handleViewEvents(){

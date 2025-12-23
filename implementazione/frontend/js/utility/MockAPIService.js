@@ -54,22 +54,30 @@ export class SuccessAPIService extends APIService {
             }, 500);
         });
     }
+
+	getSports() {
+		const data = [
+			{id: 1, name: "calcio", img: "assets/images/calcio.png", price:100},
+			{id: 2, name: "tennis", img: "assets/images/tennis.png", price:70},
+			{id: 4, name: "basket", img: "assets/images/basket.png", price:50},
+			{id: 5, name: "padel", img: "assets/images/padel.png", price:60},
+			{id: 5, name: "padel", img: "assets/images/padel.png", price:60},
+			{id: 5, name: "padel", img: "assets/images/padel.png", price:60},
+			{id: 5, name: "padel", img: "assets/images/padel.png", price:60},
+			{id: 5, name: "padel", img: "assets/images/padel.png", price:60},
+			{id: 6, name: "padel", img: "assets/images/padel.png", price:60},
+			{id: 6, name: "padel", img: "assets/images/padel.png", price:60},
+			{id: 6, name: "padel", img: "assets/images/padel.png", price:60},
+			{id: 6, name: "padel", img: "assets/images/padel.png", price:60},
+			{id: 7, name: "padel", img: "assets/images/padel.png", price:60}
+		]
+		return new Promise((resolve) => {
+			resolve(new Response(200, true, data, "Sport recuperati con successo"));
+		});
+	}
 }
 
-
-export class ErrorAPIService extends APIService {
-    login(email, password) {
-        return new Promise((resolve, reject) => {
-            reject(new Response(400, false, null, "Credenziali non valide"));
-        });
-    }
-
-    register(name, email, password) {
-        return new Promise((resolve, reject) => {
-            reject(new Response(409, false, null, "Utente già registrato")); 	
-        });
-    }
-}
+export const apiService = new SuccessAPIService();
 
 class Response {
 	constructor(code, success, data, message) {
