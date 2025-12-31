@@ -1,8 +1,6 @@
 import View from "../interfaces/View.js"
-import DatePicker from "./DatePicker.js";
-import DatePickerPresenter from "./DatePickerPresenter.js";
-import SlotPicker from "./SlotPicker.js";
-import SlotPickerPresenter from "./SlotPickerPresenter.js";
+import { eventBus } from "../utility/DefaultObserver.js";
+import Events from "../utility/Events.js";
 
 export default class CalendarView extends View {
 
@@ -14,22 +12,15 @@ export default class CalendarView extends View {
 		this.style.display = "contents";
 		this.innerHTML = this.template()
 
-		const datePicker = new DatePicker();
-
-		const slotPicker = new SlotPicker();
-
-		this.querySelector("#date-picker").appendChild(datePicker);
-		this.querySelector("#slot-picker").appendChild(slotPicker);
-
-		const presenter = new SlotPickerPresenter(slotPicker);
-		const datePickerPresenter = new DatePickerPresenter(datePicker);
-		datePickerPresenter.init();
-		presenter.init();
-
+		eventBus.notify(Events.CALENDAR_LOAD_EVENT)
 	}
 
+    display(data){ 
+		if (!data.date || !data.slot) return 
 
-    display(data){ throw new Error("display() non implementato")}
+        this.querySelector("#date-picker").appendChild(data.date);
+        this.querySelector("#slot-picker").appendChild(data.slot);
+	}
 
 	template(){
 		return `

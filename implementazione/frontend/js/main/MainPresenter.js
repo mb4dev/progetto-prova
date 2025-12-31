@@ -12,6 +12,8 @@ import AbbonamentoView from "../abbonamento/AbbonamentoView.js";
 import AbbonamentoPresenter from "../abbonamento/AbbonamentoPresenter.js";
 import StoricoView from "../storico/StoricoView.js";
 import StoricoPresenter from "../storico/StoricoPresenter.js";
+import CalendarView from "../campi/CalendarView.js";
+import CalendarPresenter from "../campi/CalendarPresenter.js";
 
 export default class MainPresenter extends Presenter {
 	#registry
@@ -24,16 +26,18 @@ export default class MainPresenter extends Presenter {
 			[Routes.MAIN_CORSI]: { view: CorsiView, presenter: CorsiPresenter },
 			[Routes.MAIN_ABBONAMENTO]: { view: AbbonamentoView, presenter: AbbonamentoPresenter },
 			[Routes.MAIN_STORICO]: { view: StoricoView, presenter: StoricoPresenter },
+
+			[Routes.MAIN_CALENDARIO] : {view: CalendarView, presenter: CalendarPresenter}
 		}
 	}
 
 	init(){
 		this._handleViewEvents();
-		eventBus.notify(Events.MAIN_SELECT_EVENT, { main: Routes.MAIN_CAMPI });
+		eventBus.notify(Events.MAIN_NAVIGATE, { main: Routes.MAIN_CAMPI });
 	}
 
 	_handleViewEvents(){
-		eventBus.subscribe(Events.MAIN_SELECT_EVENT, (data) => {
+		eventBus.subscribe(Events.MAIN_NAVIGATE, (data) => {
 			const route = this.#registry[data.main];
 			
 			if (route) {

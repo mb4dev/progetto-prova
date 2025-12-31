@@ -102,7 +102,7 @@ export default class MainView extends View {
 	#bindRoute(btn, route){
 		btn.addEventListener("click", (e) => {
 			e.preventDefault();
-			eventBus.notify(Events.MAIN_SELECT_EVENT, { main: route });
+			eventBus.notify(Events.MAIN_NAVIGATE, { main: route });
 		});
 	}
 

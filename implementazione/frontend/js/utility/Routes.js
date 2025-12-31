@@ -4,11 +4,13 @@ const Routes = {
 	HOME: "home",
 	MAIN: "main",
 
-	MAIN_PROFILE : "profile",
-	MAIN_CAMPI : "campi",
-	MAIN_CORSI : "corsi",
-	MAIN_ABBONAMENTO : "abbonamento",
-	MAIN_STORICO : "storico"
+	MAIN_PROFILE : "main:profile",
+	MAIN_CAMPI : "main:campi",
+	MAIN_CORSI : "main:corsi",
+	MAIN_ABBONAMENTO : "main:abbonamento",
+	MAIN_STORICO : "main:storico",
+
+	MAIN_CALENDARIO: "main:calendario"
 }
 
 export default Routes;

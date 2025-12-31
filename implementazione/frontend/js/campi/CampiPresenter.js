@@ -2,7 +2,7 @@ import Presenter from "../interfaces/Presenter.js"
 import { eventBus} from "../utility/DefaultObserver.js"
 import Events from "../utility/Events.js"
 import {apiService} from "../utility/MockAPIService.js"
-import CalendarView from "./CalendarView.js"
+import Routes from "../utility/Routes.js"
 
 export default class CampiPresenter extends Presenter {
     constructor(view){
@@ -10,7 +10,7 @@ export default class CampiPresenter extends Presenter {
     }
 
     update(){
-        // To be implemented
+
     }
 
     _handleViewEvents(){
@@ -21,12 +21,7 @@ export default class CampiPresenter extends Presenter {
         });
 
         eventBus.subscribe(Events.SPORT_SELECTED_EVENT, (data) => {
-            //TODO cambiare con evento di navigazione
-            const main = document.querySelector("#main-content");
-            main.innerHTML = ""
-            const calendar = new CalendarView()
-            main.appendChild(calendar)
-            
+            eventBus.notify(Events.MAIN_NAVIGATE, {main: Routes.MAIN_CALENDARIO})
         });
 
     }
