@@ -1,9 +1,9 @@
-import View from "../view.js"
+import View from "../interfaces/View.js"
 
-import Events from "../Events.js"
-import { eventBus } from "../DefaultObserver.js"
+import Events from "../utility/Events.js"
+import { eventBus } from "../utility/DefaultObserver.js"
 export default class SlotPicker extends View {
-
+	
 	constructor(){
 		super()
 	}
@@ -14,27 +14,36 @@ export default class SlotPicker extends View {
 		this._bindEvents();
 	}
 	
-	display(data){ throw new Error("display() non implementato")}
+	display(data){
+		if (!data.selected) return 
+		
+		this.querySelectorAll("[data-time]").forEach(el => {
+			const isSelected = data.selected.has(el.dataset.time);
+			el.classList.toggle("bg-[var(--accent)]", isSelected);
+			el.classList.toggle("bg-[var(--bg-light)]", !isSelected);
+		});
+	}
 	
-#renderSlot(ora){
-	const rand = Math.random();
-	let occupato = false;
-	if (rand > 0.5) occupato = true
-
-	return `		
-		<div 
-		data-time=${ora} data-occupato=${occupato}
-		class="time-slot group relative p-3 font-medium flex flex-col items-center justify-center gap-1 text-white bg-[var(--bg-light)] border-[var(--bg-dark)] rounded-lg border-2 	${occupato ? 'opacity-40 cursor-not-allowed' : 'cursor-pointer'}">
-			<div class="text-base font-semibold">${ora}</div>
-			<div class="text-xs ${occupato ? 'opacity-80' : 'opacity-0 pointer-events-none'}">
-				${occupato ? 'Occupato' : ''}
-			</div>
-			${!occupato ? '<div class="absolute inset-0 opacity-0 rounded-lg"></div>' : ''}
-		</div>`
-}
+	#renderSlot(ora){
+		const rand = Math.random();
+		let occupato = false;
+		if (rand > 0.5) occupato = true
+		
+		return `		
+			<div 
+			data-time=${ora} data-occupato=${occupato}
+			class="time-slot group relative p-3 font-medium flex flex-col items-center justify-center gap-1 text-white bg-[var(--bg-light)] border-[var(--bg-dark)] rounded-lg border-2 ${occupato ? 'opacity-40 cursor-not-allowed' : 'cursor-pointer'}">
+				<div class="text-base font-semibold">${ora}</div>
+				<div class="text-xs ${occupato ? 'opacity-80' : 'opacity-0 pointer-events-none'}">
+					${occupato ? 'Occupato' : ''}
+				</div>
+				${!occupato ? '<div class="absolute inset-0 opacity-0 rounded-lg"></div>' : ''}
+			</div>`
+	}
+	
 	template(){
 		const timeSlots = this.#generateTimeSlots()
-
+		
 		return `
 		<div class="flex flex-col h-full overflow-hidden">
 			<div class="p-4 pb-3 flex-shrink-0">
@@ -55,37 +64,32 @@ export default class SlotPicker extends View {
 		</div>
 		`
 	}
-
+	
 	_bindEvents(){
 		
 		this.addEventListener("click", e => {
-
+			
 			const slot = e.target.closest(".time-slot");
-			if(slot){
-				const occupato = slot.dataset.occupato === "true"
-
-				if(occupato){
-					return;
-				}
-				const time = slot.dataset.time;
-				eventBus.notify(Events.SLOT_SELECTED_EVENT, { time: time})
-			}
+			if(!slot || slot.dataset.occupato === "true") return 
+			
+			eventBus.notify(Events.SLOT_SELECTED_EVENT, { time: slot.dataset.time})
+			
 		});
 	}
-
+	
 	#generateTimeSlots(start = 8, end = 20, increment = 30){
 		const startH = start * 60;
 		const endH = end * 60;
-
+		
 		const timeSlots = [];
-
+		
 		for (let h = startH; h <= endH; h+= increment){
 			const hour = String(Math.floor(h/60)).padStart(2, "0") ;
 			const minute = String(h % 60).padStart(2, "0");
-
+			
 			timeSlots.push(`${hour}:${minute}`);
 		}
-
+		
 		return timeSlots;
 	}
 }
