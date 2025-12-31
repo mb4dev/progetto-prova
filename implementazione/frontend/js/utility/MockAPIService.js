@@ -66,6 +66,68 @@ export class SuccessAPIService extends APIService {
 			resolve(new Response(200, true, data, "Sport recuperati con successo"));
 		});
 	}
+
+	getOccupiedSlotsForWeek(startDateString) {
+		const startDate = new Date(startDateString);
+		startDate.setHours(0, 0, 0, 0);
+
+		if (isNaN(startDate.getTime())) {
+			return Promise.resolve(
+				new Response(400, false, null, "Data non valida")
+			);
+		}
+
+		const result = {};
+
+		for (let i = 0; i < 7; i++) {
+			const current = new Date(startDate);
+			current.setDate(startDate.getDate() + i);
+
+			const dateKey = current.toISOString().split("T")[0];
+			const slots = this.#generateTimeSlots();
+			const occupied = this.#generateOccupiedSlots(slots, dateKey);
+
+			result[dateKey] = occupied;
+		}
+
+		return Promise.resolve(
+			new Response(200, true, result, "Slot occupati recuperati con successo")
+		);
+	}
+
+		#generateTimeSlots(start = 8, end = 20, increment = 30){
+		const startH = start * 60;
+		const endH = end * 60;
+		
+		const timeSlots = [];
+		
+		for (let h = startH; h <= endH; h+= increment){
+			const hour = String(Math.floor(h/60)).padStart(2, "0") ;
+			const minute = String(h % 60).padStart(2, "0");
+			
+			timeSlots.push(`${hour}:${minute}`);
+		}
+		
+		return timeSlots;
+	}
+
+	#generateOccupiedSlots(slots, seed) {
+		const rng = this.#seededRandom(seed);
+		return slots.filter(() => rng() > 0.65);
+	}
+#seededRandom(seed) {
+	let value = 0;
+
+	for (let i = 0; i < seed.length; i++) {
+		value += seed.charCodeAt(i);
+	}
+
+	return () => {
+		value = (value * 9301 + 49297) % 233280;
+		return value / 233280;
+	};
+}
+
 }
 
 export const apiService = new SuccessAPIService();

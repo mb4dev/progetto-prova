@@ -5,7 +5,7 @@ import RegisterView from "./js/auth/RegisterView.js"
 import AuthPresenter from "./js/auth/AuthPresenter.js"
 import APIService from "./js/interfaces/APIService.js"
 import { eventBus } from "./js/utility/DefaultObserver.js"
-import { SuccessAPIService } from "./js/utility/MockAPIService.js"
+import { apiService, SuccessAPIService } from "./js/utility/MockAPIService.js"
 import MainPresenter from "./js/main/MainPresenter.js"
 import MainView from "./js/main/MainView.js"
 
@@ -64,6 +64,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const app = new App(root)
 
     app.start()
+
 
 })
 	

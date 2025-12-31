@@ -20,11 +20,13 @@ export default class DatePickerPresenter extends Presenter {
 		this.#handleIncrement();
 		this.#handleDecrement();
 
+
+
 	}
 	
 	#handleIncrement(){
 		eventBus.subscribe(Events.DATE_INCREMENT_EVENT, () => {
-			const next = new Date(this.#week.at(0).date)
+			const next = new Date(this.#week.at(0).fullDate)
 			next.setDate(next.getDate() + 7)
 			
 			this.#week = this.#getWeekDays(next)
@@ -35,7 +37,7 @@ export default class DatePickerPresenter extends Presenter {
 	#handleDecrement(){
 		eventBus.subscribe(Events.DATE_DECREMENT_EVENT, () => {
 			
-			const prev = new Date(this.#week.at(0).date)
+			const prev = new Date(this.#week.at(0).fullDate )
 			prev.setDate(prev.getDate() - 7)
 			prev.setHours(0, 0, 0, 0)
 			
@@ -55,7 +57,7 @@ export default class DatePickerPresenter extends Presenter {
 	#getWeekDays(fromDate = new Date(), daysToShow = 7){
 		const options = {
 			weekday: "long"			
-		}
+		} 
 		const days = [];
 		
 		for(let i = 0; i < daysToShow; i++){
@@ -69,8 +71,9 @@ export default class DatePickerPresenter extends Presenter {
 				giorno: day, 
 				numero: dayNumber, 
 				mese: month, 
-				date: date
+				fullDate: date.toISOString().split('T')[0],
 			}
+
 			days.push(obj)
 		}
 		

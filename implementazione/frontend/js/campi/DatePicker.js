@@ -3,12 +3,6 @@ import Events from "../utility/Events.js";
 import View from "../interfaces/View.js"
 
 export default class DatePicker extends View {
-	#selectedDay
-	#isSelected
-	
-	#startDay;
-	#endDay;
-	
 	constructor(){
 		super()
 	}
@@ -23,32 +17,34 @@ export default class DatePicker extends View {
 	
 	display(data){
 		if (!data.week) return 
-
+		
 		
 		const displayedWeek = this.querySelector("#displayed-week");
-
+		
 		const start = data.week.at(0)
 		const end = data.week.at(-1)
-
+		
 		displayedWeek.textContent = start.numero + "/" + start.mese + "-" + end.numero + "/" + end.mese
-
+		
 		const grid = this.querySelector("#days-grid")
-		grid.innerHTML = data.week.map(d => this.#dateCardTemplate(d.giorno, d.numero)).join("")
+		grid.innerHTML = data.week.map(d => this.#dateCardTemplate(d)).join("")
 	}
-
 	
 	
-	#dateCardTemplate(giorno, numero){		
+	#dateCardTemplate(date){		
+		const giorno = date.giorno
+		const numero = date.numero 
+		const fullDate = date.fullDate
 		return `
-			<div class="relative w-4/5 rounded-xl flex bg-[var(--bg-med)] border-2 border-[var(--border-color)] p-3 shadow-lg/20 cursor-pointer group hover:shadow-xl/25 hover:brightness-120">
-				<div class="h-full w-full">
-					<p class="absolute text-sm font-semibold  uppercase tracking-wider opacity-60 group-hover:text-[var(--accent)]">${giorno}</p>
-				</div>
-				<h1 class="font-bold text-3xl opacity-90 tracking-wider group-hover:text-[var(--accent)]">${numero}</h1>
+		<div data-date=${fullDate} class="date-card relative w-4/5 rounded-xl flex bg-[var(--bg-med)] border-2 border-[var(--border-color)] p-3 shadow-lg/20 cursor-pointer transition-all hover:bg-[var(--bg-light)] hover:scale-105 hover:shadow-xl/25">
+			<div class="h-full w-full">
+				<p class="absolute text-sm font-semibold uppercase tracking-wider opacity-60">${giorno}</p>
 			</div>
-		`
+			<h1 class="font-bold text-3xl opacity-90 tracking-wider">${numero}</h1>
+		</div>
+	`
 	}
-
+	
 	#sidebarTemplate(){
 		return `
 			<div class="flex flex-col items-center gap-2">
@@ -92,7 +88,7 @@ export default class DatePicker extends View {
 		`
 	}
 	
-
+	
 	template(){
 		return `
 			<div class="p-4" id="date-picker-sidebar">
@@ -118,6 +114,20 @@ export default class DatePicker extends View {
 			eventBus.notify(Events.DATE_DECREMENT_EVENT);
 		})
 		
+		this.addEventListener("click", e => {
+			const date = e.target.closest(".date-card");
+			if(!date) return 
+			
+			this.querySelectorAll(".date-card").forEach(card => {
+				card.classList.remove("bg-[var(--accent)]", "text-[var(--text-secondary)]");
+				card.classList.add("bg-[var(--bg-med)]");
+			});
+			
+			date.classList.remove("bg-[var(--bg-med)]");
+			date.classList.add("bg-[var(--accent)]", "text-[var(--text-secondary)]");
+			
+			eventBus.notify(Events.DATE_SELECTED_EVENT, { selectedDate: date.dataset.date})
+		})
 	}
 }
 
