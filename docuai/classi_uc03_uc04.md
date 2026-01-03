@@ -109,30 +109,62 @@ Controller --> Response
 classDiagram
 
 class CampiView {
-    -fields: Field[]
-    -selectedField: Field
-    -selectedDate: Date
-    -occupiedSlots: Slot[]
-    +render() 
-    -renderCalendar() 
-    -markOccupiedSlots() 
+    -fields: Sport[]
+    +display(data) 
 }
 
 class CampiPresenter {
-    -loadFields() 
-    -loadOccupiedSlots(fieldId: int, startDate: string, endDate: string) 
+    -update()
+    -handleViewEvents()
+}
+
+class CalendarView {
+    +display(components)
+}
+
+class CalendarPresenter {
+    -initComponents()
+}
+
+class SlotPicker {
+    -active: boolean
+    +display(data)
+}
+
+class SlotPickerPresenter {
+    -occupied: Slot[]
+    -selected: Set
+    +update()
+    -handleViewEvents()
+}
+
+class DatePicker {
+    +display()
+}
+
+class DatePickerPresenter {
+    +update()
 }
 
 CampiView ..|> View
-BookingView ..|> View
+CalendarView ..|> View
+SlotPicker ..|> View
+DatePicker ..|> View
+
 CampiPresenter --|> Presenter
-BookingPresenter --|> Presenter
+CalendarPresenter --|> Presenter
+SlotPickerPresenter --|> Presenter
+DatePickerPresenter --|> Presenter
 
 CampiPresenter --> CampiView
-BookingPresenter --> BookingView
+CalendarPresenter --> CalendarView
+SlotPickerPresenter --> SlotPicker
+DatePickerPresenter --> DatePicker
 
-CampiPresenter ..> Observer : subscribe
-CampiView ..> Observer : notify
-BookingPresenter ..> Observer : subscribe
-BookingView ..> Observer : notify
+CalendarPresenter ..> SlotPickerPresenter : instantiates
+CalendarPresenter ..> DatePickerPresenter : instantiates
+
+SlotPickerPresenter ..> Observer : subscribe(DATE_SELECTED)
+SlotPickerPresenter ..> APIService : calls
+CampiPresenter ..> APIService : calls
 ```
