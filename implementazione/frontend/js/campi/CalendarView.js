@@ -16,20 +16,22 @@ export default class CalendarView extends View {
 	}
 
     display(data){ 
-		if (!data.date || !data.slot) return 
+		if (!data.date || !data.slot || !data.resume) return 
 
         this.querySelector("#date-picker").appendChild(data.date);
         this.querySelector("#slot-picker").appendChild(data.slot);
+		this.querySelector("#reservation-resume").appendChild(data.resume);
 	}
+	t
 
 	template(){
 		return `
 			<div class="flex flex-col w-full h-full p-6 gap-6">
 				<div class="h-full w-full flex gap-4">
 
-					<div class="w-56 flex flex-col bg-[var(--bg-med)] rounded-xl" id="date-picker"></div>
-					<div class="flex-1 bg-[var(--bg-med)] rounded-xl" id="slot-picker"></div>
-					<div class="flex-1 bg-blue-300 rounded-xl"></div>
+					<div class="w-56 flex flex-col bg-[var(--bg-dark)] rounded-xl inset-shadow-sm/30" id="date-picker"></div>
+					<div class="flex-1 bg-[var(--bg-dark)] rounded-xl inset-shadow-sm/30" id="slot-picker"></div>
+					<div class="flex-1 bg-[var(--bg-dark)] rounded-xl inset-shadow-sm/30" id="reservation-resume"></div>
 	
 				</div>
 			</div>`

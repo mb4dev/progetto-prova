@@ -33,7 +33,7 @@ export default class MainPresenter extends Presenter {
 
 	init(){
 		this._handleViewEvents();
-		eventBus.notify(Events.MAIN_NAVIGATE, { main: Routes.MAIN_CAMPI });
+		eventBus.notify(Events.MAIN_NAVIGATE, { main: Routes.MAIN_CALENDARIO });
 	}
 
 	_handleViewEvents(){

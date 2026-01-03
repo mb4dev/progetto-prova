@@ -48,7 +48,7 @@ export default class MainView extends View {
     template(){
         return `
 			<div class="w-full h-full flex p-6 gap-6 bg-[var(--bg-dark)]">
-				<aside id="side-menu" class="bg-[var(--bg-med)] w-[20%] rounded-3xl p-6 flex flex-col gap-8 shadow-inner border border-white/5">
+				<aside id="side-menu" class="bg-[var(--bg-med)] w-[20%] rounded-3xl p-6 flex flex-col gap-8 shadow-xl/30 border border-white/5">
 					<div class="px-2 py-4">
 						<h2 class="text-2xl font-black italic text-white">GestioneCUS</h2>
 					</div>
@@ -86,7 +86,7 @@ export default class MainView extends View {
 					</div>
 				</aside>
 
-				<main id="main-content" class="flex justify-center items-center bg-[var(--bg-med)] flex-1 rounded-3xl shadow-inner border border-white/5 overflow-hidden"></main>
+				<main id="main-content" class="flex justify-center items-center bg-[var(--bg-med)] flex-1 rounded-3xl  border border-white/5 shadow-xl/30"></main>
 			</div>`
     }
 

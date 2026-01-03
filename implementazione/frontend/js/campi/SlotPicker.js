@@ -16,16 +16,13 @@
 		
 		
 		display(data) {
-			// 1. Validazione minima: se non abbiamo i dati necessari, non renderizziamo
 			if (!data.selected) return;
 			
-			// 2. Gestione Titolo
 			const dateLabel = this.querySelector("#selected-date");
 			if (dateLabel && data.selectedDate) {
 				dateLabel.textContent = "Orari disponibili per " + data.selectedDate.split("-").reverse().join("-");
 			}
 			
-			// 3. Rendering del Grid (Unico punto di verità)
 			const grid = this.querySelector("#slot-grid");
 			if (!grid) return;
 			
@@ -33,7 +30,6 @@
 			const occupied = data.occupied || [];
 			const selected = data.selected;
 			
-			// Rigeneriamo il contenuto iniettando lo stato direttamente nel template string
 			grid.innerHTML = allSlots.map(time => {
 				const isOccupied = occupied.includes(time);
 				const isSelected = selected.has(time);
@@ -44,20 +40,24 @@
 		
 		#renderSlot(ora, occupato, selezionato) {
 
-			var bgClass = "bg-[var(--bg-light)]" ;
-			var cursorClass = "cursor-pointer"
+			var bgClass = "bg-[var(--bg-med)]" ;
+			var cursorClass = "cursor-pointer"	
+			var shadowClass = "shadow-xl/20"
 			if (occupato) {
 				bgClass = "opacity-40"; 
 				cursorClass = "cursor-not-allowed"
+				shadowClass = ""
 			} else if (selezionato) {
 				bgClass = "bg-[var(--accent)]";
+			var shadowClass = "shadow-xl/30"
+
 			}
 			
 			return `        
         <div 
             data-time="${ora}" 
             data-occupato="${occupato}"
-            class="time-slot group relative p-3 font-medium flex flex-col items-center justify-center gap-1 text-white ${cursorClass} ${bgClass} border-[var(--bg-dark)] rounded-lg border-2">
+            class="time-slot group relative p-3 font-medium flex flex-col items-center justify-center gap-1 text-white ${cursorClass} ${bgClass} ${shadowClass} border-[var(--bg-light)] rounded-lg border-2 hover:bg-[var(--bg-light)] hover:scale-105  transition-all ease-in-out ">
             <div class="text-base font-semibold">${ora}</div>
             <div class="text-xs ${occupato ? 'opacity-80' : 'opacity-0 pointer-events-none'}">
                 ${occupato ? 'Occupato' : ''}
@@ -67,11 +67,9 @@
 		}
 				
 		template(){
-			const timeSlots = this.#generateTimeSlots()
-			
 			return `
 			<div class="flex flex-col h-full overflow-hidden">
-				<div class="p-4 pb-3 flex-shrink-0">
+				<div class="p-4 pb-3 flex justify-center items-center">
 					<h2 class="text-lg font-semibold flex items-center gap-2">
 						<svg class="w-5 h-5 flex-shrink-0" style="color: var(--accent);" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
 							<circle cx="12" cy="12" r="10"></circle>

@@ -48,8 +48,7 @@ export default class DatePicker extends View {
 	#sidebarTemplate(){
 		return `
 			<div class="flex flex-col items-center gap-2">
-				<div class="w-full flex flex-row justify-center items-center gap-2 p-2">
-					
+				<div class="w-full flex flex-row justify-center items-center gap-2">
 					<svg class="w-6 h-6" style="color: var(--accent);" fill="none" stroke="currentColor" viewBox="0 0 24 24">
 						<rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
 						<line x1="16" y1="2" x2="16" y2="6"></line>
@@ -95,7 +94,7 @@ export default class DatePicker extends View {
 				${this.#sidebarTemplate()}
 			</div>
 			<div class="flex-1 px-4 pb-4">
-				<div class="h-full grid grid-rows-7 gap-2 place-items-center" id="days-grid">
+				<div class="h-full grid grid-rows-[repeat(7,1fr)] gap-2 place-items-center"  id="days-grid">
 					...CARICAMENTO...		
 				</div>
 			</div>
