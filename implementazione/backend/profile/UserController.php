@@ -8,6 +8,11 @@ class UserController extends Controller {
 		parent::__construct();
 	}
 
+	public function getMiddlewares() : array {
+		return [
+			TempMiddleware::class
+		];
+	}
 	
 	public function resolveAction(string $action): Response{
 		$body = $this->getBody();

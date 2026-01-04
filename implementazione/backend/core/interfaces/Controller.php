@@ -4,6 +4,7 @@ abstract class Controller {
 	public function __construct() {}
 	
 	abstract public function resolveAction(string $action) : Response;
+	abstract public function getMiddlewares() : array;
 	
 	protected function getBody(): array {
 		if ($_SERVER['CONTENT_TYPE'] ?? '' === 'application/json') {

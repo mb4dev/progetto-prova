@@ -8,6 +8,9 @@ class AuthController extends Controller {
 		parent::__construct();
 	}
 
+	public function getMiddlewares() : array {
+		return [];
+	}
 	
 	public function resolveAction(string $action): Response{
 		$body = $this->getBody();

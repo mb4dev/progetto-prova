@@ -1,8 +1,8 @@
 <?php
 
 final class DefaultRouter extends Router {
-	public function __construct(URLParser $urlParser, ControllerFactory $controllerFactory, ResponseStrategy $responseStrategy) {
-		parent::__construct($urlParser, $controllerFactory, $responseStrategy);
+	public function __construct(MiddlewareChain $chain, URLParser $urlParser, ControllerFactory $controllerFactory, ResponseStrategy $responseStrategy) {
+		parent::__construct($chain, $urlParser, $controllerFactory, $responseStrategy);
 	}
 
 	public function dispatch(): void {
@@ -14,8 +14,19 @@ final class DefaultRouter extends Router {
 		}
 		
 		$controller = $this->controllerFactory->create($controllerType);
-		$response = $controller->resolveAction($parsedURL->action);
 
+		foreach ($controller->getMiddlewares() as $middlewareClass) {
+			$this->chain->addMiddleware(new $middlewareClass());
+		}
+
+		$response = $this->chain->execute();
+		if ($response !== null) {
+			$this->sendResponse($response);
+			return;
+		}
+
+
+		$response = $controller->resolveAction($parsedURL->action);
 		$this->sendResponse($response);
 	}
 }

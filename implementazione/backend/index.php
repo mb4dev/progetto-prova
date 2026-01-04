@@ -6,13 +6,18 @@ $autoloader = new Autoloader();
 
 $autoloader->addDirectory("./core");
 $autoloader->addDirectory("./core/exceptions");
+$autoloader->addDirectory("./core/middlewares");
 $autoloader->addDirectory("./core/interfaces");
 $autoloader->addDirectory("./core/model");
+
 $autoloader->addDirectory("./auth");
 $autoloader->addDirectory("./auth/interfaces");
 
 $autoloader->addDirectory("./profile");
 $autoloader->addDirectory("./profile/interfaces");
+
+$autoloader->addDirectory("./fields");
+$autoloader->addDirectory("./fields/interfaces");
 
 $autoloader->addDirectory("./utility");
 
@@ -30,5 +35,30 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
 $connection = new PDO("sqlite:database.db");
 $connection->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
-$router = new DefaultRouter(new DefaultURLParser(), new ControllerFactory($connection), new JsonResponseStrategy());
+$connection->exec("CREATE TABLE IF NOT EXISTS users (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    name TEXT NOT NULL,
+    email TEXT NOT NULL UNIQUE,
+    password TEXT NOT NULL
+)");
+
+$connection->exec("CREATE TABLE IF NOT EXISTS fields (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    sport TEXT NOT NULL,
+    pricePerHour REAL NOT NULL
+)");
+
+$connection->exec("CREATE TABLE IF NOT EXISTS booking (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    fieldId INTEGER NOT NULL,
+    userId INTEGER NOT NULL,
+    date TEXT NOT NULL,
+    slot TEXT NOT NULL UNIQUE,
+    FOREIGN KEY (fieldId) REFERENCES fields(id),
+    FOREIGN KEY (userId) REFERENCES users(id)
+)");
+
+$router = new DefaultRouter(new TempMiddlewareChain(), new DefaultURLParser(), new ControllerFactory($connection), new JsonResponseStrategy());
 $router -> dispatch();
+
+
