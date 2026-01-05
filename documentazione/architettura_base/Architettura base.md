@@ -183,14 +183,37 @@ class User {
     +createdAt: string
 }
 
-class Field {
+class Resource {
+    <<abstract>>
     +id: int
+    +type: string : "FIELD" o "COURSE"
     +name: string
-    +sport: string
-    +pricePerHour: float
-    +openingTime: string
-    +closingTime: string
+    +price: double
 }
+
+class Field {
+    +sport: string
+}
+
+class Course {
+    +description: string
+    +startDate: Date
+    +endDate: Date
+}
+
+class Lesson {
+    +id: int
+    +courseId: int
+    +date: Date
+    +startTime: Time
+    +endTime: Time
+    +capacity: int
+    +enrolledCount: int
+}
+
+Resource <|-- Field
+Resource <|-- Course
+Course *-- Lesson : contains
 
 class Slot {
     +startTime: string
@@ -201,16 +224,33 @@ class Slot {
 }
 
 class Booking {
+    <<abstract>>
     +id: int
-    +fieldId: int
     +userId: int
-    +startTime: string
-    +endTime: string
-    +date: string
     +status: string
     +amount: float
     +createdAt: string
 }
+
+class FieldBooking {
+    +fieldId: int
+    +date: Date
+    +startTime: Time
+    +endTime: Time
+}
+
+class CourseBooking {
+    +lessonId: int
+}
+
+Booking <|-- FieldBooking
+Booking <|-- CourseBooking
+
+Booking --> User : references
+FieldBooking --> Field : references
+CourseBooking --> Lesson : references
+Payment --> Booking : references
+Payment --> User : references
 
 class Payment {
     +id: int
@@ -229,11 +269,6 @@ class Response {
     +data: mixed
     +message: string
 }
-
-Booking --> Field : references
-Booking --> User : references
-Payment --> Booking : references
-Payment --> User : references
 ```
 
 ---

@@ -5,43 +5,45 @@ Le seguenti classi sono condivise tra UC03 (Visualizzazione disponibilità) e UC
 ### Backend - Repository Layer
 
 ``` mermaid 
+
 classDiagram
 
-class Repository {}
-class DefaultFieldRepository {}
-class FieldNotFoundException {}
-
-FieldRepository --|> Repository
-DefaultFieldRepository --|> FieldRepository
-
-
-FieldRepository ..> FieldNotFoundException : throws
-
 class BookingRepository {
-    <<interface>>
-	+getOccupiedSlots(fieldId: int, startDate: Date, endDate: Date) Slot[]
+    <<abstract>>
+	+getOccupiedSlots(fieldId: int, date: Date) Slot[]
     +createBooking(booking: Booking) Booking
 }
 
+class FieldsRepository {
+    <<abstract>>
 
-class DefaultBookingRepository{
+    getFields() Field[]
 }
 
-class BookingConflictException {}
-class BookingNotFoundException {}
+class DefaultBookingRepository {
+    +getOccupiedSlots(fieldId: int, date: Date) Slot[]
+    +createBooking(booking: Booking) 
+}
 
+class DefaultFieldsRepository {
+    getFields() Field[]
+}
 
 BookingRepository --|> Repository
+FieldsRepository --|> Repository
 DefaultBookingRepository --|> BookingRepository
-Repository --> PDO : usa
+DefaultFieldsRepository --|> FieldsRepository
 
-DefaultFieldRepository ..> FieldNotFoundException : throws
+
 DefaultBookingRepository ..> BookingConflictException : throws
 DefaultBookingRepository ..> BookingNotFoundException : throws
+DefaultFieldsRepository ..> FieldNotFoundException : throws
 
-FieldNotFoundException --|> Exception
-BookingConflictException --|> Exception
-BookingNotFoundException --|> Exception
+
+%%class BookingConflictException {}
+%%class BookingNotFoundException {}
+
+
 ```
 
 ### Backend - Service Layer
@@ -49,34 +51,20 @@ BookingNotFoundException --|> Exception
 ```mermaid
 classDiagram
 
-class FieldService {
+class FieldBookingService {
     <<interface>>
+    
     +getFields() Response
+    +reserveField(booking: Booking) Response
+    +getReservedSlot(fieldId: int, date: Date) Response
 }
 
 class DefaultFieldService {
-    -fieldRepository: FieldRepository
-}
-
-class BookingService {
-    <<interface>>
-    +createBooking(userId: int, fieldId: int, startTime: string, endTime: string) Response
-    +getOccupiedSlots(fieldId, startDate, endDate) Response
-	-checkAvailability(fieldId, startTime, endTime)
-}
-
-class DefaultBookingService {
+    -fieldsRepository: FieldsRepository
     -bookingRepository: BookingRepository
 }
 
-DefaultFieldService ..|> FieldService
-DefaultFieldService --> FieldRepository
-
-DefaultBookingService ..|> BookingService
-DefaultBookingService --> BookingRepository
-
-FieldService --> Response
-BookingService --> Response
+FieldBookingService <|-- DefaultFieldService
 ```
 
 ### Backend - Controller Layer
