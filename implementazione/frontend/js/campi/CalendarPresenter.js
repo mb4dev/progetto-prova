@@ -24,7 +24,7 @@ export default class CalendarPresenter extends Presenter {
 
         const slotPresenter = new SlotPickerPresenter(slotPicker);
         const datePickerPresenter = new DatePickerPresenter(datePicker);
-        const resumePresenter = new ReservationResumePresenter(datePicker);
+        const resumePresenter = new ReservationResumePresenter(resume);
         
         slotPresenter.init();
         datePickerPresenter.init();

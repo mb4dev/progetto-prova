@@ -34,7 +34,7 @@ export default class CampiView extends View {
             this.#fields.forEach(field => {
                 const card = new SportCard();
                 card.setAttribute('data-id', field.id);
-                card.setAttribute('data-sport', field.name);
+                card.setAttribute('data-title', field.name);
                 card.setAttribute('data-image', field.img);
                 card.setAttribute('data-price', field.price);
                 grid.appendChild(card);

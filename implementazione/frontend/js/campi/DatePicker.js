@@ -17,8 +17,7 @@ export default class DatePicker extends View {
 	
 	display(data){
 		if (!data.week) return 
-		
-		
+	
 		const displayedWeek = this.querySelector("#displayed-week");
 		
 		const start = data.week.at(0)
