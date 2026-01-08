@@ -86,7 +86,7 @@ export default class MainView extends View {
 					</div>
 				</aside>
 
-				<main id="main-content" class="flex justify-center items-center bg-[var(--bg-med)] flex-1 rounded-3xl  border border-white/5 shadow-xl/30"></main>
+				<main id="main-content" class="flex justify-center items-center bg-[var(--bg-med)] flex-1 rounded-3xl border border-white/5 shadow-xl/30"></main>
 			</div>`
     }
 

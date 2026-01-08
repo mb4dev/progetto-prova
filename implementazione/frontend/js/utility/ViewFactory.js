@@ -1,0 +1,74 @@
+import Routes from "./Routes.js";
+import ProfileView from "../profile/ProfileView.js";
+import ProfilePresenter from "../profile/ProfilePresenter.js";
+import SportSelectionView from "../sport-selection/SportSelectionView.js";
+import SportSelectionPresenter from "../sport-selection/SportSelectionPresenter.js";
+import CalendarView from "../campi/CalendarView.js";
+import ItemType from "./ItemType.js"
+import CalendarPresenter from "../campi/CalendarPresenter.js";
+import FieldsLoadStrategy from "../strategy/FieldsLoadStrategy.js";
+import CoursesLoadStrategy from "../strategy/CoursesLoadStrategy.js";
+import NavigateToCalendarCommand from "../commands/NavigateToCalendarCommand.js";
+import CalendarPresenterV2 from "../campi/CalendarPresenterV2.js";
+
+export default class ViewFactory {	
+	static createView(route){
+
+		switch(route){
+			case Routes.MAIN_CAMPI:
+				return this.#createPrenotazioneCampi()
+			case Routes.MAIN_CORSI:
+				return this.#createPrenotazioneCorsi()
+			case Routes.MAIN_PROFILE:
+				return this.#createProfileView()
+			case Routes.MAIN_CALENDARIO:
+				return this.#createCalendarView()
+			default:
+			console.error("Route non supportata dalla Factory:", route);
+			return null;
+		}
+	}
+	
+	static #createPrenotazioneCampi(){
+		const view = new SportSelectionView({
+			title: "Prenotazione campi sportivi",
+			subtitle: "Seleziona il campo sportivo che preferisci",
+			itemType: ItemType.FIELD,
+		});
+		const presenter = new SportSelectionPresenter(view, {
+			loadStrategy: new FieldsLoadStrategy(),
+			onSelectedCommand:  new NavigateToCalendarCommand()
+		});
+		
+		return {view : view, presenter: presenter};
+	}
+	
+	static #createPrenotazioneCorsi(){
+		const view = new SportSelectionView({
+			title: "Prenotazione corso",
+			subtitle: "Seleziona il corso che preferisci",
+			itemType: ItemType.COURSE,
+		});
+		
+		const config = {
+			loadStrategy: new CoursesLoadStrategy(),
+			onSelectedCommand: new NavigateToCalendarCommand()
+		}
+		const presenter = new SportSelectionPresenter(view, config);
+		return {view : view, presenter: presenter};
+		
+	}
+
+	static #createProfileView(){
+		const view = new ProfileView();
+		const presenter = new ProfilePresenter(view);
+		return {view : view, presenter: presenter};
+	}
+
+	static #createCalendarView(){
+		const view  = new CalendarView();
+		const presenter = new CalendarPresenterV2(view)
+		return {view : view, presenter: presenter};
+	}
+}
+

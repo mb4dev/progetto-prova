@@ -18,8 +18,6 @@ export default class SlotPickerPresenter extends Presenter {
 
 	}
 
-
-
 	update() { 
 		this._view.display({
 			selectedDate: this.#selectedDate,
