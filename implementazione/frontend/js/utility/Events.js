@@ -1,5 +1,6 @@
 const Events = {
 	AUTH_SUBMIT_EVENT : "auth:submit",
+	AUTH_NAVIGATE_EVENT : "auth:navigate",
 	ROUTING_EVENT : "app:navigate",
 	MAIN_NAVIGATE : "main:navigate",
 	PROFILE_UPDATE_EVENT: "profile:update",

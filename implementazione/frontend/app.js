@@ -1,17 +1,10 @@
 import Events from "./js/utility/Events.js"
 import Routes from "./js/utility/Routes.js"
-import LoginView from "./js/auth/LoginView.js"
-import RegisterView from "./js/auth/RegisterView.js"
-import AuthPresenter from "./js/auth/AuthPresenter.js"
-import APIService from "./js/interfaces/APIService.js"
 import { eventBus } from "./js/utility/DefaultObserver.js"
-import { apiService, SuccessAPIService } from "./js/utility/MockAPIService.js"
-import MainPresenter from "./js/main/MainPresenter.js"
-import MainView from "./js/main/MainView.js"
+import ViewFactory from "./js/utility/ViewFactory.js";
 
 class App {
 	#root
-	#service
 
 	constructor(root){
 		if(!root) throw new Error("root non può essere null");
@@ -25,34 +18,19 @@ class App {
 			this.router(data.route)
 		})
 		
-		this.router(Routes.MAIN);
+		this.router(Routes.LOGIN);
 	}
 
 	router(route){
 		this.#root.innerHTML = ""
 
-		var view = null;
-		var presenter = null;
-		switch (route) {
-			case Routes.LOGIN : 
-				view = new LoginView();
-				this.#root.appendChild(view);
-				presenter = new AuthPresenter(view);
-				break;
-
-			case Routes.REGISTER:
-				view = new RegisterView()
-				this.#root.appendChild(view);
-				presenter = new AuthPresenter(view);
-				break;
-
-			case Routes.MAIN:
-				view = new MainView()
-				this.#root.appendChild(view);
-				presenter = new MainPresenter(view);
-				break;
+		const components = ViewFactory.createView(route);
+		if(!components) {
+			console.error(`Errore creazione view di tipo ${route}`);
+			return;
 		}
-		presenter.init();
+
+		this.#root.appendChild(components.view);
 	}
 }
 
@@ -67,15 +45,3 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
 })
-	
-
-
-
-
-
-
-
-
-
-
-

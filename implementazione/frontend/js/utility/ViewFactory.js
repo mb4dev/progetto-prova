@@ -10,11 +10,27 @@ import FieldsLoadStrategy from "../strategy/FieldsLoadStrategy.js";
 import CoursesLoadStrategy from "../strategy/CoursesLoadStrategy.js";
 import NavigateToCalendarCommand from "../commands/NavigateToCalendarCommand.js";
 import CalendarPresenterV2 from "../campi/CalendarPresenterV2.js";
+import LoginView from "../auth/LoginView.js";
+import RegisterView from "../auth/RegisterView.js";
+import AuthPresenter from "../auth/AuthPresenter.js";
+import LoginStrategy from "../strategy/LoginStrategy.js";
+import RegisterStrategy from "../strategy/RegisterStrategy.js";
+import NavigateToMainCommand from "../commands/NavigateToMainCommand.js";
+import NavigateToRegisterCommand from "../commands/NavigateToRegisterCommand.js";
+import NavigateToLoginCommand from "../commands/NavigateToLoginCommand.js";
+import MainView from "../main/MainView.js";
+import MainPresenter from "../main/MainPresenter.js";
 
 export default class ViewFactory {	
 	static createView(route){
 
 		switch(route){
+			case Routes.LOGIN:
+				return this.#createLoginView()
+			case Routes.REGISTER:
+				return this.#createRegisterView()
+			case Routes.MAIN:
+				return this.#createMainView()
 			case Routes.MAIN_CAMPI:
 				return this.#createPrenotazioneCampi()
 			case Routes.MAIN_CORSI:
@@ -27,6 +43,32 @@ export default class ViewFactory {
 			console.error("Route non supportata dalla Factory:", route);
 			return null;
 		}
+	}
+
+	static #createLoginView(){
+		const view = new LoginView();
+		const presenter = new AuthPresenter(view, {
+			authStrategy: new LoginStrategy(),
+			onSuccessCommand: new NavigateToMainCommand(),
+			onNavigateCommand: new NavigateToRegisterCommand()
+		});
+		return {view : view, presenter: presenter};
+	}
+
+	static #createRegisterView(){
+		const view = new RegisterView();
+		const presenter = new AuthPresenter(view, {
+			authStrategy: new RegisterStrategy(),
+			onSuccessCommand: new NavigateToMainCommand(),
+			onNavigateCommand: new NavigateToLoginCommand()
+		});
+		return {view : view, presenter: presenter};
+	}
+
+	static #createMainView(){
+		const view = new MainView();
+		const presenter = new MainPresenter(view);
+		return {view : view, presenter: presenter};
 	}
 	
 	static #createPrenotazioneCampi(){

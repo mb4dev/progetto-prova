@@ -10,8 +10,8 @@ export default class RegisterView extends View {
 	#loginLink
 	#errorMessage
 
-	constructor(){
-		super();
+	constructor(config){
+		super(config);
 	}
 
 	connectedCallback(){
@@ -106,9 +106,7 @@ export default class RegisterView extends View {
 
 	#bindRouting(){
         this.#loginLink.addEventListener("click", (e) => {
-            eventBus.notify(Events.ROUTING_EVENT, {
-                route: Routes.LOGIN
-            });
+            eventBus.notify(Events.AUTH_NAVIGATE_EVENT);
         })
     }
 
