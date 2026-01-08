@@ -5,11 +5,10 @@ import SportSelectionView from "../sport-selection/SportSelectionView.js";
 import SportSelectionPresenter from "../sport-selection/SportSelectionPresenter.js";
 import CalendarView from "../campi/CalendarView.js";
 import ItemType from "./ItemType.js"
-import CalendarPresenter from "../campi/CalendarPresenter.js";
+import CalendarMediator from "../campi/CalendarMediator.js";
 import FieldsLoadStrategy from "../strategy/FieldsLoadStrategy.js";
 import CoursesLoadStrategy from "../strategy/CoursesLoadStrategy.js";
 import NavigateToCalendarCommand from "../commands/NavigateToCalendarCommand.js";
-import CalendarPresenterV2 from "../campi/CalendarPresenterV2.js";
 import LoginView from "../auth/LoginView.js";
 import RegisterView from "../auth/RegisterView.js";
 import AuthPresenter from "../auth/AuthPresenter.js";
@@ -109,7 +108,7 @@ export default class ViewFactory {
 
 	static #createCalendarView(){
 		const view  = new CalendarView();
-		const presenter = new CalendarPresenterV2(view)
+		const presenter = new CalendarMediator(view)
 		return {view : view, presenter: presenter};
 	}
 }

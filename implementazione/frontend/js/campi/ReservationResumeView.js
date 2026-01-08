@@ -18,15 +18,26 @@
 		
 		
 		display(data) {
-			console.log(data)
-			/*
-			this.querySelector("#resume-selected").innerHTML = data.selected.map(time => {
-				return `<div class="bg-[var(--accent)] text-[var(--text-primary)] p-2 text-center rounded-xl shadow-xl/20">${time}</div>`
-			}).join("");
-			//this.querySelector("#resume-selected-day").textContent = data.selectedDay;
-			//this.querySelector("#resume-selected-sport").textContent = data.selectedSport;
-			*/
+			if (data.selected) {
+				const container = this.querySelector("#resume-selected");
+				if (container) {
+					container.innerHTML = data.selected.map(time => {
+						return `<div class="bg-[var(--accent)] text-[var(--text-secondary)] p-2 text-center rounded-xl shadow-xl/20 font-bold">${time}</div>`
+					}).join("");
+				}
 
+				const total = this.querySelector("#resume-total");
+				if (total) {
+					total.textContent = (data.selected.length * 15).toFixed(2); // Esempio 15€ a slot
+				}
+			}
+
+			if (data.selectedDate) {
+				const dayLabel = this.querySelector("#resume-selected-day");
+				if (dayLabel) {
+					dayLabel.textContent = data.selectedDate.split("-").reverse().join("/");
+				}
+			}
 		}
 		
 		template(){
