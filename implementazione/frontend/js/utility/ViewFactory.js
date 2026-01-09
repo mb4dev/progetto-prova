@@ -20,9 +20,12 @@ import MainPresenter from "../main/MainPresenter.js";
 import NavigateToMainCommand from "../commands/NavigateToMainCommand.js";
 import NavigateToLoginCommand from "../commands/NavigateToLoginCommand.js";
 import NavigateToRegisterCommand from "../commands/NavigateToRegisterCommand.js";
+import PaymentView from "../payment/PaymentView.js";
+import PaymentPresenter from "../payment/PaymentPresenter.js";
+import NavigateToPaymentCommand from "../commands/NavigateToPaymentCommand.js";
 
 export default class ViewFactory {	
-	static create(route){
+	static create(route, params = {}){
 
 		switch(route){
 			case Routes.LOGIN:
@@ -38,7 +41,9 @@ export default class ViewFactory {
 			case Routes.MAIN_PROFILE:
 				return this.#createProfileView()
 			case Routes.MAIN_CALENDARIO:
-				return this.#createCalendarView()
+				return this.#createCalendarView(params)
+			case Routes.MAIN_PAYMENT:
+				return this.#createPaymentView(params)
 			default:
 			console.error("Route non supportata dalla Factory:", route);
 			return null;
@@ -109,11 +114,19 @@ export default class ViewFactory {
 		return {view : view, presenter: presenter};
 	}
 
-	static #createCalendarView(){
+	static #createCalendarView(params){
 		const view  = new CalendarView();
 		const presenter = new CalendarPresenterV2(view, {
-			loadStrategy: new SlotLoadStrategy()
+			loadStrategy: new SlotLoadStrategy(),
+			onPaymentCommand: new NavigateToPaymentCommand(),
+			sport: params.payload
 		})
 		return {view : view, presenter: presenter};
+	}
+
+	static #createPaymentView(params){
+		const view = new PaymentView();
+		const presenter = new PaymentPresenter(view, params.payload);
+		return {view, presenter};
 	}
 }

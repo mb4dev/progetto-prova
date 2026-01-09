@@ -10,7 +10,8 @@ const Routes = {
 	MAIN_ABBONAMENTO : "main:abbonamento",
 	MAIN_STORICO : "main:storico",
 
-	MAIN_CALENDARIO: "main:calendario"
+	MAIN_CALENDARIO: "main:calendario",
+	MAIN_PAYMENT: "main:payment"
 }
 
 export default Routes;

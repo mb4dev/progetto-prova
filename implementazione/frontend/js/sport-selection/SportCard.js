@@ -61,7 +61,8 @@ export default class SportCard extends View {
 				id: this.#id,
 				title: this.#title,
 				price: this.#price,
-				unit: this.#unit
+				unit: this.#unit,
+                image: this.#image
 			});
 		})
 	}

@@ -20,12 +20,14 @@ export default class CalendarMediator extends Presenter {
         
         super(view, config);
         this.#state.week = this.#getWeekDays();
+        this.#state.sport = config.sport;
 
     }
 
     _handleViewEvents() {
         eventBus.subscribe(Events.CALENDAR_LOAD_EVENT, () => {
-            this.#initComponents();
+             this.#initComponents();
+             this.#updateResume(); // Ensure sport is shown immediately
         });
 
         eventBus.subscribe(Events.DATE_SELECTED_EVENT, (data) => {
@@ -49,6 +51,21 @@ export default class CalendarMediator extends Presenter {
             }
             this.#updateSlotPicker();
             this.#updateResume();
+        });
+
+        eventBus.subscribe(Events.PAYMENT_PROCEED_EVENT, () => {
+             if(this.#state.selectedSlots.size === 0){
+                 alert("Seleziona almeno uno slot orario.");
+                 return;
+             }
+             
+             if(this._config.onPaymentCommand){
+                 this._config.onPaymentCommand.execute({
+                     sport: this.#state.sport,
+                     date: this.#state.selectedDate,
+                     slots: Array.from(this.#state.selectedSlots)
+                 });
+             }
         });
     }
 
@@ -96,6 +113,7 @@ export default class CalendarMediator extends Presenter {
         this.#views.resume.display({
             selected: Array.from(this.#state.selectedSlots),
             selectedDate: this.#state.selectedDate,
+            sport: this.#state.sport
         });
     }
 

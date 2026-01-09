@@ -20,8 +20,8 @@ export default class SportSelectionPresenter extends Presenter {
             );
         })
         
-        eventBus.subscribe(Events.SPORT_SELECTED_EVENT, () => {
-            this._config.onSelectedCommand.execute()
+        eventBus.subscribe(Events.SPORT_SELECTED_EVENT, (data) => {
+            this._config.onSelectedCommand.execute(data)
         });
         
     }

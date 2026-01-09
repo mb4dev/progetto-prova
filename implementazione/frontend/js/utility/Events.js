@@ -12,7 +12,8 @@ const Events = {
 	SLOT_SELECTED_EVENT : "slot:selected",
 	DATE_SELECTED_EVENT: "date:selected",
 	DATE_INCREMENT_EVENT: "date:increment",
-	DATE_DECREMENT_EVENT: "date:decrement"
+	DATE_DECREMENT_EVENT: "date:decrement",
+	PAYMENT_PROCEED_EVENT: "payment:proceed"
 
 }
 

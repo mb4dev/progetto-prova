@@ -38,6 +38,13 @@
 					dayLabel.textContent = data.selectedDate.split("-").reverse().join("/");
 				}
 			}
+
+			if (data.sport) {
+				const sportLabel = this.querySelector("#resume-selected-sport");
+				if (sportLabel) {
+					sportLabel.textContent = data.sport.title;
+				}
+			}
 		}
 		
 		template(){
@@ -83,8 +90,12 @@
 		}
 		
 		_bindEvents(){
-		
-			
+			const btn = this.querySelector("button");
+			if(btn){
+				btn.addEventListener("click", () => {
+					eventBus.notify(Events.PAYMENT_PROCEED_EVENT);
+				})
+			}
 		}
 		
 	}
