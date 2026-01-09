@@ -52,7 +52,6 @@ class App {
 				presenter = new MainPresenter(view);
 				break;
 		}
-		presenter.init();
 	}
 }
 

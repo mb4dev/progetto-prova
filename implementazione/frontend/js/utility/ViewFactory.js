@@ -5,28 +5,47 @@ import SportSelectionView from "../sport-selection/SportSelectionView.js";
 import SportSelectionPresenter from "../sport-selection/SportSelectionPresenter.js";
 import CalendarView from "../campi/CalendarView.js";
 import ItemType from "./ItemType.js"
-import CalendarPresenter from "../campi/CalendarPresenter.js";
 import FieldsLoadStrategy from "../strategy/FieldsLoadStrategy.js";
 import CoursesLoadStrategy from "../strategy/CoursesLoadStrategy.js";
 import NavigateToCalendarCommand from "../commands/NavigateToCalendarCommand.js";
 import CalendarPresenterV2 from "../campi/CalendarPresenterV2.js";
 
-export default class ViewFactory {	
+export default class ViewFactory {
+	static #cache = new Map();
+	
 	static createView(route){
+
+		if (this.#cache.has(route)) {
+			console.log(`ViewFactory - riutilizzo per ${route}`);
+			return this.#cache.get(route);
+		}
+
+		console.log(`ViewFactory - creazione ${route}`);
+		let components = null;
 
 		switch(route){
 			case Routes.MAIN_CAMPI:
-				return this.#createPrenotazioneCampi()
+				components = this.#createPrenotazioneCampi();
+				break;
 			case Routes.MAIN_CORSI:
-				return this.#createPrenotazioneCorsi()
+				components = this.#createPrenotazioneCorsi();
+				break;
 			case Routes.MAIN_PROFILE:
-				return this.#createProfileView()
+				components = this.#createProfileView();
+				break;
 			case Routes.MAIN_CALENDARIO:
-				return this.#createCalendarView()
+				components = this.#createCalendarView();
+				break;
 			default:
-			console.error("Route non supportata dalla Factory:", route);
-			return null;
+				console.error("Route non supportata dalla Factory:", route);
+				return null;
 		}
+
+		if (components) {
+			this.#cache.set(route, components);
+		}
+
+		return components;
 	}
 	
 	static #createPrenotazioneCampi(){
@@ -56,7 +75,6 @@ export default class ViewFactory {
 		}
 		const presenter = new SportSelectionPresenter(view, config);
 		return {view : view, presenter: presenter};
-		
 	}
 
 	static #createProfileView(){
@@ -70,5 +88,25 @@ export default class ViewFactory {
 		const presenter = new CalendarPresenterV2(view)
 		return {view : view, presenter: presenter};
 	}
-}
 
+	/*
+	// Metodo opzionale per forzare la ricreazione di una view
+	static clearCache(route = null) {
+		if (route) {
+			console.log(`ViewFactory: pulizia cache per ${route}`);
+			this.#instances.delete(route);
+		} else {
+			console.log("ViewFactory: pulizia completa cache");
+			this.#instances.clear();
+		}
+	}
+
+	// Metodo opzionale per vedere lo stato della cache
+	static getCacheStatus() {
+		return {
+			size: this.#instances.size,
+			routes: Array.from(this.#instances.keys())
+		};
+	}
+	*/
+}

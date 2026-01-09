@@ -5,9 +5,9 @@ import ViewFactory from "../utility/ViewFactory.js";
 
 export default class MainPresenter extends Presenter {
 
+
 	constructor(view){
 		super(view)
-
 	}
 
 	/*
@@ -24,6 +24,8 @@ export default class MainPresenter extends Presenter {
 			if(!components) {
 				throw new Error(`Errore creazione view di tipo ${data.main}`);
 			}
+
+		
 			this._view.display({ view: components.view, route: data.main });
 		});
 	}
