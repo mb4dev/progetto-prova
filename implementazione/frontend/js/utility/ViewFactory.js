@@ -5,47 +5,71 @@ import SportSelectionView from "../sport-selection/SportSelectionView.js";
 import SportSelectionPresenter from "../sport-selection/SportSelectionPresenter.js";
 import CalendarView from "../campi/CalendarView.js";
 import ItemType from "./ItemType.js"
+import CalendarPresenterV2 from "../campi/CalendarPresenterV2.js";
 import FieldsLoadStrategy from "../strategy/FieldsLoadStrategy.js";
 import CoursesLoadStrategy from "../strategy/CoursesLoadStrategy.js";
 import NavigateToCalendarCommand from "../commands/NavigateToCalendarCommand.js";
-import CalendarPresenterV2 from "../campi/CalendarPresenterV2.js";
+import LoginView from "../auth/LoginView.js";
+import RegisterView from "../auth/RegisterView.js";
+import AuthPresenter from "../auth/AuthPresenter.js";
+import LoginStrategy from "../strategy/LoginStrategy.js";
+import RegisterStrategy from "../strategy/RegisterStrategy.js";
+import MainView from "../main/MainView.js";
+import MainPresenter from "../main/MainPresenter.js";
+import NavigateToMainCommand from "../commands/NavigateToMainCommand.js";
+import NavigateToLoginCommand from "../commands/NavigateToLoginCommand.js";
+import NavigateToRegisterCommand from "../commands/NavigateToRegisterCommand.js";
 
-export default class ViewFactory {
-	static #cache = new Map();
-	
-	static createView(route){
-
-		if (this.#cache.has(route)) {
-			console.log(`ViewFactory - riutilizzo per ${route}`);
-			return this.#cache.get(route);
-		}
-
-		console.log(`ViewFactory - creazione ${route}`);
-		let components = null;
+export default class ViewFactory {	
+	static create(route){
 
 		switch(route){
+			case Routes.LOGIN:
+				return this.#createLoginView()
+			case Routes.REGISTER:
+				return this.#createRegisterView()
+			case Routes.MAIN:
+				return this.#createMainView()
 			case Routes.MAIN_CAMPI:
-				components = this.#createPrenotazioneCampi();
-				break;
+				return this.#createPrenotazioneCampi()
 			case Routes.MAIN_CORSI:
-				components = this.#createPrenotazioneCorsi();
-				break;
+				return this.#createPrenotazioneCorsi()
 			case Routes.MAIN_PROFILE:
-				components = this.#createProfileView();
-				break;
+				return this.#createProfileView()
 			case Routes.MAIN_CALENDARIO:
-				components = this.#createCalendarView();
-				break;
+				return this.#createCalendarView()
 			default:
-				console.error("Route non supportata dalla Factory:", route);
-				return null;
+			console.error("Route non supportata dalla Factory:", route);
+			return null;
 		}
+	}
 
-		if (components) {
-			this.#cache.set(route, components);
+	static #createLoginView(){
+		const view = new LoginView();
+
+		const config = {
+			authStrategy: new LoginStrategy(),
+			onSuccessCommand: new NavigateToMainCommand(),
+			onNavigateCommand: new NavigateToRegisterCommand()
 		}
+		const presenter = new AuthPresenter(view, config);
+		return {view : view, presenter: presenter};
+	}
 
-		return components;
+	static #createRegisterView(){
+		const view = new RegisterView();
+		const presenter = new AuthPresenter(view, {
+			authStrategy: new RegisterStrategy(),
+			onSuccessCommand: new NavigateToMainCommand(),
+			onNavigateCommand: new NavigateToLoginCommand()
+		});
+		return {view : view, presenter: presenter};
+	}
+
+	static #createMainView(){
+		const view = new MainView();
+		const presenter = new MainPresenter(view);
+		return {view : view, presenter: presenter};
 	}
 	
 	static #createPrenotazioneCampi(){
@@ -75,6 +99,7 @@ export default class ViewFactory {
 		}
 		const presenter = new SportSelectionPresenter(view, config);
 		return {view : view, presenter: presenter};
+		
 	}
 
 	static #createProfileView(){
@@ -88,25 +113,4 @@ export default class ViewFactory {
 		const presenter = new CalendarPresenterV2(view)
 		return {view : view, presenter: presenter};
 	}
-
-	/*
-	// Metodo opzionale per forzare la ricreazione di una view
-	static clearCache(route = null) {
-		if (route) {
-			console.log(`ViewFactory: pulizia cache per ${route}`);
-			this.#instances.delete(route);
-		} else {
-			console.log("ViewFactory: pulizia completa cache");
-			this.#instances.clear();
-		}
-	}
-
-	// Metodo opzionale per vedere lo stato della cache
-	static getCacheStatus() {
-		return {
-			size: this.#instances.size,
-			routes: Array.from(this.#instances.keys())
-		};
-	}
-	*/
 }

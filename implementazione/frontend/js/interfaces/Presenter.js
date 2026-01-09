@@ -2,7 +2,6 @@ import View from "./View.js"
 import APIService from "./APIService.js";
 
 export default class Presenter {
-    _view
 
     constructor(view, config) {
         if (!view) throw new Error("view non può essere null");

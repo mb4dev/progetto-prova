@@ -86,9 +86,7 @@ export default class LoginView extends View {
 
     #bindRouting(){
         this.#registerLink.addEventListener("click", (e) => {
-            eventBus.notify(Events.ROUTING_EVENT, {
-                route: Routes.REGISTER
-            });
+            eventBus.notify(Events.AUTH_NAVIGATE_EVENT);
         })
     }
 

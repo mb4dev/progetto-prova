@@ -1,73 +1,46 @@
 import Presenter from "../interfaces/Presenter.js"
 import Events from "../utility/Events.js";
-import RegisterView from "./RegisterView.js";
 import { eventBus } from "../utility/DefaultObserver.js";
-import Routes from "../utility/Routes.js";
 
-export default class AuthPresenter extends Presenter{
-    constructor(view) {
-        super(view)
+export default class AuthPresenter extends Presenter {
+    constructor(view, config) {
+        if (!config.authStrategy || !config.onSuccessCommand) throw new Error("AuthStrategy non presente nella configurazione");
+        super(view, config);
     }
 
-    _handleViewEvents(){
-        this.#handleSubmit();
+    _handleViewEvents() {
+        this._handleSubmit();
+        this._handleRouting();
     }
 
-	#handleSubmit(){
-		eventBus.subscribe(Events.AUTH_SUBMIT_EVENT, (data) => {
+    _handleSubmit() {
+        eventBus.subscribe(Events.AUTH_SUBMIT_EVENT, (data) => {
             try {
-                const validatedData = this.#validateInput(data)
-                this._view.display(validatedData)
-            
-                const response = this.#callApi(validatedData)
-                this.#handleResponse(response)
+                this._config.authStrategy.validate(data);
+                
+                this._config.authStrategy.authenticate(data)
+                    .then((response) => {
+                        if (response.success === false) throw new Error(response.message);
+                        
+                        this._config.onSuccessCommand.execute();
+                    })
+                    .catch((error) => {
+                        this._view.display({ error: error.message });
+                    });
             }
-            catch(error){
-                this._view.display({error: error.message})
+            catch (error) {
+                this._view.display({ error: error.message });
             }
-
-        })
-	}
-
-    update(){}
-
-    #validateInput(eventDetail){
-        if(!eventDetail) throw new Error("dati inseriti non validi")
-        if(!eventDetail.email || !eventDetail.password) throw new Error("email o password sono vuoti");
-
-        var authData = {
-            email:  eventDetail.email,
-            password: eventDetail.password
-        }
-
-        if(this._view instanceof RegisterView){
-            if(!eventDetail.name || !eventDetail.passwordConfirm) throw new Error("name o passwordConfirm sono vuoti");
-            if(eventDetail.password !== eventDetail.passwordConfirm) throw new Error("le password non corrispondono");
-            
-            authData.name = eventDetail.name;
-        }
-
-        return authData;
+        });
     }
 
-    #callApi(data){
-        if(!data) throw new Error("dati chiamata non validi");
-        
-        if(this._view instanceof RegisterView){
-            return this._service.register(data.name, data.email, data.password)
-        }
-        return this._service.login(data.email, data.password)
+    _handleRouting() {
+        eventBus.subscribe(Events.AUTH_NAVIGATE_EVENT, () => {
+            if (this._config.onNavigateCommand) {
+                this._config.onNavigateCommand.execute();
+            }
+        });
     }
 
-    #handleResponse(response){
-        if(!response) throw new Error("risposta non valida");
-
-        response.then((response) => {
-            if (response.success === false) throw new Error(response.message)
-            
-            eventBus.notify(Events.ROUTING_EVENT, {route: Routes.MAIN})
-        }).catch((error) => {
-            this._view.display({error: error.message})
-        })
-    }
+    update() { }
 }
