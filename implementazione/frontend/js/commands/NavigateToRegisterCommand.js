@@ -7,8 +7,4 @@ export default class NavigateToRegisterCommand extends Command {
     execute() {
         eventBus.notify(Events.ROUTING_EVENT, { route: Routes.REGISTER });
     }
-<<<<<<< HEAD
 }
-=======
-}
->>>>>>> dev

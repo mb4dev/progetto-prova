@@ -7,8 +7,4 @@ export default class NavigateToLoginCommand extends Command {
     execute() {
         eventBus.notify(Events.ROUTING_EVENT, { route: Routes.LOGIN });
     }
-<<<<<<< HEAD
 }
-=======
-}
->>>>>>> dev

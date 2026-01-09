@@ -4,11 +4,7 @@ import { eventBus } from "../utility/DefaultObserver.js";
 
 export default class AuthPresenter extends Presenter {
     constructor(view, config) {
-<<<<<<< HEAD
-        if (!config.authStrategy) throw new Error("AuthStrategy non presente nella configurazione");
-=======
         if (!config.authStrategy || !config.onSuccessCommand) throw new Error("AuthStrategy non presente nella configurazione");
->>>>>>> dev
         super(view, config);
     }
 
@@ -26,13 +22,7 @@ export default class AuthPresenter extends Presenter {
                     .then((response) => {
                         if (response.success === false) throw new Error(response.message);
                         
-<<<<<<< HEAD
-                        if (this._config.onSuccessCommand) {
-                            this._config.onSuccessCommand.execute();
-                        }
-=======
                         this._config.onSuccessCommand.execute();
->>>>>>> dev
                     })
                     .catch((error) => {
                         this._view.display({ error: error.message });
@@ -53,8 +43,4 @@ export default class AuthPresenter extends Presenter {
     }
 
     update() { }
-<<<<<<< HEAD
 }
-=======
-}
->>>>>>> dev
