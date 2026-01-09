@@ -20,7 +20,7 @@ export default class MainPresenter extends Presenter {
 	_handleViewEvents(){
 		eventBus.subscribe(Events.MAIN_NAVIGATE, (data) => {
 			const route = data.main;
-			const components = ViewFactory.createView(route);
+			const components = ViewFactory.create(route);
 			if(!components) {
 				throw new Error(`Errore creazione view di tipo ${data.main}`);
 			}

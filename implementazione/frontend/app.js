@@ -18,7 +18,7 @@ class App {
 			this.router(data.route)
 		})
 
-		this.router(Routes.LOGIN);
+		this.router(Routes.MAIN);
 	}
 
 	router(route){

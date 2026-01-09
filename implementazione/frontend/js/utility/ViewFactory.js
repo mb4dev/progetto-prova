@@ -3,9 +3,10 @@ import ProfileView from "../profile/ProfileView.js";
 import ProfilePresenter from "../profile/ProfilePresenter.js";
 import SportSelectionView from "../sport-selection/SportSelectionView.js";
 import SportSelectionPresenter from "../sport-selection/SportSelectionPresenter.js";
-import CalendarView from "../campi/CalendarView.js";
+import CalendarView from "../prenotazione/CalendarView.js";
 import ItemType from "./ItemType.js"
-import CalendarPresenterV2 from "../campi/CalendarPresenterV2.js";
+import CalendarPresenterV2 from "../prenotazione/CalendarPresenterV2.js";
+import SlotLoadStrategy from "../strategy/SlotLoadStrategy.js";
 import FieldsLoadStrategy from "../strategy/FieldsLoadStrategy.js";
 import CoursesLoadStrategy from "../strategy/CoursesLoadStrategy.js";
 import NavigateToCalendarCommand from "../commands/NavigateToCalendarCommand.js";
@@ -110,7 +111,9 @@ export default class ViewFactory {
 
 	static #createCalendarView(){
 		const view  = new CalendarView();
-		const presenter = new CalendarPresenterV2(view)
+		const presenter = new CalendarPresenterV2(view, {
+			loadStrategy: new SlotLoadStrategy()
+		})
 		return {view : view, presenter: presenter};
 	}
 }
