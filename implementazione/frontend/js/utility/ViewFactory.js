@@ -5,12 +5,8 @@ import SportSelectionView from "../sport-selection/SportSelectionView.js";
 import SportSelectionPresenter from "../sport-selection/SportSelectionPresenter.js";
 import CalendarView from "../prenotazione/CalendarView.js";
 import ItemType from "./ItemType.js"
-<<<<<<< HEAD
-import CalendarMediator from "../campi/CalendarMediator.js";
-=======
 import CalendarPresenterV2 from "../prenotazione/CalendarPresenterV2.js";
 import SlotLoadStrategy from "../strategy/SlotLoadStrategy.js";
->>>>>>> dev
 import FieldsLoadStrategy from "../strategy/FieldsLoadStrategy.js";
 import CoursesLoadStrategy from "../strategy/CoursesLoadStrategy.js";
 import NavigateToCalendarCommand from "../commands/NavigateToCalendarCommand.js";
@@ -19,19 +15,11 @@ import RegisterView from "../auth/RegisterView.js";
 import AuthPresenter from "../auth/AuthPresenter.js";
 import LoginStrategy from "../strategy/LoginStrategy.js";
 import RegisterStrategy from "../strategy/RegisterStrategy.js";
-<<<<<<< HEAD
-import NavigateToMainCommand from "../commands/NavigateToMainCommand.js";
-import NavigateToRegisterCommand from "../commands/NavigateToRegisterCommand.js";
-import NavigateToLoginCommand from "../commands/NavigateToLoginCommand.js";
-import MainView from "../main/MainView.js";
-import MainPresenter from "../main/MainPresenter.js";
-=======
 import MainView from "../main/MainView.js";
 import MainPresenter from "../main/MainPresenter.js";
 import NavigateToMainCommand from "../commands/NavigateToMainCommand.js";
 import NavigateToLoginCommand from "../commands/NavigateToLoginCommand.js";
 import NavigateToRegisterCommand from "../commands/NavigateToRegisterCommand.js";
->>>>>>> dev
 
 export default class ViewFactory {	
 	static create(route){
@@ -59,13 +47,6 @@ export default class ViewFactory {
 
 	static #createLoginView(){
 		const view = new LoginView();
-<<<<<<< HEAD
-		const presenter = new AuthPresenter(view, {
-			authStrategy: new LoginStrategy(),
-			onSuccessCommand: new NavigateToMainCommand(),
-			onNavigateCommand: new NavigateToRegisterCommand()
-		});
-=======
 
 		const config = {
 			authStrategy: new LoginStrategy(),
@@ -73,7 +54,6 @@ export default class ViewFactory {
 			onNavigateCommand: new NavigateToRegisterCommand()
 		}
 		const presenter = new AuthPresenter(view, config);
->>>>>>> dev
 		return {view : view, presenter: presenter};
 	}
 
@@ -131,13 +111,9 @@ export default class ViewFactory {
 
 	static #createCalendarView(){
 		const view  = new CalendarView();
-<<<<<<< HEAD
-		const presenter = new CalendarMediator(view)
-=======
 		const presenter = new CalendarPresenterV2(view, {
 			loadStrategy: new SlotLoadStrategy()
 		})
->>>>>>> dev
 		return {view : view, presenter: presenter};
 	}
 }

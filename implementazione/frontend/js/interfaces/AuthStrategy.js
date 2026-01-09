@@ -6,8 +6,4 @@ export default class AuthStrategy {
     validate(data) {
         throw new Error("Metodo validate non implementato");
     }
-<<<<<<< HEAD
 }
-=======
-}
->>>>>>> dev
