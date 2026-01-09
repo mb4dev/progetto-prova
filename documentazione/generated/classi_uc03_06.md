@@ -162,59 +162,66 @@ CourseBookingController --> CourseBookingService
 
 ### Frontend - View e Presenter
 
-Frontend ottimizzato con componenti riutilizzabili (`ResourceCard`) e Presenter base. Si sfrutta l'ereditarietà o la configurazione per adattare la vista a Campi o Corsi.
+Il frontend è stato rifattorizzato introducendo pattern architetturali avanzati per migliorare la modularità e la riutilizzabilità dei componenti.
+
+#### Design Pattern Implementati
+
+1.  **Factory Pattern**: `ViewFactory` centralizza la creazione delle viste e dei presenter, gestendo l'iniezione delle dipendenze.
+2.  **Strategy Pattern**: `LoadStrategy` permette di utilizzare lo stesso presenter (`SportSelectionPresenter`) per caricare dati eterogenei (Campi vs Corsi) variando solo l'algoritmo di caricamento.
+3.  **Command Pattern**: `Command` disaccoppia la logica di navigazione (`NavigateToCalendarCommand`) dalla logica di presentazione.
 
 ```mermaid
 classDiagram
 
-class View {
+class ViewFactory {
+    +createView(route: Route)
+    <<Factory>>
+}
+
+class SportSelectionView {
+    -config: Object
+    +display(data: Object)
+    <<View>>
+}
+
+class SportSelectionPresenter {
+    -loadStrategy: LoadStrategy
+    -onSelectedCommand: Command
+    +_handleViewEvents()
+    <<Presenter>>
+}
+
+class LoadStrategy {
     <<interface>>
-    +render()
-    +showError(msg: string)
+    +load() Promise
 }
 
-class GenericResourceView {
-    %% Vista lista parametrica per Campi e Corsi
-    -container: HTMLElement
-    -cardFactory: CardFactory
-    +displayResources(items: Item[])
-    +onSelect(callback: Function)
+class FieldsLoadStrategy {
+    +load()
 }
 
-class BookingSummaryView {
-    %% Vista riepilogo per conferma UC04 e UC06
-    +displaySummary(data: BookingData)
-    +onConfirm(callback: Function)
+class CoursesLoadStrategy {
+    +load()
 }
 
-class ResourceCard {
-    %% UI Component riutilizzabile per Campo e Corso
-    -data: Object
-    +render() string
+class Command {
+    <<interface>>
+    +execute()
 }
 
-class ResourcePresenter {
-    %% Logica comune per caricamento dati
-    -view: GenericResourceView
-    -service: APIService
-    +loadResources(type: string)
-    +selectResource(id: string)
+class NavigateToCalendarCommand {
+    +execute()
 }
 
-class BookingPresenter {
-    %% Logica comune prenotazione
-    -view: BookingSummaryView
-    -service: APIService
-    +initialize(bookingData: Object)
-    +confirmBooking()
-}
+ViewFactory ..> SportSelectionView : creates
+ViewFactory ..> SportSelectionPresenter : creates
 
-GenericResourceView ..|> View
-BookingSummaryView ..|> View
-GenericResourceView ..> ResourceCard : uses
-ResourcePresenter --> GenericResourceView
-BookingPresenter --> BookingSummaryView
+SportSelectionPresenter --> SportSelectionView : updates
+SportSelectionPresenter --> LoadStrategy : uses
+SportSelectionPresenter --> Command : executes
 
-ResourcePresenter ..> ResourceController : calls API (via HTTP)
-BookingPresenter ..> BookingController : calls API (via HTTP)
+FieldsLoadStrategy ..|> LoadStrategy
+CoursesLoadStrategy ..|> LoadStrategy
+
+NavigateToCalendarCommand ..|> Command
 ```
