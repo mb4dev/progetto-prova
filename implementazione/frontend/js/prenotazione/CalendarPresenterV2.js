@@ -1,7 +1,6 @@
 import Presenter from "../interfaces/Presenter.js"
 import { eventBus } from "../utility/DefaultObserver.js";
 import Events from "../utility/Events.js";
-import { apiService } from "../utility/MockAPIService.js";
 import DatePicker from "./DatePicker.js";
 import SlotPicker from "./SlotPicker.js";
 import ReservationResumeView from "./ReservationResumeView.js";
@@ -12,7 +11,7 @@ export default class CalendarPresenterV2 extends Presenter {
     #state
 
     constructor(view, config) {
-        if(!config.loadStrategy || !config.onConfirmCommand || !config.onBackCommand) throw new Error("Configurazione minima mancante");
+        if(!config.loadStrategy || !config.onConfirmCommand) throw new Error("Configurazione minima mancante");
         super(view, config);
 
         this.#state = new ReservationState()
@@ -48,6 +47,13 @@ export default class CalendarPresenterV2 extends Presenter {
             this.#updateSlotPicker();
             this.#updateResume();
         });
+
+        eventBus.subscribe(Events.RESUME_CLEAR, () => {
+            this.#state.clear();
+            this.#updateResume();
+            this.#updateSlotPicker();
+            
+        })
     }
 
     #initComponents() {

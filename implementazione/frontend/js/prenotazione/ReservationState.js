@@ -33,8 +33,12 @@ export default class ReservationState {
         }
 
         this.week = this.#getWeekDays(firstDay);
-	callback()
+		callback()
     }
 
+
+	clear(){
+		this.selectedSlots.clear()
+	}
 
 }

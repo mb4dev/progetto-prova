@@ -112,7 +112,6 @@ export default class ViewFactory {
 		const presenter = new CalendarPresenterV2(view, {
 			loadStrategy: new SlotLoadStrategy(),
 			onConfirmCommand: new NavigateCommand(Routes.MAIN_PAYMENT),
-			onBackCommand: new NavigateCommand(Routes.MAIN),
 		})
 		return {view : view, presenter: presenter};
 	}
