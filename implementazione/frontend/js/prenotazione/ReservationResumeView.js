@@ -4,6 +4,9 @@
 	import { eventBus } from "../utility/DefaultObserver.js"
 	
 	export default class ReservationResumeView extends View {
+
+		#goToPaymentBtn
+		#goBackBtn
 		
 		constructor(){
 			super()
@@ -14,6 +17,8 @@
 			this.innerHTML = this.template()
 			this._bindEvents();
 
+			this.#goToPaymentBtn = this.querySelector("#payment-btn")
+			this.#goBackBtn = this.querySelector("#back-btn")
 		}
 		
 		
@@ -75,11 +80,13 @@
 						<div class="flex flex-row mt-auto w-full gap-3 ">
 
 						<button
+							id="back-btn"
 							class="w-full p-3 bg-[var(--bg-med)] shadow-lg/20 text-[var(--text-primary)] font-bold rounded-xl hover:scale-102 cursor-pointer hover:shadow-xl/25 hover:bg-[var(--accent)] transition-all duration-150 ease-in-out">
 							Annulla
 						</button>
 
 						<button
+							id="payment-btn"
 							class="w-full p-3 bg-[var(--bg-med)] shadow-lg/20 text-[var(--text-primary)] font-bold rounded-xl hover:scale-102 cursor-pointer hover:shadow-xl/25 hover:bg-[var(--accent)] transition-all duration-150 ease-in-out">
 							Vai al pagamento
 						</button>
@@ -92,6 +99,7 @@
 		}
 		
 		_bindEvents(){
+			
 		
 			
 		}

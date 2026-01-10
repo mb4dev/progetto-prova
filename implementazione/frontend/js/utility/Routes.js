@@ -9,6 +9,7 @@ const Routes = {
 	MAIN_CORSI : "main:corsi",
 	MAIN_ABBONAMENTO : "main:abbonamento",
 	MAIN_STORICO : "main:storico",
+	MAIN_PAYMENT: "main:payment",
 
 	MAIN_CALENDARIO: "main:calendario"
 }

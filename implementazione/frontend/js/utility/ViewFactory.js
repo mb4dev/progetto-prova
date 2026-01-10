@@ -9,7 +9,7 @@ import CalendarPresenterV2 from "../prenotazione/CalendarPresenterV2.js";
 import SlotLoadStrategy from "../strategy/SlotLoadStrategy.js";
 import FieldsLoadStrategy from "../strategy/FieldsLoadStrategy.js";
 import CoursesLoadStrategy from "../strategy/CoursesLoadStrategy.js";
-import NavigateToCalendarCommand from "../commands/NavigateToCalendarCommand.js";
+import NavigateCommand from "../commands/NavigateCommand.js";
 import LoginView from "../auth/LoginView.js";
 import RegisterView from "../auth/RegisterView.js";
 import AuthPresenter from "../auth/AuthPresenter.js";
@@ -17,9 +17,7 @@ import LoginStrategy from "../strategy/LoginStrategy.js";
 import RegisterStrategy from "../strategy/RegisterStrategy.js";
 import MainView from "../main/MainView.js";
 import MainPresenter from "../main/MainPresenter.js";
-import NavigateToMainCommand from "../commands/NavigateToMainCommand.js";
-import NavigateToLoginCommand from "../commands/NavigateToLoginCommand.js";
-import NavigateToRegisterCommand from "../commands/NavigateToRegisterCommand.js";
+
 
 export default class ViewFactory {	
 	static create(route){
@@ -50,8 +48,8 @@ export default class ViewFactory {
 
 		const config = {
 			authStrategy: new LoginStrategy(),
-			onSuccessCommand: new NavigateToMainCommand(),
-			onNavigateCommand: new NavigateToRegisterCommand()
+			onSuccessCommand: new NavigateCommand(Routes.MAIN),
+			onNavigateCommand: new NavigateCommand(Routes.REGISTER)
 		}
 		const presenter = new AuthPresenter(view, config);
 		return {view : view, presenter: presenter};
@@ -61,8 +59,8 @@ export default class ViewFactory {
 		const view = new RegisterView();
 		const presenter = new AuthPresenter(view, {
 			authStrategy: new RegisterStrategy(),
-			onSuccessCommand: new NavigateToMainCommand(),
-			onNavigateCommand: new NavigateToLoginCommand()
+			onSuccessCommand: new NavigateCommand(Routes.MAIN),
+			onNavigateCommand: new NavigateCommand(Routes.LOGIN)
 		});
 		return {view : view, presenter: presenter};
 	}
@@ -81,7 +79,7 @@ export default class ViewFactory {
 		});
 		const presenter = new SportSelectionPresenter(view, {
 			loadStrategy: new FieldsLoadStrategy(),
-			onSelectedCommand:  new NavigateToCalendarCommand()
+			onSelectedCommand:  new NavigateCommand(Routes.MAIN_CALENDARIO)
 		});
 		
 		return {view : view, presenter: presenter};
@@ -96,7 +94,7 @@ export default class ViewFactory {
 		
 		const config = {
 			loadStrategy: new CoursesLoadStrategy(),
-			onSelectedCommand: new NavigateToCalendarCommand()
+			onSelectedCommand: new NavigateCommand(Routes.MAIN_CALENDARIO)
 		}
 		const presenter = new SportSelectionPresenter(view, config);
 		return {view : view, presenter: presenter};
@@ -112,7 +110,9 @@ export default class ViewFactory {
 	static #createCalendarView(){
 		const view  = new CalendarView();
 		const presenter = new CalendarPresenterV2(view, {
-			loadStrategy: new SlotLoadStrategy()
+			loadStrategy: new SlotLoadStrategy(),
+			onConfirmCommand: new NavigateCommand(Routes.MAIN_PAYMENT),
+			onBackCommand: new NavigateCommand(Routes.MAIN),
 		})
 		return {view : view, presenter: presenter};
 	}
