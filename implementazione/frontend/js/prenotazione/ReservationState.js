@@ -1,10 +1,19 @@
-export default class ReservationState {
+class ReservationState {
 	constructor() {
+        this.selectedSport = null;
 		this.selectedDate = null;
 		this.selectedSlots = new Set();
 		this.occupiedSlots = [];
 		this.week = this.#getWeekDays();
 	}
+
+    startNewReservation(sport){
+        this.selectedSport = sport;
+        this.selectedDate = null;
+		this.selectedSlots = new Set();
+		this.occupiedSlots = [];
+		this.week = this.#getWeekDays();
+    }
 
 	#getWeekDays(fromDate = new Date(), daysToShow = 7) {
         const options = { weekday: "long" };
@@ -40,5 +49,8 @@ export default class ReservationState {
 	clear(){
 		this.selectedSlots.clear()
 	}
-
 }
+
+const reservationState = new ReservationState();
+export default reservationState;
+

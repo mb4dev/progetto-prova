@@ -1,6 +1,7 @@
 import View from "../interfaces/View.js"
 import Events from "../utility/Events.js"
 import { eventBus } from "../utility/DefaultObserver.js"
+import reservationState from "../prenotazione/ReservationState.js"
 
 export default class SportCard extends View {
 
@@ -57,12 +58,15 @@ export default class SportCard extends View {
 	
 	_bindEvents(){
 		this.addEventListener("click", () => {
-			eventBus.notify(this.#event, {
+			
+			reservationState.startNewReservation({
 				id: this.#id,
 				title: this.#title,
 				price: this.#price,
 				unit: this.#unit
 			});
+
+			eventBus.notify(this.#event);
 		})
 	}
 	

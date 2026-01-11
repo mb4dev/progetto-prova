@@ -4,7 +4,7 @@ import Events from "../utility/Events.js";
 import DatePicker from "./DatePicker.js";
 import SlotPicker from "./SlotPicker.js";
 import ReservationResumeView from "./ReservationResumeView.js";
-import ReservationState from "./ReservationState.js";
+import reservationState from "./ReservationState.js";
 
 export default class CalendarPresenterV2 extends Presenter {
     #views = {};
@@ -14,7 +14,7 @@ export default class CalendarPresenterV2 extends Presenter {
         if(!config.loadStrategy || !config.onConfirmCommand) throw new Error("Configurazione minima mancante");
         super(view, config);
 
-        this.#state = new ReservationState()
+        this.#state = reservationState
     }
 
     _handleViewEvents() {
@@ -68,6 +68,7 @@ export default class CalendarPresenterV2 extends Presenter {
         });
 
         this.#updateDatePicker();
+        this.#updateResume();
     }
 
     #updateDatePicker() {
@@ -84,6 +85,7 @@ export default class CalendarPresenterV2 extends Presenter {
 
     #updateResume() {
         this.#views.resume.display({
+            selectedSport : this.#state.selectedSport,
             selected: Array.from(this.#state.selectedSlots),
             selectedDate: this.#state.selectedDate,
         });
