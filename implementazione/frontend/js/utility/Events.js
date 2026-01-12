@@ -13,8 +13,10 @@ const Events = {
 	DATE_SELECTED_EVENT: "date:selected",
 	DATE_INCREMENT_EVENT: "date:increment",
 	DATE_DECREMENT_EVENT: "date:decrement",
+	RESUME_CLEAR: "resume:clear",
 
-	RESUME_CLEAR: "resume:clear"
+	PAYMENT_PROCEED_EVENT: "payment:start",
+	CART_UPDATED: "cart:updated",
 
 }
 

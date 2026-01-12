@@ -3,7 +3,8 @@ import { eventBus } from "../utility/DefaultObserver.js";
 import Events from "../utility/Events.js";
 import DatePicker from "./DatePicker.js";
 import SlotPicker from "./SlotPicker.js";
-import ReservationResumeView from "./ReservationResumeView.js";
+import CartView from "../cart/CartView.js";
+import CartPresenter from "../cart/CartPresenter.js";
 import reservationState from "./ReservationState.js";
 
 export default class CalendarPresenterV2 extends Presenter {
@@ -30,7 +31,6 @@ export default class CalendarPresenterV2 extends Presenter {
                 const allSlots = result.data || {};
                 this.#state.occupiedSlots = allSlots[data.selectedDate] || []; 
                 this.#updateSlotPicker();
-                this.#updateResume();
             });
         });
 
@@ -45,30 +45,34 @@ export default class CalendarPresenterV2 extends Presenter {
                 this.#state.selectedSlots.add(time);
             }
             this.#updateSlotPicker();
-            this.#updateResume();
         });
 
         eventBus.subscribe(Events.RESUME_CLEAR, () => {
             this.#state.clear();
-            this.#updateResume();
             this.#updateSlotPicker();
-            
+        })
+
+        eventBus.subscribe(Events.PAYMENT_PROCEED_EVENT, () => {
+            this._config.onConfirmCommand.execute();
         })
     }
 
     #initComponents() {
         this.#views.date = new DatePicker();
         this.#views.slot = new SlotPicker();
-        this.#views.resume = new ReservationResumeView();
+        this.#views.cart = new CartView();
+
+        // Initialize cart presenter
+        this.#views.cartPresenter = new CartPresenter(this.#views.cart, {});
 
         this._view.display({
             date: this.#views.date,
             slot: this.#views.slot,
-            resume: this.#views.resume
+            cart: this.#views.cart
         });
 
         this.#updateDatePicker();
-        this.#updateResume();
+        this.#views.cartPresenter.update();
     }
 
     #updateDatePicker() {
@@ -83,13 +87,7 @@ export default class CalendarPresenterV2 extends Presenter {
         });
     }
 
-    #updateResume() {
-        this.#views.resume.display({
-            selectedSport : this.#state.selectedSport,
-            selected: Array.from(this.#state.selectedSlots),
-            selectedDate: this.#state.selectedDate,
-        });
-    }
+
 
     update() {}
 }

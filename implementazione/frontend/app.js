@@ -19,6 +19,7 @@ class App {
 		})
 
 		this.router(Routes.MAIN);
+		eventBus.notify(Events.MAIN_NAVIGATE, { main: Routes.MAIN_PAYMENT})
 	}
 
 	router(route){

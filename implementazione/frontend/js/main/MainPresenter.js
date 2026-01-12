@@ -2,20 +2,18 @@ import Presenter from "../interfaces/Presenter.js"
 import Events from "../utility/Events.js";
 import { eventBus } from "../utility/DefaultObserver.js";
 import ViewFactory from "../utility/ViewFactory.js";
+import Routes from "../utility/Routes.js";
 
 export default class MainPresenter extends Presenter {
-
 
 	constructor(view){
 		super(view)
 	}
 
-	/*
 	init(){
-		this._handleViewEvents();
-		eventBus.notify(Events.MAIN_NAVIGATE, { main: Routes.MAIN_CAMPI });
+		this._handleViewEvents()
 	}
-	*/
+	
 
 	_handleViewEvents(){
 		eventBus.subscribe(Events.MAIN_NAVIGATE, (data) => {

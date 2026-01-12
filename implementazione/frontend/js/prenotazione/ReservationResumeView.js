@@ -111,10 +111,9 @@ export default class ReservationResumeView extends View {
 		})
 		
 		this.#goToPaymentBtn.addEventListener("click", () => {
-			eventBus.notify(Events.MAIN_NAVIGATE)
+			eventBus.notify(Events.PAYMENT_PROCEED_EVENT)
 		})
-	
-		
+
 	}
 	
 }

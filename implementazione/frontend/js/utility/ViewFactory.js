@@ -17,6 +17,8 @@ import LoginStrategy from "../strategy/LoginStrategy.js";
 import RegisterStrategy from "../strategy/RegisterStrategy.js";
 import MainView from "../main/MainView.js";
 import MainPresenter from "../main/MainPresenter.js";
+import PaymentView from "../payment/PaymentView.js";
+import PaymentPresenter from "../payment/PaymentPresenter.js";
 
 
 export default class ViewFactory {	
@@ -37,6 +39,8 @@ export default class ViewFactory {
 				return this.#createProfileView()
 			case Routes.MAIN_CALENDARIO:
 				return this.#createCalendarView()
+			case Routes.MAIN_PAYMENT:
+				return this.#createPayment()
 			default:
 			console.error("Route non supportata dalla Factory:", route);
 			return null;
@@ -113,6 +117,13 @@ export default class ViewFactory {
 			loadStrategy: new SlotLoadStrategy(),
 			onConfirmCommand: new NavigateCommand(Routes.MAIN_PAYMENT),
 		})
+		return {view : view, presenter: presenter};
+	}
+
+	static #createPayment(){
+		const view = new PaymentView();
+		const presenter = new PaymentPresenter(view, {})
+		
 		return {view : view, presenter: presenter};
 	}
 }
