@@ -15,6 +15,10 @@ export default class PaymentView extends View {
         this.id = "payment-view";
         this.style.display = "contents";
         this.innerHTML = this.template();
+
+        this.#confirmBtn = this.querySelector("#confirm-payment-btn");
+
+        //this.cancelBtn = this.querySelector("#cancel-payment-btn");
         this._bindEvents();
     }
 
@@ -133,7 +137,9 @@ export default class PaymentView extends View {
 
 
     _bindEvents(){
-
+        this.#confirmBtn.addEventListener("click", () => {
+            eventBus.notify(Events.PAYMENT_CONFIRM_EVENT);
+        })
     }
 }
 

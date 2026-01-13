@@ -16,6 +16,8 @@ const Events = {
 	RESUME_CLEAR: "resume:clear",
 
 	PAYMENT_PROCEED_EVENT: "payment:start",
+	PAYMENT_CANCEL_EVENT: "payment:cancel",
+	PAYMENT_CONFIRM_EVENT: "payment:confirm",
 	
 	CART_UPDATED: "cart:updated",
 	CART_REMOVE: "cart:remove",

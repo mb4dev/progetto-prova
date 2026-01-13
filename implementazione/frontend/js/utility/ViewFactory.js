@@ -19,6 +19,7 @@ import MainView from "../main/MainView.js";
 import MainPresenter from "../main/MainPresenter.js";
 import PaymentView from "../payment/PaymentView.js";
 import PaymentPresenter from "../payment/PaymentPresenter.js";
+import ConfirmPaymentCommand from "../commands/ConfirmPaymentCommand.js";
 
 
 export default class ViewFactory {	
@@ -122,7 +123,9 @@ export default class ViewFactory {
 
 	static #createPayment(){
 		const view = new PaymentView();
-		const presenter = new PaymentPresenter(view, {})
+		const presenter = new PaymentPresenter(view, {
+			onConfirmPaymentCommand : new ConfirmPaymentCommand()
+		})
 		
 		return {view : view, presenter: presenter};
 	}

@@ -41,5 +41,10 @@ export default class PaymentPresenter extends Presenter{
 			if (!this._view.isConnected) return;
 			this.update();
 		});
+
+		eventBus.subscribe(Events.PAYMENT_CONFIRM_EVENT, () => {
+			if (!this._view.isConnected) return;
+			this._config.onConfirmPaymentCommand.execute();
+		});
 	}
 }
