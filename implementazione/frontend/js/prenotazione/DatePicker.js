@@ -19,13 +19,15 @@ export default class DatePicker extends View {
 		if (!data.week) return 
 	
 		const displayedWeek = this.querySelector("#displayed-week");
+		const grid = this.querySelector("#days-grid");
+	
+		if (!displayedWeek || !grid) return;
 		
 		const start = data.week.at(0)
 		const end = data.week.at(-1)
 		
 		displayedWeek.textContent = start.numero + "/" + start.mese + "-" + end.numero + "/" + end.mese
 		
-		const grid = this.querySelector("#days-grid")
 		grid.innerHTML = data.week.map(d => this.#dateCardTemplate(d)).join("")
 	}
 	

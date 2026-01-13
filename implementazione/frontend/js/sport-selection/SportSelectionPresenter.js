@@ -14,6 +14,7 @@ export default class SportSelectionPresenter extends Presenter {
     
     _handleViewEvents(){
         eventBus.subscribe(Events.SPORTS_LOAD_EVENT, data => {
+            if (!this._view.isConnected) return;
             this._config.loadStrategy.load().then(result => {
                 this._view.display({items: result.data});
             }
@@ -21,6 +22,7 @@ export default class SportSelectionPresenter extends Presenter {
         })
         
         eventBus.subscribe(Events.SPORT_SELECTED_EVENT, () => {
+            if (!this._view.isConnected) return;
             this._config.onSelectedCommand.execute()
         });
         

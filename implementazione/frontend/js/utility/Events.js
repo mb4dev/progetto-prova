@@ -16,7 +16,10 @@ const Events = {
 	RESUME_CLEAR: "resume:clear",
 
 	PAYMENT_PROCEED_EVENT: "payment:start",
+	
 	CART_UPDATED: "cart:updated",
+	CART_REMOVE: "cart:remove-item",
+	CART_CLEAR: "cart:clear",
 
 }
 

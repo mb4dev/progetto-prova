@@ -8,7 +8,6 @@ class CartService {
     }
 
     add(item) {
-        // Simple validation or duplicate check could go here
         this.items.push(item);  
         this.notify();
     }

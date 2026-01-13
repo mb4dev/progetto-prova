@@ -20,10 +20,12 @@ export default class CalendarPresenterV2 extends Presenter {
 
     _handleViewEvents() {
         eventBus.subscribe(Events.CALENDAR_LOAD_EVENT, () => {
+            if (!this._view.isConnected) return;
             this.#initComponents();
         });
 
         eventBus.subscribe(Events.DATE_SELECTED_EVENT, (data) => {
+            if (!this._view.isConnected) return;
             this.#state.selectedDate = data.selectedDate;
             this.#state.selectedSlots.clear();
 
@@ -34,10 +36,18 @@ export default class CalendarPresenterV2 extends Presenter {
             });
         });
 
-        eventBus.subscribe(Events.DATE_INCREMENT_EVENT, () => this.#state.changeWeek(7,this.#updateDatePicker()));
-        eventBus.subscribe(Events.DATE_DECREMENT_EVENT, () => this.#state.changeWeek(-7, this.#updateDatePicker()));
+        eventBus.subscribe(Events.DATE_INCREMENT_EVENT, () => {
+            if (!this._view.isConnected) return;
+            this.#state.changeWeek(7,this.#updateDatePicker())
+        });
+        
+        eventBus.subscribe(Events.DATE_DECREMENT_EVENT, () => {
+            if (!this._view.isConnected) return;
+            this.#state.changeWeek(-7, this.#updateDatePicker())
+        });
 
         eventBus.subscribe(Events.SLOT_SELECTED_EVENT, (data) => {
+            if (!this._view.isConnected) return;
             const { time } = data;
             if (this.#state.selectedSlots.has(time)) {
                 this.#state.selectedSlots.delete(time);
@@ -48,11 +58,13 @@ export default class CalendarPresenterV2 extends Presenter {
         });
 
         eventBus.subscribe(Events.RESUME_CLEAR, () => {
+            if (!this._view.isConnected) return;
             this.#state.clear();
             this.#updateSlotPicker();
         })
 
         eventBus.subscribe(Events.PAYMENT_PROCEED_EVENT, () => {
+            if (!this._view.isConnected) return;
             this._config.onConfirmCommand.execute();
         })
     }
@@ -62,7 +74,6 @@ export default class CalendarPresenterV2 extends Presenter {
         this.#views.slot = new SlotPicker();
         this.#views.cart = new CartView();
 
-        // Initialize cart presenter
         this.#views.cartPresenter = new CartPresenter(this.#views.cart, {});
 
         this._view.display({
@@ -71,8 +82,11 @@ export default class CalendarPresenterV2 extends Presenter {
             cart: this.#views.cart
         });
 
-        this.#updateDatePicker();
-        this.#views.cartPresenter.update();
+
+        requestAnimationFrame(() => {
+            this.#updateDatePicker();
+            this.#views.cartPresenter.update();
+        });
     }
 
     #updateDatePicker() {

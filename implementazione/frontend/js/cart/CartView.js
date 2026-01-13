@@ -24,6 +24,8 @@ export default class CartView extends View {
         const cartList = this.querySelector("#cart-list");
         const cartTotalEl = this.querySelector("#cart-total");
 
+        if (!cartList || !cartTotalEl) return;
+
         if (data.cartItems && data.cartItems.length > 0) {
             cartList.innerHTML = data.cartItems.map((item, index) => `
                 <div class="flex flex-col bg-[var(--bg-card)] p-3 m-2 border-1  border-[var(--accent)] rounded-xl shadow-xl/20">
@@ -56,7 +58,7 @@ export default class CartView extends View {
             cartList.innerHTML = `<div class="p-8 text-center opacity-50 italic text-sm">Il carrello è vuoto</div>`;
         }
 
-        if(cartTotalEl) cartTotalEl.textContent = (data.cartTotal || 0).toFixed(2);
+        cartTotalEl.textContent = (data.cartTotal || 0).toFixed(2);
     }
 
     template() {
