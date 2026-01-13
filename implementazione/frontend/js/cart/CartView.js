@@ -7,6 +7,7 @@ export default class CartView extends View {
 
     #checkoutBtn;
     #container;
+    hideCheckout = false;
 
     constructor() {
         super();
@@ -23,23 +24,30 @@ export default class CartView extends View {
 
         const cartList = this.querySelector("#cart-list");
         const cartTotalEl = this.querySelector("#cart-total");
+        const checkoutSection = this.querySelector("#checkout-section");
 
-        if (!cartList || !cartTotalEl) return;
+        if (this.hideCheckout && checkoutSection) {
+            checkoutSection.style.display = "none";
+        }
+
+        if (!cartList) return;
 
         if (data.cartItems && data.cartItems.length > 0) {
             cartList.innerHTML = data.cartItems.map((item, index) => `
-                <div class="flex flex-col bg-[var(--bg-card)] p-3 m-2 border-1  border-[var(--accent)] rounded-xl shadow-xl/20">
+                <div class="flex flex-col bg-[var(--bg-med)] p-3 m-2 border-1  border-[var(--accent)] rounded-xl shadow-xl/20">
                     <div class="flex justify-between items-start">
                         <div>
-                            <p class="font-bold text-sm">${item.sport.title}</p>
+                            <p class="font-bold text-sm text-[var(--text-primary)]">${item.sport.title}</p>
                             <p class="text-xs opacity-70">${item.date.split("-").reverse().join("/")}</p>
                         </div>
+                        ${this.hideCheckout ? '' : `
                         <button data-index="${index}" class="remove-item-btn text-red-400 hover:text-red-600">
                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/></svg>
                         </button>
+                        `}
                     </div>
                     <div class="mt-2 flex flex-wrap gap-1">
-                         ${item.slots.map(s => `<span class="bg-[var(--bg-med)] px-2 py-1 rounded text-[10px]">${s}</span>`).join("")}
+                         ${item.slots.map(s => `<span class="bg-[var(--accent)] px-2 py-1 rounded text-[10px]">${s}</span>`).join("")}
                     </div>
                     <div class="mt-2 text-right font-bold text-[var(--accent)]">
                         ${item.price.toFixed(2)}€
@@ -47,18 +55,22 @@ export default class CartView extends View {
                 </div>
             `).join("");
             
-            this.querySelectorAll(".remove-item-btn").forEach(btn => {
-                btn.addEventListener("click", (e) => {
-                    const idx = e.currentTarget.dataset.index;
-                    eventBus.notify("cart:remove-item", { index: parseInt(idx) });
+            if (!this.hideCheckout) {
+                this.querySelectorAll(".remove-item-btn").forEach(btn => {
+                    btn.addEventListener("click", (e) => {
+                        const idx = e.currentTarget.dataset.index;
+                        eventBus.notify("cart:remove-item", { index: parseInt(idx) });
+                    });
                 });
-            });
+            }
 
         } else {
             cartList.innerHTML = `<div class="p-8 text-center opacity-50 italic text-sm">Il carrello è vuoto</div>`;
         }
 
-        cartTotalEl.textContent = (data.cartTotal || 0).toFixed(2);
+        if (cartTotalEl) {
+            cartTotalEl.textContent = (data.cartTotal || 0).toFixed(2);
+        }
     }
 
     template() {
@@ -69,11 +81,11 @@ export default class CartView extends View {
                     Carrello
                 </h2>
 
-                <div class="flex-1 overflow-y-auto min-h-0 mb-4 px-1" id="cart-list">
+                <div class="flex-1 overflow-y-auto min-h-0 mb-4 px-1 custom-scrollbar" id="cart-list">
                     <!-- Cart Items -->
                 </div>
 
-                <div class="mt-auto bg-[var(--bg-med)] p-4 rounded-xl shadow-lg/10">
+                <div id="checkout-section" class="mt-auto bg-[var(--bg-med)] p-4 rounded-xl shadow-lg/10">
                     <div class="flex justify-between items-end mb-4">
                         <span class="text-sm font-bold opacity-70">Totale</span>
                         <span class="text-2xl font-bold"><span id="cart-total">0.00</span>€</span>
@@ -90,13 +102,20 @@ export default class CartView extends View {
     }
 
     _bindEvents() {
-        this.querySelector("#checkout-btn").addEventListener("click", () => {
-             eventBus.notify(Events.PAYMENT_PROCEED_EVENT);
-        });
+        const checkoutBtn = this.querySelector("#checkout-btn");
+        const clearCartBtn = this.querySelector("#clear-cart-btn");
+
+        if (checkoutBtn) {
+            checkoutBtn.addEventListener("click", () => {
+                 eventBus.notify(Events.PAYMENT_PROCEED_EVENT);
+            });
+        }
         
-        this.querySelector("#clear-cart-btn").addEventListener("click", () => {
-             eventBus.notify("cart:clear");
-        });
+        if (clearCartBtn) {
+            clearCartBtn.addEventListener("click", () => {
+                 eventBus.notify("cart:clear");
+            });
+        }
     }
 }
 
