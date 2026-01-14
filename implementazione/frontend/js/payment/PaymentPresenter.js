@@ -20,7 +20,6 @@ export default class PaymentPresenter extends Presenter{
 		this.#cartView.hideCheckout = true;
 		this.#cartPresenter = new CartPresenter(this.#cartView, {});
 
-		// Wait for the view to be fully rendered before updating
 		requestAnimationFrame(() => {
 			this.update();
 			this.#cartPresenter.update();
@@ -53,11 +52,11 @@ export default class PaymentPresenter extends Presenter{
 				total: cartService.getTotal()
 			};
 
-			this._config.paymentStrategy
-				.pay(payload)
+			this._config.paymentStrategy.pay(payload)
+				/*
 				.then((response) => {
 					console.log("Pagamento effettuato:", response);
-					// in caso di pagamento singolo svuotiamo il carrello
+					
 					if (payload.items && payload.items.length) {
 						cartService.clear();
 					}
@@ -66,6 +65,7 @@ export default class PaymentPresenter extends Presenter{
 				.catch((error) => {
 					console.error("Errore durante il pagamento:", error);
 				});
+				*/
 		});
 	}
 }

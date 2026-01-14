@@ -14,8 +14,8 @@ Il modulo **pagamento** gestisce:
 
 La logica di chiamata all'API di pagamento è incapsulata in una `PaymentStrategy`, iniettata nel `PaymentPresenter` dalla `ViewFactory`. In questo modo è possibile differenziare:
 
-- il **pagamento singolo** (UC08), che usa `NormalPaymentStrategy` e opera sui dati presenti nel carrello;
-- il **pagamento abbonamento** (UC09), che usa `SubscriptionPaymentStrategy` e opera sui dati dell'abbonamento selezionato.
+- il **pagamento singolo** (UC08), che usa `NormalPaymentStrategy` 
+- il **pagamento abbonamento** (UC09), che usa `SubscriptionPaymentStrategy`
 
 ## Diagramma di attività (carrello e pagamento)
 

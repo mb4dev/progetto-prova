@@ -3,6 +3,8 @@ import { eventBus } from "../utility/DefaultObserver.js";
 import Events from "../utility/Events.js";
 
 export default class SubscriptionView extends View {
+
+
     constructor() {
         super();
     }
@@ -15,6 +17,13 @@ export default class SubscriptionView extends View {
     }
 
     display(data) {
+
+        if(data.cart){
+            const container = this.querySelector("#carrello");
+            container.innerHTML = "";
+            container.appendChild(data.cart);
+        }
+
         const list = this.querySelector("#subscription-list");
         if (!list) return;
 
@@ -54,6 +63,8 @@ export default class SubscriptionView extends View {
 
     template() {
         return `
+         <div class="h-full w-full flex gap-4 p-6">
+
             <div class="flex flex-col w-full h-full p-6 gap-4">
                 <div class="flex flex-col gap-1">
                     <h1 class="text-2xl font-bold">Abbonamenti</h1>
@@ -61,6 +72,9 @@ export default class SubscriptionView extends View {
                 </div>
                 <div id="subscription-list" class="flex-1 overflow-y-auto custom-scrollbar mt-2">
                 </div>
+            </div>
+            <div class="w-80 bg-[var(--bg-dark)] rounded-xl inset-shadow-sm/30" id="carrello">   
+            </div>
             </div>
         `;
     }

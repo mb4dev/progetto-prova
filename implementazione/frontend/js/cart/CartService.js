@@ -3,8 +3,11 @@ import { eventBus } from "../utility/DefaultObserver.js";
 import Events from "../utility/Events.js";
 
 class CartService {
+    
     constructor() {
         this.items = [];
+        this.subscriptions = [];
+
     }
 
     add(item) {

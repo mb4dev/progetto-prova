@@ -38,17 +38,13 @@ export default class PaymentView extends View {
 
     template(){
         return `
-        	<div class="h-full w-full flex gap-4 p-6">
-                <div class="w-80 bg-[var(--bg-dark)] rounded-xl inset-shadow-sm/30" id="riepilogo-pagamento">
-
-                </div>
-                <div class="flex-1 rounded-xl" id="dati-pagamento">
-                    <div class="flex flex-col gap-6">
-                        <div class="flex flex-col gap-1">
-                            <h1 class="text-2xl font-bold">Riepilogo pagamento</h1>
-                            <p class="text-sm text-gray-500">Controlla i dettagli prima di confermare</p>
-                        </div>
-
+        <div class="h-full w-full flex gap-4 p-6">
+            <div class="flex-1 rounded-xl" id="dati-pagamento">
+                <div class="flex flex-col gap-6">
+                    <div class="flex flex-col gap-1">
+                        <h1 class="text-2xl font-bold">Riepilogo pagamento</h1>
+                        <p class="text-sm text-gray-500">Controlla i dettagli prima di confermare</p>
+                    </div>
                     <div class="flex flex-col gap-4">
                         <div class="mb-6">
                             <h2 class="text-lg font-bold mb-3 flex items-center gap-2">
@@ -58,10 +54,10 @@ export default class PaymentView extends View {
                                 </svg>
                                 Dati Carta di Credito
                             </h2>
-                        <div class="bg-[var(--bg-card)] p-4 rounded-xl">
-                            <div class="mb-4">
-                                <label class="block text-sm font-semibold mb-2" for="card-number">Numero Carta</label>
-                                <input 
+                            <div class="bg-[var(--bg-card)] p-4 rounded-xl">
+                                <div class="mb-4">
+                                    <label class="block text-sm font-semibold mb-2" for="card-number">Numero Carta</label>
+                                    <input 
                                     type="text" 
                                     id="card-number" 
                                     name="cardNumber"
@@ -69,25 +65,23 @@ export default class PaymentView extends View {
                                     maxlength="19"
                                     class="w-full px-4 py-3 bg-[var(--bg-dark)] rounded-lg focus:outline-none focus:ring-2 focus:ring-[var(--accent)] font-mono"
                                     required
-                                />
-                            </div>
-
-                            <div class="mb-4">
-                                <label class="block text-sm font-semibold mb-2" for="card-name">Intestatario</label>
-                                <input 
+                                    />
+                                </div>
+                                <div class="mb-4">
+                                    <label class="block text-sm font-semibold mb-2" for="card-name">Intestatario</label>
+                                    <input 
                                     type="text" 
                                     id="card-name" 
                                     name="cardName"
                                     placeholder="NOME COGNOME"
                                     class="w-full px-4 py-3 bg-[var(--bg-dark)] rounded-lg focus:outline-none focus:ring-2 focus:ring-[var(--accent)] uppercase"
                                     required
-                                />
-                            </div>
-
-                            <div class="grid grid-cols-2 gap-4">
-                                <div>
-                                    <label class="block text-sm font-semibold mb-2" for="card-expiry">Scadenza</label>
-                                    <input 
+                                    />
+                                </div>
+                                <div class="grid grid-cols-2 gap-4">
+                                    <div>
+                                        <label class="block text-sm font-semibold mb-2" for="card-expiry">Scadenza</label>
+                                        <input 
                                         type="text" 
                                         id="card-expiry" 
                                         name="cardExpiry"
@@ -95,11 +89,11 @@ export default class PaymentView extends View {
                                         maxlength="5"
                                         class="w-full px-4 py-3 bg-[var(--bg-dark)] rounded-lg focus:outline-none focus:ring-2 focus:ring-[var(--accent)] font-mono"
                                         required
-                                    />
-                                </div>
-                                <div>
-                                    <label class="block text-sm font-semibold mb-2" for="card-cvv">CVV</label>
-                                    <input 
+                                        />
+                                    </div>
+                                    <div>
+                                        <label class="block text-sm font-semibold mb-2" for="card-cvv">CVV</label>
+                                        <input 
                                         type="text" 
                                         id="card-cvv" 
                                         name="cardCvv"
@@ -107,32 +101,37 @@ export default class PaymentView extends View {
                                         maxlength="3"
                                         class="w-full px-4 py-3 bg-[var(--bg-dark)] rounded-lg focus:outline-none focus:ring-2 focus:ring-[var(--accent)] font-mono"
                                         required
-                                    />
+                                        />
+                                    </div>
                                 </div>
                             </div>
                         </div>
                     </div>
-                </div>
-                <div class="border-t border-[var(--separator)] pt-6 mb-6">
-                    <div class="flex justify-between items-center">
-                        <span class="text-xl font-bold">Totale</span>
-                        <span class="text-3xl font-bold text-[var(--accent)]">
-                            <span id="payment-total">0.00</span>€
-                        </span>
+                    
+                    <div class="border-t border-[var(--separator)] pt-6 mb-6">
+                        <div class="flex justify-between items-center">
+                            <span class="text-xl font-bold">Totale</span>
+                            <span class="text-3xl font-bold text-[var(--accent)]">
+                                <span id="payment-total">0.00</span>€
+                            </span>
+                        </div>
+                    </div>
+                    
+                    <div class="flex gap-4">
+                        <button id="cancel-payment-btn" class="flex-1 py-3 px-6 bg-[var(--bg-dark)] text-[var(--text-primary)] rounded-xl font-bold hover:bg-opacity-80 transition-all">
+                            Annulla
+                        </button>
+                        <button id="confirm-payment-btn" class="flex-1 py-3 px-6 bg-[var(--accent)] text-[var(--text-secondary)] rounded-xl font-bold hover:shadow-lg transition-all">
+                            Conferma Pagamento
+                        </button>
                     </div>
                 </div>
-
-                <div class="flex gap-4">
-                    <button id="cancel-payment-btn" class="flex-1 py-3 px-6 bg-[var(--bg-dark)] text-[var(--text-primary)] rounded-xl font-bold hover:bg-opacity-80 transition-all">
-                        Annulla
-                    </button>
-                    <button id="confirm-payment-btn" class="flex-1 py-3 px-6 bg-[var(--accent)] text-[var(--text-secondary)] rounded-xl font-bold hover:shadow-lg transition-all">
-                        Conferma Pagamento
-                    </button>
-                </div>
+            </div>
+            <div class="w-80 bg-[var(--bg-dark)] rounded-xl inset-shadow-sm/30" id="riepilogo-pagamento">
+                
             </div>
         </div>
-    </div>`
+        `
     }
 
 
