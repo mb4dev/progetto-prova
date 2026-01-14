@@ -14,4 +14,24 @@ export default class APIService {
     updateProfile(data) {
         throw new Error("updateProfile() non è implementato");
     }
+
+    getSports() {
+        throw new Error("getSports() non è implementato");
+    }
+
+    getCourses() {
+        throw new Error("getCourses() non è implementato");
+    }
+
+    getSubscriptions() {
+        throw new Error("getSubscriptions() non è implementato");
+    }
+
+    processSinglePayment(data) {
+        throw new Error("processSinglePayment() non è implementato");
+    }
+
+    processSubscriptionPayment(data) {
+        throw new Error("processSubscriptionPayment() non è implementato");
+    }
 }

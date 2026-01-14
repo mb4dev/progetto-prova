@@ -11,6 +11,9 @@ export default class PaymentPresenter extends Presenter{
 	#cartPresenter;
 
 	constructor(view, config){
+		if (!config || !config.paymentStrategy) {
+			throw new Error("Configurazione minima PaymentPresenter non presente (paymentStrategy mancante)");
+		}
 		super(view, config);
 		
 		this.#cartView = new CartView();
@@ -44,7 +47,25 @@ export default class PaymentPresenter extends Presenter{
 
 		eventBus.subscribe(Events.PAYMENT_CONFIRM_EVENT, () => {
 			if (!this._view.isConnected) return;
-			this._config.onConfirmPaymentCommand.execute();
+
+			const payload = {
+				items: cartService.getItems(),
+				total: cartService.getTotal()
+			};
+
+			this._config.paymentStrategy
+				.pay(payload)
+				.then((response) => {
+					console.log("Pagamento effettuato:", response);
+					// in caso di pagamento singolo svuotiamo il carrello
+					if (payload.items && payload.items.length) {
+						cartService.clear();
+					}
+					this._config.onConfirmPaymentCommand?.execute({ response });
+				})
+				.catch((error) => {
+					console.error("Errore durante il pagamento:", error);
+				});
 		});
 	}
 }

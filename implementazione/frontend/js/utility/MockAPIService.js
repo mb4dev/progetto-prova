@@ -78,7 +78,19 @@ export class SuccessAPIService extends APIService {
 			return new Promise((resolve) => {
 				resolve(new Response(200, true, data, "Corsi recuperati con successo"));
 			});
-	}
+		}
+		
+		getSubscriptions() {
+			const data = [
+				{ id: 1, name: "Mensile", description: "Accesso illimitato per 30 giorni", price: 49.90 },
+				{ id: 2, name: "Trimestrale", description: "Accesso illimitato per 3 mesi", price: 129.90 },
+				{ id: 3, name: "Annuale", description: "Accesso illimitato per 12 mesi", price: 399.90 },
+			];
+			
+			return new Promise((resolve) => {
+				resolve(new Response(200, true, data, "Abbonamenti recuperati con successo"));
+			});
+		}
 		
 		getOccupiedSlotsForWeek(startDateString) {
 			const startDate = new Date(startDateString);
@@ -139,6 +151,29 @@ export class SuccessAPIService extends APIService {
 				value = (value * 9301 + 49297) % 233280;
 				return value / 233280;
 			};
+		}
+		
+		processSinglePayment(paymentData) {
+			const data = {
+				type: "single",
+				total: paymentData?.total ?? 0,
+				itemsCount: paymentData?.items?.length ?? 0,
+			};
+			
+			return Promise.resolve(
+				new Response(200, true, data, "Pagamento singolo effettuato con successo")
+			);
+		}
+		
+		processSubscriptionPayment(subscriptionData) {
+			const data = {
+				type: "subscription",
+				subscriptionId: subscriptionData?.subscriptionId ?? null,
+			};
+			
+			return Promise.resolve(
+				new Response(200, true, data, "Pagamento abbonamento effettuato con successo")
+			);
 		}
 		
 	}

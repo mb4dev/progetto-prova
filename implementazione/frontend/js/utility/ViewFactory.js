@@ -9,6 +9,7 @@
 	import SlotLoadStrategy from "../strategy/SlotLoadStrategy.js";
 	import FieldsLoadStrategy from "../strategy/FieldsLoadStrategy.js";
 	import CoursesLoadStrategy from "../strategy/CoursesLoadStrategy.js";
+	import SubscriptionLoadStrategy from "../strategy/SubscriptionLoadStrategy.js";
 	import NavigateCommand from "../commands/NavigateCommand.js";
 	import LoginView from "../auth/LoginView.js";
 	import RegisterView from "../auth/RegisterView.js";
@@ -20,6 +21,8 @@
 	import PaymentView from "../payment/PaymentView.js";
 	import PaymentPresenter from "../payment/PaymentPresenter.js";
 	import ConfirmPaymentCommand from "../commands/ConfirmPaymentCommand.js";
+	import NormalPaymentStrategy from "../strategy/NormalPaymentStrategy.js";
+	import SubscriptionPaymentStrategy from "../strategy/SubscriptionPaymentStrategy.js";
 	import HistoryView from "../history/HistoryView.js";
 	import HistoryPresenter from "../history/HistoryPresenter.js";
 	import SubscriptionView from "../subscription/SubscriptionView.js";
@@ -49,7 +52,10 @@
 				case Routes.MAIN_CALENDARIO:
 					return this.#createCalendarView()
 				case Routes.MAIN_PAYMENT:
-					return this.#createPayment()
+				case Routes.MAIN_PAYMENT_SINGLE:
+					return this.#createPaymentSingle()
+				case Routes.MAIN_PAYMENT_SUBSCRIPTION:
+					return this.#createPaymentSubscription()
 				default:
 				console.error("Route non supportata dalla Factory:", route);
 				return null;
@@ -124,14 +130,15 @@
 			const view  = new CalendarView();
 			const presenter = new CalendarPresenterV2(view, {
 				loadStrategy: new SlotLoadStrategy(),
-				onConfirmCommand: new NavigateCommand(Routes.MAIN_PAYMENT),
+				onConfirmCommand: new NavigateCommand(Routes.MAIN_PAYMENT_SINGLE),
 			})
 			return {view : view, presenter: presenter};
 		}
 
-		static #createPayment(){
+		static #createPaymentSingle(){
 			const view = new PaymentView();
 			const presenter = new PaymentPresenter(view, {
+				paymentStrategy: new NormalPaymentStrategy(),
 				onConfirmPaymentCommand : new ConfirmPaymentCommand()
 			})
 
@@ -146,7 +153,20 @@
 
 		static #createSubscriptionView() {
 			const view = new SubscriptionView();
-			const presenter = new SubscriptionPresenter(view, {});
+			const presenter = new SubscriptionPresenter(view, {
+				loadStrategy: new SubscriptionLoadStrategy(),
+				onSelectedCommand: new NavigateCommand(Routes.MAIN_PAYMENT_SUBSCRIPTION),
+			});
+			return { view: view, presenter: presenter };
+		}
+
+		static #createPaymentSubscription() {
+			const view = new PaymentView();
+			const presenter = new PaymentPresenter(view, {
+				paymentStrategy: new SubscriptionPaymentStrategy(),
+				onConfirmPaymentCommand: new ConfirmPaymentCommand()
+			});
+
 			return { view: view, presenter: presenter };
 		}
 	}
