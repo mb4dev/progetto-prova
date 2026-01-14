@@ -13,6 +13,7 @@ classDiagram
 class Presenter {
     <<abstract>>
     #view: View
+    #config: Object
     #api: APIService
     +init() 
     #update()

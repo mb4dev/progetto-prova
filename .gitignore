@@ -1,10 +1,6 @@
 .obsidian
-<<<<<<< HEAD
-documentazione/diagrammi_sequenza/backend.pdf
-=======
 node_modules
 package-lock.json
 package.json
 file_rimuovere
 
->>>>>>> dev

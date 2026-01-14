@@ -20,6 +20,10 @@
 	import PaymentView from "../payment/PaymentView.js";
 	import PaymentPresenter from "../payment/PaymentPresenter.js";
 	import ConfirmPaymentCommand from "../commands/ConfirmPaymentCommand.js";
+	import HistoryView from "../history/HistoryView.js";
+	import HistoryPresenter from "../history/HistoryPresenter.js";
+	import SubscriptionView from "../subscription/SubscriptionView.js";
+	import SubscriptionPresenter from "../subscription/SubscriptionPresenter.js";
 
 
 	export default class ViewFactory {	
@@ -38,6 +42,10 @@
 					return this.#createPrenotazioneCorsi()
 				case Routes.MAIN_PROFILE:
 					return this.#createProfileView()
+				case Routes.MAIN_STORICO:
+					return this.#createHistoryView()
+				case Routes.MAIN_ABBONAMENTO:
+					return this.#createSubscriptionView()
 				case Routes.MAIN_CALENDARIO:
 					return this.#createCalendarView()
 				case Routes.MAIN_PAYMENT:
@@ -126,7 +134,19 @@
 			const presenter = new PaymentPresenter(view, {
 				onConfirmPaymentCommand : new ConfirmPaymentCommand()
 			})
-			
+
 			return {view : view, presenter: presenter};
+		}
+
+		static #createHistoryView() {
+			const view = new HistoryView();
+			const presenter = new HistoryPresenter(view, {});
+			return { view: view, presenter: presenter };
+		}
+
+		static #createSubscriptionView() {
+			const view = new SubscriptionView();
+			const presenter = new SubscriptionPresenter(view, {});
+			return { view: view, presenter: presenter };
 		}
 	}

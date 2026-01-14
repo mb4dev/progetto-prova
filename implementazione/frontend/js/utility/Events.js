@@ -18,7 +18,12 @@ const Events = {
 	PAYMENT_PROCEED_EVENT: "payment:start",
 	PAYMENT_CANCEL_EVENT: "payment:cancel",
 	PAYMENT_CONFIRM_EVENT: "payment:confirm",
-	
+
+	HISTORY_LOAD_EVENT: "history:load",
+
+	SUBSCRIPTION_LOAD_EVENT: "subscription:load",
+	SUBSCRIPTION_SELECTED_EVENT: "subscription:selected",
+
 	CART_UPDATED: "cart:updated",
 	CART_REMOVE: "cart:remove",
 	CART_CLEAR: "cart:clear",
