@@ -18,7 +18,7 @@ class App {
 			this.router(data.route)
 		})
 
-		this.router(Routes.MAIN);
+		this.router(Routes.LOGIN);
 		//eventBus.notify(Events.MAIN_NAVIGATE, { main: Routes.MAIN_PAYMENT})
 	}
 

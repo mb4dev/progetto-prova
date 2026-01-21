@@ -5,9 +5,9 @@ import { eventBus } from "../utility/DefaultObserver.js";
 export default class AdminView extends View {
     #fieldsContainer
     #sportsContainer
-    #addFieldBtn
-    #addSportBtn
     #activeTab = 'fields'
+    #fields = []
+    #sports = []
 
     constructor() {
         super();
@@ -20,135 +20,223 @@ export default class AdminView extends View {
 
         this.#fieldsContainer = this.querySelector("#fields-container");
         this.#sportsContainer = this.querySelector("#sports-container");
-        this.#addFieldBtn = this.querySelector("#add-field-btn");
-        this.#addSportBtn = this.querySelector("#add-sport-btn");
 
         this._bindEvents();
     }
 
     display(data) {
         if (data.fields) {
-            this.renderFields(data.fields);
+            this.#fields = data.fields;
+            this.renderFields();
         }
         if (data.sports) {
-            this.renderSports(data.sports);
+            this.#sports = data.sports;
+            this.renderSports();
         }
     }
 
-    renderFields(fields) {
+    renderFields() {
+        const listHtml = this.#fields.length > 0 ? `
+            <div class="space-y-3">
+                ${this.#fields.map(field => `
+                    <div class="bg-[var(--bg-light)] rounded-xl p-4 border border-white/5 flex items-center justify-between group hover:border-[var(--accent)]/30 transition-all">
+                        <div class="flex-1">
+                            <h4 class="font-bold text-[var(--text-primary)]">${field.name}</h4>
+                            <p class="text-[var(--text-primary)] opacity-60 text-sm">${field.type} • €${field.price}/ora</p>
+                        </div>
+                        <button class="delete-field-btn p-2 hover:bg-red-500/10 rounded-lg transition-colors opacity-0 group-hover:opacity-100" 
+                                data-id="${field.id}"
+                                title="Elimina">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#ef4444" stroke-width="2">
+                                <polyline points="3 6 5 6 21 6"/>
+                                <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>
+                            </svg>
+                        </button>
+                    </div>
+                `).join('')}
+            </div>
+        ` : `
+            <div class="text-center py-8 text-[var(--text-primary)] opacity-50">
+                Nessun campo disponibile
+            </div>
+        `;
+
         this.#fieldsContainer.innerHTML = `
-            <div class="mb-6">
-                <div class="flex justify-between items-center mb-4">
-                    <h3 class="text-xl font-bold text-white">Campi Sportivi</h3>
-                    <button id="add-field-btn" class="bg-[var(--accent)] text-white px-4 py-2 rounded-lg hover:bg-opacity-90 transition-colors">
-                        Aggiungi Campo
-                    </button>
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <!-- Form creazione -->
+                <div class="bg-[var(--bg-light)] rounded-2xl p-6 border border-white/5 h-fit">
+                    <h3 class="text-xl font-bold text-[var(--text-primary)] mb-4">Crea Nuovo Campo</h3>
+                    <form id="field-form" class="space-y-4">
+                        <div>
+                            <label class="block text-[var(--text-primary)] opacity-70 text-sm mb-2">Nome Campo</label>
+                            <input type="text" 
+                                   name="name" 
+                                   required
+                                   placeholder="Es: Campo A"
+                                   class="w-full bg-[var(--bg-med)] text-[var(--text-primary)] rounded-xl px-4 py-3 border border-white/5 focus:border-[var(--accent)] focus:outline-none transition-colors">
+                        </div>
+                        
+                        <div>
+                            <label class="block text-[var(--text-primary)] opacity-70 text-sm mb-2">Tipo</label>
+                            <input type="text" 
+                                   name="type" 
+                                   required
+                                   placeholder="Es: Calcetto, Tennis"
+                                   class="w-full bg-[var(--bg-med)] text-[var(--text-primary)] rounded-xl px-4 py-3 border border-white/5 focus:border-[var(--accent)] focus:outline-none transition-colors">
+                        </div>
+                        
+                        <div>
+                            <label class="block text-[var(--text-primary)] opacity-70 text-sm mb-2">Prezzo (€/ora)</label>
+                            <input type="number" 
+                                   name="price" 
+                                   required
+                                   min="0"
+                                   step="0.01"
+                                   placeholder="30.00"
+                                   class="w-full bg-[var(--bg-med)] text-[var(--text-primary)] rounded-xl px-4 py-3 border border-white/5 focus:border-[var(--accent)] focus:outline-none transition-colors">
+                        </div>
+                        
+                        <button type="submit" 
+                                class="w-full bg-[var(--accent)] text-white font-semibold py-3 rounded-xl hover:opacity-90 transition-opacity">
+                            + Aggiungi Campo
+                        </button>
+                    </form>
                 </div>
-                <div class="grid gap-4">
-                    ${fields.map(field => this.#renderFieldCard(field)).join('')}
+
+                <!-- Lista campi -->
+                <div class="bg-[var(--bg-light)] rounded-2xl p-6 border border-white/5">
+                    <h3 class="text-xl font-bold text-[var(--text-primary)] mb-4">Campi Esistenti (${this.#fields.length})</h3>
+                    <div class="max-h-[500px] overflow-y-auto custom-scrollbar pr-2">
+                        ${listHtml}
+                    </div>
                 </div>
             </div>
         `;
 
-        this.#addFieldBtn = this.querySelector("#add-field-btn");
         this._bindFieldEvents();
     }
 
-    renderSports(sports) {
+    renderSports() {
+        const listHtml = this.#sports.length > 0 ? `
+            <div class="space-y-3">
+                ${this.#sports.map(sport => `
+                    <div class="bg-[var(--bg-light)] rounded-xl p-4 border border-white/5 flex items-center justify-between group hover:border-[var(--accent)]/30 transition-all">
+                        <div class="flex items-center gap-4 flex-1">
+                            ${sport.img ? `
+                                <img src="${sport.img}" alt="${sport.name}" class="w-12 h-12 rounded-lg object-cover">
+                            ` : `
+                                <div class="w-12 h-12 rounded-lg bg-gradient-to-br from-[var(--accent)]/20 to-[var(--accent)]/5 flex items-center justify-center text-2xl">
+                                    🏃
+                                </div>
+                            `}
+                            <div class="flex-1">
+                                <h4 class="font-bold text-[var(--text-primary)]">${sport.name}</h4>
+                                <p class="text-[var(--text-primary)] opacity-60 text-sm">
+                                    ${sport.description || 'Nessuna descrizione'} • €${sport.price}
+                                </p>
+                            </div>
+                        </div>
+                        <button class="delete-sport-btn p-2 hover:bg-red-500/10 rounded-lg transition-colors opacity-0 group-hover:opacity-100" 
+                                data-id="${sport.id}"
+                                title="Elimina">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#ef4444" stroke-width="2">
+                                <polyline points="3 6 5 6 21 6"/>
+                                <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>
+                            </svg>
+                        </button>
+                    </div>
+                `).join('')}
+            </div>
+        ` : `
+            <div class="text-center py-8 text-[var(--text-primary)] opacity-50">
+                Nessuno sport disponibile
+            </div>
+        `;
+
         this.#sportsContainer.innerHTML = `
-            <div class="mb-6">
-                <div class="flex justify-between items-center mb-4">
-                    <h3 class="text-xl font-bold text-white">Sport</h3>
-                    <button id="add-sport-btn" class="bg-[var(--accent)] text-white px-4 py-2 rounded-lg hover:bg-opacity-90 transition-colors">
-                        Aggiungi Sport
-                    </button>
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <!-- Form creazione -->
+                <div class="bg-[var(--bg-light)] rounded-2xl p-6 border border-white/5 h-fit">
+                    <h3 class="text-xl font-bold text-[var(--text-primary)] mb-4">Crea Nuovo Sport</h3>
+                    <form id="sport-form" class="space-y-4">
+                        <div>
+                            <label class="block text-[var(--text-primary)] opacity-70 text-sm mb-2">Nome Sport</label>
+                            <input type="text" 
+                                   name="name" 
+                                   required
+                                   placeholder="Es: Calcio a 5"
+                                   class="w-full bg-[var(--bg-med)] text-[var(--text-primary)] rounded-xl px-4 py-3 border border-white/5 focus:border-[var(--accent)] focus:outline-none transition-colors">
+                        </div>
+                        
+                        <div>
+                            <label class="block text-[var(--text-primary)] opacity-70 text-sm mb-2">Descrizione</label>
+                            <textarea name="description" 
+                                      rows="3"
+                                      placeholder="Descrizione opzionale dello sport"
+                                      class="w-full bg-[var(--bg-med)] text-[var(--text-primary)] rounded-xl px-4 py-3 border border-white/5 focus:border-[var(--accent)] focus:outline-none transition-colors resize-none"></textarea>
+                        </div>
+                        
+                        <div>
+                            <label class="block text-[var(--text-primary)] opacity-70 text-sm mb-2">URL Immagine</label>
+                            <input type="url" 
+                                   name="img" 
+                                   placeholder="https://esempio.com/immagine.jpg"
+                                   class="w-full bg-[var(--bg-med)] text-[var(--text-primary)] rounded-xl px-4 py-3 border border-white/5 focus:border-[var(--accent)] focus:outline-none transition-colors">
+                        </div>
+                        
+                        <div>
+                            <label class="block text-[var(--text-primary)] opacity-70 text-sm mb-2">Prezzo (€)</label>
+                            <input type="number" 
+                                   name="price" 
+                                   required
+                                   min="0"
+                                   step="0.01"
+                                   placeholder="15.00"
+                                   class="w-full bg-[var(--bg-med)] text-[var(--text-primary)] rounded-xl px-4 py-3 border border-white/5 focus:border-[var(--accent)] focus:outline-none transition-colors">
+                        </div>
+                        
+                        <button type="submit" 
+                                class="w-full bg-[var(--accent)] text-white font-semibold py-3 rounded-xl hover:opacity-90 transition-opacity">
+                            + Aggiungi Sport
+                        </button>
+                    </form>
                 </div>
-                <div class="grid gap-4">
-                    ${sports.map(sport => this.#renderSportCard(sport)).join('')}
+
+                <!-- Lista sport -->
+                <div class="bg-[var(--bg-light)] rounded-2xl p-6 border border-white/5">
+                    <h3 class="text-xl font-bold text-[var(--text-primary)] mb-4">Sport Esistenti (${this.#sports.length})</h3>
+                    <div class="max-h-[500px] overflow-y-auto custom-scrollbar pr-2">
+                        ${listHtml}
+                    </div>
                 </div>
             </div>
         `;
 
-        this.#addSportBtn = this.querySelector("#add-sport-btn");
         this._bindSportEvents();
-    }
-
-    #renderFieldCard(field) {
-        return `
-            <div class="bg-[var(--bg-light)] rounded-lg p-4 border border-white/10">
-                <div class="flex justify-between items-start">
-                    <div>
-                        <h4 class="font-bold text-white">${field.name}</h4>
-                        <p class="text-gray-400">${field.type}</p>
-                        <p class="text-[var(--accent)] font-semibold">€${field.price}/ora</p>
-                    </div>
-                    <div class="flex gap-2">
-                        <button class="edit-field-btn text-blue-400 hover:text-blue-300" data-id="${field.id}">
-                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
-                                <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
-                            </svg>
-                        </button>
-                        <button class="delete-field-btn text-red-400 hover:text-red-300" data-id="${field.id}">
-                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                <polyline points="3 6 5 6 21 6"/>
-                                <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>
-                            </svg>
-                        </button>
-                    </div>
-                </div>
-            </div>
-        `;
-    }
-
-    #renderSportCard(sport) {
-        return `
-            <div class="bg-[var(--bg-light)] rounded-lg p-4 border border-white/10">
-                <div class="flex justify-between items-start">
-                    <div>
-                        <h4 class="font-bold text-white">${sport.name}</h4>
-                        <p class="text-gray-400">${sport.description || ''}</p>
-                        <p class="text-[var(--accent)] font-semibold">€${sport.price}</p>
-                    </div>
-                    <div class="flex gap-2">
-                        <button class="edit-sport-btn text-blue-400 hover:text-blue-300" data-id="${sport.id}">
-                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
-                                <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
-                            </svg>
-                        </button>
-                        <button class="delete-sport-btn text-red-400 hover:text-red-300" data-id="${sport.id}">
-                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                <polyline points="3 6 5 6 21 6"/>
-                                <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>
-                            </svg>
-                        </button>
-                    </div>
-                </div>
-            </div>
-        `;
     }
 
     template() {
         return `
-            <div class="w-full h-full p-6 bg-[var(--bg-dark)]">
-                <div class="mb-8">
-                    <h2 class="text-3xl font-black text-white mb-2">Pannello Admin</h2>
-                    <p class="text-gray-400">Gestisci campi sportivi e sport</p>
+            <div class="w-full h-full p-6 flex flex-col gap-6">
+                <div class="flex flex-col gap-2">
+                    <h2 class="text-3xl font-bold text-[var(--text-primary)]">Admin</h2>
+                    <p class="text-[var(--text-primary)] opacity-70">Gestisci campi sportivi e sport</p>
                 </div>
 
-                <div class="bg-[var(--bg-med)] rounded-3xl p-6 border border-white/5">
+                <div class="bg-[var(--bg-med)] rounded-3xl p-6 border border-white/5 flex-1 flex flex-col">
                     <div class="flex gap-4 mb-6 border-b border-white/10">
-                        <button class="tab-btn pb-2 px-4 font-bold text-[var(--accent)] border-b-2 border-[var(--accent)]" data-tab="fields">
+                        <button class="tab-btn pb-3 px-4 font-bold text-[var(--accent)] border-b-2 border-[var(--accent)] transition-colors" data-tab="fields">
                             Campi
                         </button>
-                        <button class="tab-btn pb-2 px-4 font-bold text-gray-400 hover:text-white transition-colors" data-tab="sports">
+                        <button class="tab-btn pb-3 px-4 font-bold text-[var(--text-primary)] opacity-50 hover:opacity-100 transition-all" data-tab="sports">
                             Sport
                         </button>
                     </div>
 
-                    <div id="fields-container"></div>
-                    <div id="sports-container" class="hidden"></div>
+                    <div class="flex-1 overflow-y-auto custom-scrollbar">
+                        <div id="fields-container"></div>
+                        <div id="sports-container" class="hidden"></div>
+                    </div>
                 </div>
             </div>
         `;
@@ -164,49 +252,60 @@ export default class AdminView extends View {
     }
 
     _bindFieldEvents() {
-        if (this.#addFieldBtn) {
-            this.#addFieldBtn.addEventListener('click', () => {
-                this.dispatchEvent(new CustomEvent('admin_add_field', { detail: {} }));
+        const form = this.querySelector('#field-form');
+        if (form) {
+            form.addEventListener('submit', (e) => {
+                e.preventDefault();
+                const formData = new FormData(form);
+                const data = {
+                    id: Date.now().toString(), // Genera un ID temporaneo
+                    name: formData.get('name'),
+                    type: formData.get('type'),
+                    price: parseFloat(formData.get('price'))
+                };
+                
+                eventBus.notify(Events.ADMIN_ADD_FIELD, data);
+                form.reset();
             });
         }
-
-        const editBtns = this.querySelectorAll('.edit-field-btn');
-        editBtns.forEach(btn => {
-            btn.addEventListener('click', (e) => {
-                const id = e.target.closest('button').dataset.id;
-                this.dispatchEvent(new CustomEvent('admin_edit_field', { detail: { id } }));
-            });
-        });
 
         const deleteBtns = this.querySelectorAll('.delete-field-btn');
         deleteBtns.forEach(btn => {
             btn.addEventListener('click', (e) => {
-                const id = e.target.closest('button').dataset.id;
-                this.dispatchEvent(new CustomEvent('admin_delete_field', { detail: { id } }));
+                const id = e.currentTarget.dataset.id;
+                if (confirm('Sei sicuro di voler eliminare questo campo?')) {
+                    eventBus.notify(Events.ADMIN_DELETE_FIELD, { id });
+                }
             });
         });
     }
 
     _bindSportEvents() {
-        if (this.#addSportBtn) {
-            this.#addSportBtn.addEventListener('click', () => {
-                this.dispatchEvent(new CustomEvent('admin_add_sport', { detail: {} }));
+        const form = this.querySelector('#sport-form');
+        if (form) {
+            form.addEventListener('submit', (e) => {
+                e.preventDefault();
+                const formData = new FormData(form);
+                const data = {
+                    id: Date.now().toString(), // Genera un ID temporaneo
+                    name: formData.get('name'),
+                    description: formData.get('description') || '',
+                    img: formData.get('img') || '',
+                    price: parseFloat(formData.get('price'))
+                };
+                
+                eventBus.notify(Events.ADMIN_ADD_SPORT, data);
+                form.reset();
             });
         }
-
-        const editBtns = this.querySelectorAll('.edit-sport-btn');
-        editBtns.forEach(btn => {
-            btn.addEventListener('click', (e) => {
-                const id = e.target.closest('button').dataset.id;
-                this.dispatchEvent(new CustomEvent('admin_edit_sport', { detail: { id } }));
-            });
-        });
 
         const deleteBtns = this.querySelectorAll('.delete-sport-btn');
         deleteBtns.forEach(btn => {
             btn.addEventListener('click', (e) => {
-                const id = e.target.closest('button').dataset.id;
-                this.dispatchEvent(new CustomEvent('admin_delete_sport', { detail: { id } }));
+                const id = e.currentTarget.dataset.id;
+                if (confirm('Sei sicuro di voler eliminare questo sport?')) {
+                    eventBus.notify(Events.ADMIN_DELETE_SPORT, { id });
+                }
             });
         });
     }
@@ -216,24 +315,19 @@ export default class AdminView extends View {
         tabBtns.forEach(btn => {
             if (btn.dataset.tab === tab) {
                 btn.classList.add('text-[var(--accent)]', 'border-b-2', 'border-[var(--accent)]');
-                btn.classList.remove('text-gray-400');
+                btn.classList.remove('opacity-50');
             } else {
                 btn.classList.remove('text-[var(--accent)]', 'border-b-2', 'border-[var(--accent)]');
-                btn.classList.add('text-gray-400');
+                btn.classList.add('opacity-50');
             }
         });
 
-        const containers = {
-            'fields': this.#fieldsContainer,
-            'sports': this.#sportsContainer
-        };
-
-        Object.values(containers).forEach(container => {
-            if (container) container.classList.add('hidden');
-        });
-
-        if (containers[tab]) {
-            containers[tab].classList.remove('hidden');
+        if (tab === 'fields') {
+            this.#fieldsContainer.classList.remove('hidden');
+            this.#sportsContainer.classList.add('hidden');
+        } else {
+            this.#fieldsContainer.classList.add('hidden');
+            this.#sportsContainer.classList.remove('hidden');
         }
 
         this.#activeTab = tab;

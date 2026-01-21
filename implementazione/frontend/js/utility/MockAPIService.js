@@ -17,7 +17,7 @@ export class SuccessAPIService extends APIService {
 			}
 		}
 		return new Promise((resolve, reject) => {
-			resolve(new Response(200, true, data, "Login effettuato con successo"))
+			resolve(new Response(200, true, data, "Login"))
 		})
 	}
 	
@@ -26,7 +26,7 @@ export class SuccessAPIService extends APIService {
 			token: "token",
 			user: {
 				id: 		1,
-				name: 		"name",
+				name: 		"nome cognome",
 				email: 		"email",
 				admin: 		false
 			}

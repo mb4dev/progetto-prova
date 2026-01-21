@@ -45,9 +45,29 @@ export default class MainView extends View {
 			this.#activeRoute = data.route;
 			this._updateActiveTab();
 		}
+		if (data.profile) {
+			this.#updateProfile(data.profile);
+		}
+	}
+
+	#updateProfile(user) {
+		const nameEl = this.querySelector(".profile-name");
+		const avatarEl = this.querySelector(".profile-avatar");
+		
+		if (nameEl) nameEl.textContent = user.name;
+		if (avatarEl) {
+			avatarEl.textContent = user.name ? user.name.toUpperCase().split(" ").filter(s => s).map(s => s[0]).join("") : "";
+		}
 	}
 
     template(){
+		const user = JSON.parse(localStorage.getItem("user"));
+
+		const userData = {
+			name: user.name,
+			initials: user.name ? user.name.toUpperCase().split(" ").filter(s => s).map(s => s[0]).join("") : ""
+		}
+		console.log(user)
         return `
 			<div class="w-full h-full flex p-6 gap-6 bg-[var(--bg-dark)]">
 				<aside id="side-menu" class="bg-[var(--bg-med)] w-[20%] rounded-3xl p-6 flex flex-col gap-8 shadow-xl/30 border border-white/5">
@@ -85,9 +105,9 @@ export default class MainView extends View {
 
 					<div id="side-menu-profile" class="nav-btn mt-auto px-2 py-4 border-t border-white/5 cursor-pointer group hover:bg-white/5 rounded-2xl transition-all duration-300">
 						<div class="flex items-center gap-3">
-							<div class="profile-avatar w-10 h-10 rounded-full bg-[var(--accent)]/20 flex justify-center items-center text-sm font-bold border border-[var(--accent)]/30 group-hover:border-[var(--accent)] transition-all">TMP</div>
+							<div class="profile-avatar w-10 h-10 rounded-full bg-[var(--accent)]/20 flex justify-center items-center text-sm font-bold border border-[var(--accent)]/30 group-hover:border-[var(--accent)] transition-all">${userData.initials}</div>
 							<div class="flex flex-col">
-								<span class="profile-name text-sm font-bold">Temp</span>
+								<span class="profile-name text-sm font-bold">${userData.name}</span>
 							</div>
 						</div>
 					</div>

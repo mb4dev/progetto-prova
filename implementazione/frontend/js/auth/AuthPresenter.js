@@ -14,19 +14,11 @@ export default class AuthPresenter extends Presenter {
     }
 
     _handleSubmit() {
-        eventBus.subscribe(Events.AUTH_SUBMIT_EVENT, (data) => {
+        eventBus.subscribe(Events.AUTH_SUBMIT_EVENT, async (data) => {
             try {
                 this._config.authStrategy.validate(data);
-                
-                this._config.authStrategy.authenticate(data)
-                    .then((response) => {
-                        if (response.success === false) throw new Error(response.message);
-                        
-                        this._config.onSuccessCommand.execute();
-                    })
-                    .catch((error) => {
-                        this._view.display({ error: error.message });
-                    });
+                await this._config.authStrategy.authenticate(data)
+                this._config.onSuccessCommand.execute();
             }
             catch (error) {
                 this._view.display({ error: error.message });

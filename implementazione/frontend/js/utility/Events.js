@@ -4,6 +4,8 @@ const Events = {
 	ROUTING_EVENT : "app:navigate",
 	MAIN_NAVIGATE : "main:navigate",
 	PROFILE_UPDATE_EVENT: "profile:update",
+	PROFILE_UPDATED: "profile:updated",
+
 
 	SPORT_SELECTED_EVENT: "sport:selected",
 	SPORTS_LOAD_EVENT: "sports:load",

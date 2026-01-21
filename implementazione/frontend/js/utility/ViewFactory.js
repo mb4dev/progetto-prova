@@ -30,6 +30,7 @@ import SubscriptionView from "../subscription/SubscriptionView.js";
 import SubscriptionPresenter from "../subscription/SubscriptionPresenter.js";
 import AdminView from "../admin/AdminView.js";
 import AdminPresenter from "../admin/AdminPresenter.js";
+import ProfileUpdateCommand from "../commands/ProfileUpdateCommand.js";
 
 
 export default class ViewFactory {	
@@ -130,7 +131,9 @@ export default class ViewFactory {
 
 	static #createProfileView(){
 		const view = new ProfileView();
-		const presenter = new ProfilePresenter(view);
+		const presenter = new ProfilePresenter(view, {
+			onUpdateCommand: new ProfileUpdateCommand()
+		});
 		return {view : view, presenter: presenter};
 	}
 

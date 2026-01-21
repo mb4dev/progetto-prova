@@ -26,5 +26,9 @@ export default class MainPresenter extends Presenter {
 		
 			this._view.display({ view: components.view, route: data.main });
 		});
+
+		eventBus.subscribe(Events.PROFILE_UPDATED, (newUser) => {
+			this._view.display({ profile: newUser });
+		});
 	}
 }

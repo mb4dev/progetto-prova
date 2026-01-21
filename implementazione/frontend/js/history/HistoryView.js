@@ -73,7 +73,7 @@ export default class HistoryView extends View {
         return `
             <div class="flex flex-col w-full h-full p-6 gap-4">
                 <div class="flex flex-col gap-1">
-                    <h1 class="text-2xl font-bold">Storico attività</h1>
+                    <h1 class="text-3xl font-bold">Storico attività</h1>
                     <p class="text-sm text-gray-500">Visualizza prenotazioni e pagamenti effettuati</p>
                 </div>
                 <div id="history-list" class="flex-1 overflow-y-auto custom-scrollbar mt-2">
