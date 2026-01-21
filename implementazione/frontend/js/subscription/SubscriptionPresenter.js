@@ -9,6 +9,7 @@ import cartService from "../cart/CartService.js";
 
 export default class SubscriptionPresenter extends Presenter {
     #components = {};
+    #subs = [];
     constructor(view, config) {
         if (!config.loadStrategy) {
             throw new Error("Configurazione minima SubscriptionPresenter non presente (loadStrategy mancante)");
@@ -27,6 +28,8 @@ export default class SubscriptionPresenter extends Presenter {
                 if (!response || response.success === false || !response.data) {
                     return;
                 }
+                this.#subs = response.data
+                console.log(this.#subs)
                 this._view.display({ cart: this.#components.cart, items: response.data });
             })
     }
@@ -40,9 +43,22 @@ export default class SubscriptionPresenter extends Presenter {
         eventBus.subscribe(Events.SUBSCRIPTION_SELECTED_EVENT, (data) => {
             if (!this._view.isConnected) return;
 
-            
-            //this._navigateToPayment.execute();
+            const selectedSubscription = this.#subs.find(sub => sub.id === parseInt(data.id));
+            if (selectedSubscription) {
+                cartService.add({
+                    ...selectedSubscription,
+                    type: 'subscription'
+                });
+            }
         });
+
+        eventBus.subscribe(Events.PAYMENT_PROCEED_EVENT, () => {
+            if (!this._view.isConnected) return;
+            if (this._config.onSelectedCommand) {
+                this._config.onSelectedCommand.execute();
+            }
+        });
+
     }
 }
 

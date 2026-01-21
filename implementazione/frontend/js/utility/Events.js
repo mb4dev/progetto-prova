@@ -20,6 +20,7 @@ const Events = {
 	PAYMENT_CONFIRM_EVENT: "payment:confirm",
 
 	HISTORY_LOAD_EVENT: "history:load",
+	HISTORY_DELETE_EVENT: "history:delete",
 
 	SUBSCRIPTION_LOAD_EVENT: "subscription:load",
 	SUBSCRIPTION_SELECTED_EVENT: "subscription:selected",
@@ -27,6 +28,16 @@ const Events = {
 	CART_UPDATED: "cart:updated",
 	CART_REMOVE: "cart:remove",
 	CART_CLEAR: "cart:clear",
+	CART_REMOVE_SUBSCRIPTION: "cart:remove-subscription",
+
+	/*
+	ADMIN_ADD_FIELD: "admin:add:field",
+	ADMIN_EDIT_FIELD: "admin:edit:field",
+	ADMIN_DELETE_FIELD: "admin:delete:field",
+	ADMIN_ADD_SPORT: "admin:add:sport",
+	ADMIN_EDIT_SPORT: "admin:edit:sport",
+	ADMIN_DELETE_SPORT: "admin:delete:sport",
+	*/
 
 }
 

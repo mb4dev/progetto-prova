@@ -9,11 +9,8 @@ const Routes = {
 	MAIN_CORSI : "main:corsi",
 	MAIN_ABBONAMENTO : "main:abbonamento",
 	MAIN_STORICO : "main:storico",
-	MAIN_PAYMENT_SINGLE: "main:payment:single",
-	MAIN_PAYMENT_SUBSCRIPTION: "main:payment:subscription",
-	// alias legacy per compatibilità, se usato viene mappato al pagamento singolo
-	MAIN_PAYMENT: "main:payment:single",
-	
+	MAIN_ADMIN: "main:admin",
+	MAIN_PAYMENT: "main:payment",
 	MAIN_CALENDARIO: "main:calendario"
 }
 

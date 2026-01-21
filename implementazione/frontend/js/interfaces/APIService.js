@@ -34,4 +34,36 @@ export default class APIService {
     processSubscriptionPayment(data) {
         throw new Error("processSubscriptionPayment() non è implementato");
     }
+
+    getHistory() {
+        throw new Error("getHistory() non è implementato");
+    }
+
+    getFields() {
+        throw new Error("getFields() non è implementato");
+    }
+
+    createField(fieldData) {
+        throw new Error("createField() non è implementato");
+    }
+
+    updateField(id, fieldData) {
+        throw new Error("updateField() non è implementato");
+    }
+
+    deleteField(id) {
+        throw new Error("deleteField() non è implementato");
+    }
+
+    updateSport(id, sportData) {
+        throw new Error("updateSport() non è implementato");
+    }
+
+    createSport(sportData) {
+        throw new Error("createSport() non è implementato");
+    }
+
+    deleteSport(id) {
+        throw new Error("deleteSport() non è implementato");
+    }
 }

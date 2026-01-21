@@ -12,11 +12,6 @@ Il modulo **pagamento** gestisce:
 - il **riepilogo** degli elementi da pagare,
 - la **conferma del pagamento** e l'eventuale svuotamento del carrello.
 
-La logica di chiamata all'API di pagamento è incapsulata in una `PaymentStrategy`, iniettata nel `PaymentPresenter` dalla `ViewFactory`. In questo modo è possibile differenziare:
-
-- il **pagamento singolo** (UC08), che usa `NormalPaymentStrategy` 
-- il **pagamento abbonamento** (UC09), che usa `SubscriptionPaymentStrategy`
-
 ## Diagramma di attività (carrello e pagamento)
 
 ```mermaid
@@ -40,7 +35,7 @@ flowchart TD
     ClearCart --> EndOk([Fine])
 ```
 
-## Diagramma di sequenza (frontend - pagamento singolo)
+## Diagramma di sequenza (frontend)
 
 ```mermaid
 sequenceDiagram
@@ -63,7 +58,6 @@ participant PaymentPresenter
 
 participant PaymentView
 
-participant PaymentStrategy
 participant ConfirmPaymentCommand
 
   
@@ -118,14 +112,9 @@ EventBus ->> PaymentPresenter: PAYMENT_CONFIRM_EVENT
 
   
 
-PaymentPresenter ->> PaymentStrategy: pay({items, total})
-PaymentStrategy ->> APIService: processSinglePayment(...)
-APIService -->> PaymentStrategy: Response(success, data)
-PaymentStrategy -->> PaymentPresenter: Promise resolved
-PaymentPresenter ->> CartService: clear()
-PaymentPresenter ->> ConfirmPaymentCommand: execute({response})
+PaymentPresenter ->> ConfirmPaymentCommand: execute()
 
-Note over PaymentStrategy: incapsula la chiamata API\nper il pagamento singolo
+Note over ConfirmPaymentCommand: conferma pagamento\nsvuota carrello\nnaviga a esito
 ```
 
 ## Diagramma delle classi

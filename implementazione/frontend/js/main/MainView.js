@@ -9,6 +9,7 @@ export default class MainView extends View {
 	#corsiBtn
 	#abbonamentoBtn
 	#storicoBtn
+	#adminBtn
 
 	#main
 	#activeRoute = null;
@@ -28,6 +29,7 @@ export default class MainView extends View {
 		this.#corsiBtn = this.querySelector("#side-menu-corsi")
 		this.#abbonamentoBtn = this.querySelector("#side-menu-abbonamento")
 		this.#storicoBtn = this.querySelector("#side-menu-storico")
+		this.#adminBtn = this.querySelector("#side-menu-admin")
 		this.#profileBtn = this.querySelector("#side-menu-profile")
 
         this._bindEvents();
@@ -74,6 +76,11 @@ export default class MainView extends View {
 								<svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 8V12L15 15" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="2"/><path d="M12 3C8 3 4.5 5.5 3 9L2 7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
 							</span> Storico
 						</button>
+						<button class="nav-btn flex items-center gap-3 w-full p-4 rounded-2xl font-bold transition-all duration-300 hover:bg-white/5 text-gray-400" id="side-menu-admin">
+							<span class="w-6 h-6 text-[var(--accent)]">
+								<svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 2L2 7L12 12L22 7L12 2Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M2 17L12 22L22 17" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M2 12L12 17L22 12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+							</span> Admin
+						</button>
 					</nav>
 
 					<div id="side-menu-profile" class="nav-btn mt-auto px-2 py-4 border-t border-white/5 cursor-pointer group hover:bg-white/5 rounded-2xl transition-all duration-300">
@@ -96,6 +103,7 @@ export default class MainView extends View {
 		this.#bindRoute(this.#corsiBtn, Routes.MAIN_CORSI);
 		this.#bindRoute(this.#abbonamentoBtn, Routes.MAIN_ABBONAMENTO);
 		this.#bindRoute(this.#storicoBtn, Routes.MAIN_STORICO);
+		this.#bindRoute(this.#adminBtn, Routes.MAIN_ADMIN);
 		this.#bindRoute(this.#profileBtn, Routes.MAIN_PROFILE);
     }
 
@@ -112,6 +120,7 @@ export default class MainView extends View {
 			{ btn: this.#corsiBtn, route: Routes.MAIN_CORSI },
 			{ btn: this.#abbonamentoBtn, route: Routes.MAIN_ABBONAMENTO },
 			{ btn: this.#storicoBtn, route: Routes.MAIN_STORICO },
+			{ btn: this.#adminBtn, route: Routes.MAIN_ADMIN },
 			{ btn: this.#profileBtn, route: Routes.MAIN_PROFILE }
 		];
 

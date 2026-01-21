@@ -10,17 +10,6 @@
 
 Il modulo **prenotazione** gestisce la selezione di **data** e **slot orari** per un campo/corso, a partire da uno sport o corso selezionato nel modulo *sport-selection*.
 
-Componenti principali:
-- `CalendarView`
-- `CalendarPresenterV2`
-- `DatePicker`
-- `SlotPicker`
-- `ReservationState`
-- `CartView` / `CartPresenter`
-- `APIService`
-- `SlotLoadStrategy`
-- `NavigateCommand` (verso il modulo pagamento)
-
 ## Diagramma di attività (selezione e conferma slot)
 
 ```mermaid

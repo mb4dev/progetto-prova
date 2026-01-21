@@ -1,6 +1,7 @@
 const ItemType = {
 	FIELD: "field",
-	COURSE: "course"
+	COURSE: "course",
+	SUB: "subscription"
 }
 
 export default ItemType

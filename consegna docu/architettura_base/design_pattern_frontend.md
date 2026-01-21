@@ -36,28 +36,22 @@ classDiagram
 
 ## 2. Strategy Pattern
 
-Lo **Strategy Pattern** è utilizzato per incapsulare le diverse logiche di accesso ai dati e alle API, in modo che i Presenter non conoscano i dettagli delle chiamate HTTP/servizio.
-Nel frontend viene applicato principalmente in due famiglie:
+Lo **Strategy Pattern** è utilizzato per incapsulare le diverse logiche di caricamento dei dati (es. caricare i Campi vs caricare i Corsi). Questo permette di riutilizzare lo stesso `SportSelectionPresenter` per casi d'uso diversi (UC03 Prenotazione Campi e UC05 Prenotazione Corsi), cambiando solo la strategia iniettata.
 
-- strategie di **caricamento** (`LoadStrategy`) per tutte le chiamate API di lettura (sport, corsi, slot occupati, abbonamenti);
-- strategie di **pagamento** (`PaymentStrategy`) per distinguere le modalità di pagamento (pagamento singolo vs abbonamento).
-
-### Implementazione (LoadStrategy)
+### Implementazione
 
 - **`LoadStrategy`**: Interfaccia che definisce il metodo `load()`.
-- **`FieldsLoadStrategy`**: Implementazione che recupera la lista dei campi (`APIService.getSports()`).
-- **`CoursesLoadStrategy`**: Implementazione che recupera la lista dei corsi (`APIService.getCourses()`).
-- **`SlotLoadStrategy`**: Implementazione che recupera gli slot occupati per una settimana (`APIService.getOccupiedSlotsForWeek()`).
-- **`SubscriptionLoadStrategy`**: Implementazione che recupera la lista degli abbonamenti (`APIService.getSubscriptions()`).
-- **`SportSelectionPresenter` / `CalendarPresenterV2` / `SubscriptionPresenter`**: ricevono una `LoadStrategy` nel costruttore e la utilizzano per recuperare i dati, senza conoscere i dettagli dell'implementazione.
+- **`FieldsLoadStrategy`**: Implementazione che recupera la lista dei campi
+- **`CoursesLoadStrategy`**: Implementazione che recupera la lista dei corsi
+- **`SportSelectionPresenter`**: Classe che riceve una `LoadStrategy` nel costruttore e la utilizza per recuperare i dati, senza conoscere i dettagli dell'implementazione.
 
-### Diagramma delle Classi (LoadStrategy)
+### Diagramma delle Classi
 
 ```mermaid
 classDiagram
     class LoadStrategy {
         <<interface>>
-        +load(data) : Promise
+        +load() : Promise
     }
 
     class FieldsLoadStrategy {
@@ -68,92 +62,21 @@ classDiagram
         +load()
     }
 
-    class SlotLoadStrategy {
-        +load(data)
-    }
-
-    class SubscriptionLoadStrategy {
-        +load()
-    }
-
     class SportSelectionPresenter {
         -loadStrategy: LoadStrategy
-        +update()
-    }
-
-    class CalendarPresenterV2 {
-        -loadStrategy: LoadStrategy
-        +_handleViewEvents()
-    }
-
-    class SubscriptionPresenter {
-        -loadStrategy: LoadStrategy
-        +update()
+        +loadData()
     }
 
     class APIService {
         +getSports()
         +getCourses()
-        +getOccupiedSlotsForWeek()
-        +getSubscriptions()
     }
 
     FieldsLoadStrategy --|> LoadStrategy
     CoursesLoadStrategy --|> LoadStrategy
-    SlotLoadStrategy --|> LoadStrategy
-    SubscriptionLoadStrategy --|> LoadStrategy
-
     FieldsLoadStrategy ..> APIService : calls
     CoursesLoadStrategy ..> APIService : calls
-    SlotLoadStrategy ..> APIService : calls
-    SubscriptionLoadStrategy ..> APIService : calls
-
     SportSelectionPresenter --> LoadStrategy : uses
-    CalendarPresenterV2 --> LoadStrategy : uses
-    SubscriptionPresenter --> LoadStrategy : uses
-```
-
-### Implementazione (PaymentStrategy)
-
-- **`PaymentStrategy`**: Interfaccia che definisce il metodo `pay(data)`.
-- **`NormalPaymentStrategy`**: Strategia utilizzata per il pagamento singolo (carrello di prenotazioni), che incapsula la chiamata `APIService.processSinglePayment()`.
-- **`SubscriptionPaymentStrategy`**: Strategia utilizzata per il pagamento di un abbonamento, che incapsula la chiamata `APIService.processSubscriptionPayment()`.
-- **`PaymentPresenter`**: Riceve una `PaymentStrategy` nel costruttore e, alla conferma del pagamento, invoca `paymentStrategy.pay(...)` senza conoscere i dettagli dell'implementazione o dell'API sottostante.
-
-### Diagramma delle Classi (PaymentStrategy)
-
-```mermaid
-classDiagram
-    class PaymentStrategy {
-        <<interface>>
-        +pay(data) : Promise
-    }
-
-    class NormalPaymentStrategy {
-        +pay(data)
-    }
-
-    class SubscriptionPaymentStrategy {
-        +pay(data)
-    }
-
-    class PaymentPresenter {
-        -paymentStrategy: PaymentStrategy
-        +_handleViewEvents()
-    }
-
-    class APIService {
-        +processSinglePayment(data)
-        +processSubscriptionPayment(data)
-    }
-
-    NormalPaymentStrategy --|> PaymentStrategy
-    SubscriptionPaymentStrategy --|> PaymentStrategy
-
-    NormalPaymentStrategy ..> APIService : calls
-    SubscriptionPaymentStrategy ..> APIService : calls
-
-    PaymentPresenter --> PaymentStrategy : uses
 ```
 
 ## 3. Command Pattern

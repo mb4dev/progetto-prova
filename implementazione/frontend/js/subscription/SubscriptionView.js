@@ -44,7 +44,7 @@ export default class SubscriptionView extends View {
                 </div>
                 <div class="text-right text-sm">
                     <div class="font-bold text-[var(--accent)]">${item.price.toFixed(2)}€</div>
-                    <button class="mt-1 px-3 py-1 rounded-lg bg-[var(--accent)] text-xs font-bold text-[var(--text-secondary)]" data-id="${item.id}">
+                    <button class="sub-btn mt-1 px-3 py-1 rounded-lg bg-[var(--accent)] text-xs font-bold text-[var(--text-secondary)]" data-id="${item.id}">
                         Acquista
                     </button>
                 </div>
@@ -53,9 +53,9 @@ export default class SubscriptionView extends View {
             )
             .join("");
 
-        this.querySelectorAll("#subscription-list button[data-id]").forEach((btn) => {
+        this.querySelectorAll(".sub-btn").forEach((btn) => {
             btn.addEventListener("click", (e) => {
-                const id = e.currentTarget.dataset.id;
+                const id = btn.dataset.id;
                 eventBus.notify(Events.SUBSCRIPTION_SELECTED_EVENT, { id });
             });
         });

@@ -14,6 +14,7 @@ export default class HistoryView extends View {
         this._bindEvents();
     }
 
+
     display(data) {
         const list = this.querySelector("#history-list");
         if (!list) return;
@@ -26,21 +27,46 @@ export default class HistoryView extends View {
         }
 
         list.innerHTML = items
-            .map(
-                (item) => `
-            <div class="flex justify-between items-center p-3 mb-2 rounded-xl bg-[var(--bg-med)]">
-                <div class="flex flex-col">
-                    <span class="font-bold text-sm">${item.title}</span>
-                    <span class="text-xs opacity-70">${item.date}</span>
-                </div>
-                <div class="text-right text-sm">
-                    <div class="font-bold text-[var(--accent)]">${item.amount.toFixed(2)}€</div>
-                    <div class="text-xs opacity-60">${item.status}</div>
-                </div>
-            </div>
-        `
-            )
+            .map((item) => {
+                const statusDisplay = item.status ? 
+                    `<div class="text-xs opacity-60">${item.status}</div>` : "";
+
+                const cancelButton = item.status === "cancellabile" ? 
+                    `<button data-id=${item.id} class="cancel-btn ml-2 w-6 h-6 bg-red-500 text-white rounded-full flex items-center justify-center hover:bg-red-600 ">
+                        <span class="text-xs font-bold">×</span>
+                    </button>` : "";
+
+                const slots = item.slot
+                    .map(slot => {
+                        return `<span class="text-center m-3">${slot}<span>`
+                    }).join("");
+                
+
+                return `
+                    <div class="flex justify-between items-center p-3 mb-2 rounded-xl bg-[var(--bg-dark)]">
+                        <div class="flex flex-col">
+                            <span class="font-bold text-sm">${item.title}</span>
+                            <span class="text-xs opacity-70">Data ${item.date} - Orari${slots}</span>
+                        </div>
+                        <div class="text-right text-sm flex items-center gap-3">
+                            <div class="font-bold text-[var(--accent)]">${item.amount.toFixed(2)}€</div>
+                            ${statusDisplay}
+                            ${cancelButton}
+                        </div>
+                    </div>
+        `;
+            })
             .join("");
+
+        this.querySelectorAll(".cancel-btn")?.forEach(
+            btn => {
+                btn.addEventListener("click", (e) => {
+                    eventBus.notify(Events.HISTORY_DELETE_EVENT, {
+                        id: btn.dataset["id"]
+                    })                    
+                })
+            }
+        )
     }
 
     template() {

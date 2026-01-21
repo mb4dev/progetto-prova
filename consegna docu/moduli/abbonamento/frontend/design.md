@@ -28,10 +28,8 @@ sequenceDiagram
     view ->> bus: notify(SUBSCRIPTION_LOAD_EVENT)
     bus ->> presenter: callback SUBSCRIPTION_LOAD_EVENT
 
-    presenter ->> loadStrat: load()
-    loadStrat ->> api: getSubscriptions()
-    api -->> loadStrat: Response(success, data[])
-    loadStrat -->> presenter: Response(success, data[])
+    presenter ->> api: getSubscriptions()
+    api -->> presenter: Response(success, data[])
     presenter ->> view: display({items})
     view -->> user: mostra lista abbonamenti
 
@@ -40,7 +38,7 @@ sequenceDiagram
     bus ->> presenter: callback SUBSCRIPTION_SELECTED_EVENT
 
     presenter ->> cmd: execute()
-    cmd ->> main: navigazione verso MAIN_PAYMENT_SUBSCRIPTION
+    cmd ->> main: navigazione verso MAIN_PAYMENT
 ```
 
 ## Diagramma delle classi
@@ -73,13 +71,9 @@ classDiagram
         #handleViewEvents()
     }
 
-    class LoadStrategy {
+    class APIService {
         <<interface>>
-        +load() Promise
-    }
-
-    class SubscriptionLoadStrategy {
-        +load() Promise
+        +getSubscriptions() Promise
     }
 
     class Command {
@@ -94,10 +88,8 @@ classDiagram
     View <|-- SubscriptionView
     Presenter <|-- SubscriptionPresenter
     Command <|-- NavigateCommand
-    LoadStrategy <|-- SubscriptionLoadStrategy
 
-    SubscriptionPresenter --> LoadStrategy
-    SubscriptionLoadStrategy --> APIService
+    SubscriptionPresenter --> APIService
     SubscriptionPresenter o-- NavigateCommand
 ```
 

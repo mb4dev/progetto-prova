@@ -32,38 +32,78 @@ export default class CartView extends View {
 
         if (!cartList) return;
 
+        let cartHTML = "";
+        let itemIndex = 0;
+
+
         if (data.cartItems && data.cartItems.length > 0) {
-            cartList.innerHTML = data.cartItems.map((item, index) => `
-                <div class="flex flex-col bg-[var(--bg-med)] p-3 m-2 border-1  border-[var(--accent)] rounded-xl shadow-xl/20">
-                    <div class="flex justify-between items-start">
-                        <div>
-                            <p class="font-bold text-sm text-[var(--text-primary)]">${item.sport.title}</p>
-                            <p class="text-xs opacity-70">${item.date.split("-").reverse().join("/")}</p>
+            cartHTML += data.cartItems.map((item, index) => {
+                const currentIndex = itemIndex++;
+                return `
+                    <div class="flex flex-col bg-[var(--bg-med)] p-3 m-2 border-1  border-[var(--accent)] rounded-xl shadow-xl/20">
+                        <div class="flex justify-between items-start">
+                            <div>
+                                <p class="font-bold text-sm text-[var(--text-primary)]">${item.sport.title}</p>
+                                <p class="text-xs opacity-70">${item.date.split("-").reverse().join("/")}</p>
+                            </div>
+                            ${this.hideCheckout ? '' : `
+                            <button data-index="${currentIndex}" class="remove-item-btn text-red-400 hover:text-red-600">
+                               <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/></svg>
+                            </button>
+                            `}
                         </div>
-                        ${this.hideCheckout ? '' : `
-                        <button data-index="${index}" class="remove-item-btn text-red-400 hover:text-red-600">
-                           <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/></svg>
-                        </button>
-                        `}
+                        <div class="mt-2 flex flex-wrap gap-1">
+                             ${item.slots.map(s => `<span class="bg-[var(--accent)] px-2 py-1 rounded text-[10px]">${s}</span>`).join("")}
+                        </div>
+                        <div class="mt-2 text-right font-bold text-[var(--accent)]">
+                            ${item.price.toFixed(2)}€
+                        </div>
                     </div>
-                    <div class="mt-2 flex flex-wrap gap-1">
-                         ${item.slots.map(s => `<span class="bg-[var(--accent)] px-2 py-1 rounded text-[10px]">${s}</span>`).join("")}
+                `;
+            }).join("");
+        }
+
+
+        if (data.subscriptions && data.subscriptions.length > 0) {
+            cartHTML += data.subscriptions.map((subscription, subIndex) => {
+                return `
+                    <div class="flex flex-col bg-[var(--bg-med)] p-3 m-2 border-1 border-blue-400 rounded-xl shadow-xl/20">
+                        <div class="flex justify-between items-start">
+                            <div>
+                                <p class="font-bold text-sm text-[var(--text-primary)]">${subscription.name}</p>
+                                <p class="text-xs opacity-70">${subscription.description}</p>
+                            </div>
+                            ${this.hideCheckout ? '' : `
+                            <button data-subscription="true" class="remove-subscription-btn text-red-400 hover:text-red-600">
+                               <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/></svg>
+                            </button>
+                            `}
+                        </div>
+                        <div class="mt-2 text-right font-bold text-blue-400">
+                            ${subscription.price.toFixed(2)}€
+                        </div>
                     </div>
-                    <div class="mt-2 text-right font-bold text-[var(--accent)]">
-                        ${item.price.toFixed(2)}€
-                    </div>
-                </div>
-            `).join("");
+                `;
+            }).join("");
+        }
+
+        if (cartHTML) {
+            cartList.innerHTML = cartHTML;
             
             if (!this.hideCheckout) {
                 this.querySelectorAll(".remove-item-btn").forEach(btn => {
                     btn.addEventListener("click", (e) => {
                         const idx = e.currentTarget.dataset.index;
-                        eventBus.notify("cart:remove-item", { index: parseInt(idx) });
+                        eventBus.notify(Events.CART_REMOVE, { index: parseInt(idx) });
+                    });
+                });
+
+                this.querySelectorAll(".remove-subscription-btn").forEach(btn => {
+                    btn.addEventListener("click", () => {
+                        eventBus.notify(Events.CART_REMOVE_SUBSCRIPTION);
                     });
                 });
             }
-
         } else {
             cartList.innerHTML = `<div class="p-8 text-center opacity-50 italic text-sm">Il carrello è vuoto</div>`;
         }
@@ -113,7 +153,7 @@ export default class CartView extends View {
         
         if (clearCartBtn) {
             clearCartBtn.addEventListener("click", () => {
-                 eventBus.notify("cart:clear");
+                 eventBus.notify(Events.CART_CLEAR);
             });
         }
     }

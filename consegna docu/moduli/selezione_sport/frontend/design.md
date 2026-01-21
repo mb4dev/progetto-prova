@@ -1,99 +1,197 @@
-# Modulo Selezione Sport - Frontend
+# Modulo Selezione sport - Frontend
 
-## Casi d'uso Correlati
-- **UC03**: Visualizzazione Disponibilità Campi
+## Casi d'uso correlati
+- **UC03**: Visualizzare disponibilità campi (parte di selezione campo)
 - **UC05**: Visualizzare corsi
 
-Questo modulo gestisce la visualizzazione e la selezione dei campi e degli sport disponibili.
+## Panoramica
 
-## Diagramma di Attività
+Il modulo **sport-selection** gestisce la selezione iniziale di un **campo sportivo** o di un **corso**.
+È il punto di ingresso per i flussi di prenotazione (UC03/UC04 e UC05/UC06).
 
-```mermaid 
+## Diagramma di attività (selezione campo/corso)
+
+```mermaid
 flowchart TD
-    Start([Inizio]) --> SelectSport[Utente seleziona la pagina di prenotazione]
-    SelectSport --> LoadFields[Sistema carica i dati per il tipo di prenotazione selezionato]
-    LoadFields --> ShowFields[Mostra elenco campi/corsi disponibili]
-    ShowFields --> SelectField[Utente seleziona un elemento]
-    SelectField --> Navigate[Naviga a Prenotazione]
-    Navigate -->End([Fine])
+    Start([Inizio]) --> ShowList[Mostra lista campi/corsi]
+    ShowList --> UserSelect[Utente seleziona un elemento]
+    ShowList --> NoItems{Nessun elemento disponibile?}
+
+    NoItems -->|Sì| EmptyMsg[Mostra messaggio]
+    EmptyMsg --> End1([Fine])
+    NoItems -->|No| UserSelect
+
+    UserSelect --> NavigateCalendar[Esegui NavigateCommand verso calendario]
+    NavigateCalendar --> End2([Fine])
 ```
 
-### Flusso Selezione (con Strategy e Command)
+## Diagramma di sequenza (frontend)
 
 ```mermaid
 sequenceDiagram
-    autonumber
-    
-    actor user as Utente
-    participant main as MainPresenter
-    participant view as SportSelectionView
-    participant presenter as SportSelectionPresenter
-    participant strategy as LoadStrategy
-    participant api as APIService
-    participant bus as Observer
-    participant command as Command
+    actor Utente
+    participant MainPresenter
+    participant SportSelectionView
+    participant SportSelectionPresenter
+    participant EventBus
+    participant LoadStrategy
+    participant APIService
 
-    main ->>+ presenter: init()
-    presenter ->>+ strategy: load()
-    strategy ->>+ api: get data
-    api -->>- strategy: data
-    strategy -->>- presenter: {data}
-    
-    presenter ->>+ view: display({items: data})
-    view -->>- user: mostra lista elementi
-    
-    user ->>+ view: seleziona elemento
-    view ->>+ bus: notify(SPORT_SELECTED_EVENT)
-    bus ->>+ presenter: handle event
-    
-    presenter ->>+ command: execute()
-    command -->>- presenter: action completed (e.g. navigation)
+    MainPresenter ->> SportSelectionView: crea view
+    MainPresenter ->> SportSelectionPresenter: crea presenter
+
+    SportSelectionView ->> EventBus: SPORTS_LOAD_EVENT
+    EventBus ->> SportSelectionPresenter: SPORTS_LOAD_EVENT
+
+    SportSelectionPresenter ->> LoadStrategy: load(itemType)
+    LoadStrategy ->> APIService: getSports / getCourses
+    APIService -->> LoadStrategy: items
+    LoadStrategy -->> SportSelectionPresenter: items
+
+    SportSelectionPresenter ->> SportSelectionView: display(items)
+    SportSelectionView -->> Utente: mostra lista
+
+    Utente ->> SportSelectionView: seleziona elemento
+    SportSelectionView ->> EventBus: SPORT_SELECTED_EVENT
+    EventBus ->> SportSelectionPresenter: SPORT_SELECTED_EVENT
+
+    Note over SportSelectionPresenter: esegue onSelectedCommand(navigazione)
 ```
 
-
-## Diagramma delle Classi
+## Diagramma delle classi
 
 ```mermaid
 classDiagram
-    class Presenter {
-        <<interface>>
-    }
 
-    class SportSelectionPresenter {
+class View {
 
-    }
+<<abstract>>
 
-    class SportSelectionView {
-        +display(data)
-    }
++display(data)
 
-    class SportCard {
-        +render(sportData)
-    }
++template() string
 
-    class LoadStrategy {
-        <<interface>>
-        +load() Promise
-    }
+#bindEvents()
 
-    class Command {
-        <<interface>>
-        +execute()
-    }
+}
 
-    class ConcreteLoadStrategy {
-        +load()
-    }
+  
 
-    class ConcreteCommand {
-        +execute()
-    }
+class SportSelectionView {
 
-    SportSelectionPresenter --|> Presenter
-    SportSelectionPresenter --> SportSelectionView : manages
-    SportSelectionView ..> SportCard : uses
-    SportSelectionPresenter --> LoadStrategy : uses
-    SportSelectionPresenter --> Command : executes
-    ConcreteLoadStrategy ..|> LoadStrategy
-    ConcreteCommand ..|> Command
+-config: Object
+
++display(data)
+
++template() string
+
+#_bindEvents()
+
+}
+
+  
+
+class Presenter {
+
+<<abstract>>
+
+#view: View
+
+#config: Object
+
++update()
+
+#handleViewEvents()
+
+}
+
+  
+
+class SportSelectionPresenter {
+
+#view: SportSelectionView
+
+#config
+
+}
+
+  
+
+class APIService {
+
+<<interface>>
+
++getSports() Promise
+
++getCourses() Promise
+
+}
+
+  
+
+class LoadStrategy {
+
+<<interface>>
+
++load(data) Promise
+
+}
+
+  
+
+class FieldsLoadStrategy {
+
++load(data) Promise
+
+}
+
+  
+
+class CoursesLoadStrategy {
+
++load(data) Promise
+
+}
+
+  
+
+class Command {
+
+<<interface>>
+
++execute()
+
+}
+
+  
+
+class NavigateCommand {
+
+-route: string
+
++execute()
+
+}
+
+  
+
+View <|-- SportSelectionView
+
+Presenter <|-- SportSelectionPresenter
+
+LoadStrategy <|-- FieldsLoadStrategy
+
+LoadStrategy <|-- CoursesLoadStrategy
+
+Command <|-- NavigateCommand
+
+  
+
+SportSelectionPresenter o-- LoadStrategy
+
+SportSelectionPresenter o-- Command
+
+FieldsLoadStrategy --> APIService
+
+CoursesLoadStrategy --> APIService
 ```

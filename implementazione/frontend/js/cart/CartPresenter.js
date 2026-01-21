@@ -8,30 +8,34 @@ export default class CartPresenter extends Presenter {
     
     constructor(view, config) {
         super(view, config);
-        this.cartService = cartService;
-        this.reservationState = reservationState;
     }
 
     _handleViewEvents() {
 
-        eventBus.subscribe(Events.CART_UPDATED, (data) => {
+        eventBus.subscribe(Events.CART_UPDATED, () => {
             if (!this._view.isConnected) return;
             this.#updateView();
         });
 
         eventBus.subscribe(Events.CART_REMOVE, (data) => {
             if (!this._view.isConnected) return;
-            this.cartService.remove(data.index);
+            cartService.remove(data.index);
         });
 
-        eventBus.subscribe("cart:clear", () => {
+        eventBus.subscribe(Events.CART_CLEAR, () => {
             if (!this._view.isConnected) return;
-            this.cartService.clear();
+            cartService.clear();
+        });
+
+        eventBus.subscribe(Events.CART_REMOVE_SUBSCRIPTION, () => {
+            if (!this._view.isConnected) return;
+            cartService.removeSubscription();
         });
 
 
         eventBus.subscribe(Events.SLOT_SELECTED_EVENT, (data) => {
             if (!this._view.isConnected) return;
+            // Delay to ensure state is updated by CalendarPresenter
             setTimeout(() => {
                 this.#addToCart();
             }, 50);
@@ -49,24 +53,26 @@ export default class CartPresenter extends Presenter {
     }
 
     #addToCart() {
-        const { selectedSport, selectedDate, selectedSlots } = this.reservationState;
+        const { selectedSport, selectedDate, selectedSlots } = reservationState;
         
         if (!selectedSport || !selectedDate) {
             return;
         }
-        const existingIndex = this.cartService.getItems().findIndex(item => 
-            item.sport.title === selectedSport.title && item.date === selectedDate
+
+        const existingIndex = cartService.items.findIndex(item => 
+            item.sport?.title === selectedSport.title && item.date === selectedDate
         );
 
         if (selectedSlots.size === 0) {
             if (existingIndex !== -1) {
-                this.cartService.remove(existingIndex);
+                cartService.remove(existingIndex);
             }
         } else {
             const slots = Array.from(selectedSlots);
-            const price = (slots.length * selectedSport.price) / 2;
+            const price = (slots.length * parseFloat(selectedSport.price)) / 2;
             
             const cartItem = {
+                type: 'field',
                 sport: selectedSport,
                 date: selectedDate,
                 slots: slots,
@@ -74,20 +80,22 @@ export default class CartPresenter extends Presenter {
             };
 
             if (existingIndex !== -1) {
-                this.cartService.items[existingIndex] = cartItem;
-                this.cartService.notify();
+                cartService.items[existingIndex] = cartItem;
+                cartService.notify();
             } else {
-                this.cartService.add(cartItem);
+                cartService.add(cartItem);
             }
         }
     }
 
     #updateView() {
-        const cartItems = this.cartService.getItems();
-        const cartTotal = this.cartService.getTotal();
+        const regularItems = cartService.items;
+        const subscriptions = cartService.subscriptions;
+        const cartTotal = cartService.getTotal();
 
         this._view.display({
-            cartItems: cartItems,
+            cartItems: regularItems,
+            subscriptions: subscriptions,
             cartTotal: cartTotal
         });
     }

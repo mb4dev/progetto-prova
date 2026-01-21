@@ -22,11 +22,14 @@ import PaymentView from "../payment/PaymentView.js";
 import PaymentPresenter from "../payment/PaymentPresenter.js";
 import ConfirmPaymentCommand from "../commands/ConfirmPaymentCommand.js";
 import NormalPaymentStrategy from "../strategy/NormalPaymentStrategy.js";
-//import SubscriptionPaymentStrategy from "../strategy/SubscriptionPaymentStrategy.js";
+import SubscriptionPaymentStrategy from "../strategy/SubscriptionPaymentStrategy.js";
 import HistoryView from "../history/HistoryView.js";
 import HistoryPresenter from "../history/HistoryPresenter.js";
+import HistoryLoadStrategy from "../strategy/HistoryLoadStrategy.js";
 import SubscriptionView from "../subscription/SubscriptionView.js";
 import SubscriptionPresenter from "../subscription/SubscriptionPresenter.js";
+import AdminView from "../admin/AdminView.js";
+import AdminPresenter from "../admin/AdminPresenter.js";
 
 
 export default class ViewFactory {	
@@ -47,6 +50,8 @@ export default class ViewFactory {
 				return this.#createProfileView()
 			case Routes.MAIN_STORICO:
 				return this.#createHistoryView()
+			case Routes.MAIN_ADMIN:
+				return this.#createAdminView()
 			case Routes.MAIN_ABBONAMENTO:
 				return this.#createSubscriptionView()
 			case Routes.MAIN_CALENDARIO:
@@ -54,7 +59,7 @@ export default class ViewFactory {
 			case Routes.MAIN_PAYMENT:
 				return this.#createPayment()
 			/*
-			case Routes.MAIN_PAYMENT_SINGLE:
+				case Routes.MAIN_PAYMENT_SINGLE:
 				return this.#createPaymentSingle()
 			case Routes.MAIN_PAYMENT_SUBSCRIPTION:
 				return this.#createPaymentSubscription()
@@ -140,7 +145,10 @@ export default class ViewFactory {
 
 	static #createHistoryView() {
 		const view = new HistoryView();
-		const presenter = new HistoryPresenter(view, {});
+		const presenter = new HistoryPresenter(view, {
+			loadStrategy: new HistoryLoadStrategy(),
+			onDeleteCommand:  { execute: (id) => console.log("richiesta cancellazione " + id) }
+		});
 		return { view: view, presenter: presenter };
 	}
 
@@ -150,6 +158,12 @@ export default class ViewFactory {
 			loadStrategy: new SubscriptionLoadStrategy(),
 			onSelectedCommand: new NavigateCommand(Routes.MAIN_PAYMENT_SUBSCRIPTION),
 		});
+		return { view: view, presenter: presenter };
+	}
+
+	static #createAdminView() {
+		const view = new AdminView();
+		const presenter = new AdminPresenter(view, {});
 		return { view: view, presenter: presenter };
 	}
 
@@ -184,5 +198,5 @@ export default class ViewFactory {
 
 		return { view: view, presenter: presenter };
 	}
-	*/
+		*/
 }

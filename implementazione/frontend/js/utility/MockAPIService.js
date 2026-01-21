@@ -1,4 +1,5 @@
 import APIService from "../interfaces/APIService.js"
+import ItemType from "./ItemType.js"
 
 export class SuccessAPIService extends APIService {
 	constructor() {
@@ -79,112 +80,130 @@ export class SuccessAPIService extends APIService {
 				resolve(new Response(200, true, data, "Corsi recuperati con successo"));
 			});
 		}
+	
+	getSubscriptions() {
+		const data = [
+			{ id: 1, name: "Mensile", description: "Accesso illimitato per 30 giorni", price: 49.90 },
+			{ id: 2, name: "Trimestrale", description: "Accesso illimitato per 3 mesi", price: 129.90 },
+			{ id: 3, name: "Annuale", description: "Accesso illimitato per 12 mesi", price: 399.90 },
+		];
 		
-		getSubscriptions() {
-			const data = [
-				{ id: 1, name: "Mensile", description: "Accesso illimitato per 30 giorni", price: 49.90 },
-				{ id: 2, name: "Trimestrale", description: "Accesso illimitato per 3 mesi", price: 129.90 },
-				{ id: 3, name: "Annuale", description: "Accesso illimitato per 12 mesi", price: 399.90 },
-			];
-			
-			return new Promise((resolve) => {
-				resolve(new Response(200, true, data, "Abbonamenti recuperati con successo"));
-			});
-		}
-		
-		getOccupiedSlotsForWeek(startDateString) {
-			const startDate = new Date(startDateString);
-			startDate.setHours(0, 0, 0, 0);
-			
-			if (isNaN(startDate.getTime())) {
-				return Promise.resolve(
-					new Response(400, false, null, "Data non valida")
-				);
-			}
-			
-			const result = {};
-			
-			for (let i = 0; i < 7; i++) {
-				const current = new Date(startDate);
-				current.setDate(startDate.getDate() + i);
-				
-				const dateKey = current.toISOString().split("T")[0];
-				const slots = this.#generateTimeSlots();
-				const occupied = this.#generateOccupiedSlots(slots, dateKey);
-				
-				result[dateKey] = occupied;
-			}
-			
-			return Promise.resolve(
-				new Response(200, true, result, "Slot occupati recuperati con successo")
-			);
-		}
-		
-		#generateTimeSlots(start = 8, end = 20, increment = 30){
-			const startH = start * 60;
-			const endH = end * 60;
-			
-			const timeSlots = [];
-			
-			for (let h = startH; h <= endH; h+= increment){
-				const hour = String(Math.floor(h/60)).padStart(2, "0") ;
-				const minute = String(h % 60).padStart(2, "0");
-				
-				timeSlots.push(`${hour}:${minute}`);
-			}
-			
-			return timeSlots;
-		}
-		
-		#generateOccupiedSlots(slots, seed) {
-			const rng = this.#seededRandom(seed);
-			return slots.filter(() => rng() > 0.65);
-		}
-		#seededRandom(seed) {
-			let value = 0;
-			
-			for (let i = 0; i < seed.length; i++) {
-				value += seed.charCodeAt(i);
-			}
-			
-			return () => {
-				value = (value * 9301 + 49297) % 233280;
-				return value / 233280;
-			};
-		}
-		
-		processSinglePayment(paymentData) {
-			const data = {
-				type: "single",
-				total: paymentData?.total ?? 0,
-				itemsCount: paymentData?.items?.length ?? 0,
-			};
-			
-			return Promise.resolve(
-				new Response(200, true, data, "Pagamento singolo effettuato con successo")
-			);
-		}
-		
-		processSubscriptionPayment(subscriptionData) {
-			const data = {
-				type: "subscription",
-				subscriptionId: subscriptionData?.subscriptionId ?? null,
-			};
-			
-			return Promise.resolve(
-				new Response(200, true, data, "Pagamento abbonamento effettuato con successo")
-			);
-		}
-		
+		return new Promise((resolve) => {
+			resolve(new Response(200, true, data, "Abbonamenti recuperati con successo"));
+		});
 	}
 	
-	export const apiService = new SuccessAPIService();
-	
-	class Response {
-		constructor(code, success, data, message) {
-			this.code = code;
-			this.success = success;
-			this.data = data;
-			this.message = message;
+	getOccupiedSlotsForWeek(startDateString) {
+		const startDate = new Date(startDateString);
+		startDate.setHours(0, 0, 0, 0);
+		
+		if (isNaN(startDate.getTime())) {
+			return Promise.resolve(
+				new Response(400, false, null, "Data non valida")
+			);
 		}
+		
+		const result = {};
+		
+		for (let i = 0; i < 7; i++) {
+			const current = new Date(startDate);
+			current.setDate(startDate.getDate() + i);
+			
+			const dateKey = current.toISOString().split("T")[0];
+			const slots = this.#generateTimeSlots();
+			const occupied = this.#generateOccupiedSlots(slots, dateKey);
+			
+			result[dateKey] = occupied;
+		}
+		
+		return Promise.resolve(
+			new Response(200, true, result, "Slot occupati recuperati con successo")
+		);
 	}
+	
+	#generateTimeSlots(start = 8, end = 20, increment = 30){
+		const startH = start * 60;
+		const endH = end * 60;
+		
+		const timeSlots = [];
+		
+		for (let h = startH; h <= endH; h+= increment){
+			const hour = String(Math.floor(h/60)).padStart(2, "0") ;
+			const minute = String(h % 60).padStart(2, "0");
+			
+			timeSlots.push(`${hour}:${minute}`);
+		}
+		
+		return timeSlots;
+	}
+	
+	#generateOccupiedSlots(slots, seed) {
+		const rng = this.#seededRandom(seed);
+		return slots.filter(() => rng() > 0.65);
+	}
+	#seededRandom(seed) {
+		let value = 0;
+		
+		for (let i = 0; i < seed.length; i++) {
+			value += seed.charCodeAt(i);
+		}
+		
+		return () => {
+			value = (value * 9301 + 49297) % 233280;
+			return value / 233280;
+		};
+	}
+	
+	getHistory() {
+		const today = new Date();
+		const tomorrow = new Date(today);
+		tomorrow.setDate(today.getDate() + 1);
+		const nextWeek = new Date(today);
+		nextWeek.setDate(today.getDate() + 7);
+		
+		const data = [
+			{ id: 1, type: ItemType.FIELD, title: "Tennis", date: tomorrow.toISOString().split('T')[0], slot:["08:00", "08:30"] , amount: 70.00 },
+			{ id: 2, type: ItemType.FIELD, title: "Calcio", date: nextWeek.toISOString().split('T')[0], slot:["18:00"], amount: 100.00 },
+			{ id: 3, type: ItemType.SUB, title: "Abbonamento Mensile", date: "2026-01-12", slot:[], amount: 49.90 },
+			{ id: 4, type: ItemType.COURSE, title: "Palestra", date: "2026-01-12", slot:["15:00"], amount: 70.00 },
+		];
+		
+		return Promise.resolve(
+			new Response(200, true, data, "Storico prenotazioni recuperato con successo")
+		);
+	}
+	processSinglePayment(paymentData) {
+		const data = {
+			type: "single",
+			total: paymentData?.total ?? 0,
+			itemsCount: paymentData?.items?.length ?? 0,
+		};
+		
+		return Promise.resolve(
+			new Response(200, true, data, "Pagamento singolo effettuato con successo")
+		);
+	}
+
+	processSubscriptionPayment(subscriptionData) {
+		const data = {
+			type: "subscription",
+			subscriptionId: subscriptionData?.subscriptionId ?? null,
+		};
+		
+		return Promise.resolve(
+			new Response(200, true, data, "Pagamento abbonamento effettuato con successo")
+		);
+	}
+}
+
+
+export const apiService = new SuccessAPIService();
+
+class Response {
+	constructor(code, success, data, message) {
+		this.code = code;
+		this.success = success;
+		this.data = data;
+		this.message = message;
+	}
+}
