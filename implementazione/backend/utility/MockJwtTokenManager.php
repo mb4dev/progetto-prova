@@ -4,7 +4,10 @@ class MockJwtTokenManager implements JwtTokenManager {
 	public function encode() : string {
 		return "mock_token";
 	}
-	public function decode(string $token) {
-		return true;
+	public function decode(string $token): array {
+		return [
+			"name" => "test",
+			"role" => "admin"
+		];
 	}
 }

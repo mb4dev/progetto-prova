@@ -10,15 +10,15 @@ final class DefaultURLParser implements URLParser {
         $parts = array_values(array_filter(explode("/", $path), fn($p) => $p !== ""));
 
         $controller = $parts[0] ?? null;
-        $action = $parts[1] ?? null;
+        $action = $parts[1] ?? "";
 
-        $queryParams = [];
-        parse_str($_SERVER['QUERY_STRING'] ?? '', $queryParams);
+        //$queryParams = [];
+        //parse_str($_SERVER['QUERY_STRING'] ?? '', $queryParams);
 
         return new ParsedURL(
             $controller,
             $action,
-            $queryParams
         );
+            // $queryParams
 	}
 }

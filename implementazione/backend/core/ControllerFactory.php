@@ -5,17 +5,22 @@ final class ControllerFactory {
 	public function create($type): Controller {
 		$controller = null;
 		switch ($type) {
-			case ControllerTypes::AUTH :
+			case ControllerTypes::AUTH:
 				$repository = new DefaultAuthRepository($this->dbConnection);
 				$service = new DefaultAuthService($repository, new DefaultPasswordValidator(), new MockJwtTokenManager());
 				$controller = new AuthController($service);
 				break;
-			case ControllerTypes::USER :
-				$repository = new DefaultUserRepository($this->dbConnection);
-				$service = new DefaultUserService($repository);
-				$controller = new UserController($service);
+			case ControllerTypes::SPORTS:
+				$repository = new DefaultSportsRepository($this->dbConnection);
+				$service = new DefaultSportsService($repository);
+				$controller = new SportsController($service);
 				break;
-			default: throw new InvalidArgumentException("Controller $type non esistente");
+			case ControllerTypes::BOOKINGS:
+				$repository = new DefaultBookingsRepository($this->dbConnection);
+				$service = new DefaultBookingsService($repository);
+				$controller = new BookingsController($service);
+				break;
+			default: throw new InvalidArgumentException("Controller {$type->value} non esistente");
 		}
 		return $controller;	
 	}

@@ -1,5 +1,7 @@
 <?php
 
+use Role;
+
 class AuthController extends Controller {
 
 	public function __construct(
@@ -10,12 +12,12 @@ class AuthController extends Controller {
 
 	public function getMiddlewares() : array {
 		return [];
+		
 	}
 	
 	public function resolveAction(string $action): Response{
 		$body = $this->getBody();
 
-		//print_r($body);
 		return match (strtolower($action)) {
 			"login" => $this->login($body),
 			"register" => $this->register($body),
@@ -30,7 +32,12 @@ class AuthController extends Controller {
 		if(empty($body["email"]) || empty($body["password"])) {
 			return new Response(400, false, ["error" => "Parametri non validi"]);
 		}
-		return $this->authService->login($body["email"], $body["password"]);
+		$response = $this->authService->login($body["email"], $body["password"]);
+		
+		if ($response->success && isset($response->jsonData['token'])) {
+			setcookie('jwt_token', $response->jsonData['token'], time() + 3600, '/', '', false, true);
+		}
+		return $response;
 	}
 
 	private function register(array $body) : Response {
@@ -41,7 +48,11 @@ class AuthController extends Controller {
 			return new Response(400, false, ["error" => "Parametri non validi"]);
 		}
 
-		return $this->authService->register($body["name"], $body["email"], $body["password"]);
+		$response = $this->authService->register($body["name"], $body["email"], $body["password"], Role::tryFrom($body["role"]));
+		if ($response->success && isset($response->jsonData['token'])) {
+			setcookie('jwt_token', $response->jsonData['token'], time() + 3600, '/', '', false, true);
+		}
+		return $response;
 	}
 
 }

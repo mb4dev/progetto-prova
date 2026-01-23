@@ -2,5 +2,6 @@
 
 enum ControllerTypes: string {
 	case AUTH = "auth";
-	case USER = "user";
+	case SPORTS = "sports";
+	case BOOKINGS = "bookings";
 }

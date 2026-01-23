@@ -2,5 +2,5 @@
 
 interface JwtTokenManager {
 	public function encode() : string;
-	public function decode(string $token) ;
+	public function decode(string $token) : array ;
 }

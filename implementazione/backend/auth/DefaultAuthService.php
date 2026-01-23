@@ -22,7 +22,12 @@ class DefaultAuthService implements AuthService {
 
 			$token = $this->jwtTokenManager->encode();
 
-			return new Response(200, true, ["message" => "Login effettuato", "token" => $token]);
+			return new Response(200, true, ["message" => "Login effettuato", "token" => $token, "user" => [
+				"id" => $user->id,
+				"name" => $user->name,
+				"email" => $user->email,
+				"role" => $user->role
+			]]);
 		}
 		catch(Exception $e){
 			if ($e instanceof UserNotFoundException) {
@@ -32,11 +37,16 @@ class DefaultAuthService implements AuthService {
 		}
 	}
 
-	public function register(string $name, string $email, string $password) : Response{
+	public function register(string $name, string $email, string $password, Role $role = Role::USER) : Response{
 		try{
-			$user = $this->authRepository->register($name, $email, $password);
+			$user = $this->authRepository->register($name, $email, $password, $role);
 			$token = $this->jwtTokenManager->encode();
-			return new Response(200, true, ["message" => "Registrazione effettuata", "token"=> $token]);
+			return new Response(200, true, ["message" => "Registrazione effettuata", "token"=> $token, "user" => [
+				"id" => $user->id,
+				"name" => $user->name,
+				"email" => $user->email,
+				"role" => $user->role
+			]]);
 		}
 		catch(Exception $e){
 			if ($e instanceof UserAlreadyExistsException) {
