@@ -71,10 +71,10 @@ export class SuccessAPIService extends APIService {
 	
 	getCourses(){
 		const data = [
-			{id: 1, name: "pesi", img: "", price:100},
-			{id: 2, name: "palestra", img: "", price:70},
-			{id: 3, name: "boxe", img: "", price:50},
-			{id: 4, name: "yoga", img: "	", price:60}];
+			{id: 1, name: "pesi", img: "", price:100, schedule: ["09:00", "11:00", "15:00"]},
+			{id: 2, name: "palestra", img: "", price:70, schedule: ["18:00", "20:00"]},
+			{id: 3, name: "boxe", img: "", price:50, schedule: ["08:00", "10:00", "13:00", "19:00"]},
+			{id: 4, name: "yoga", img: "	", price:60, schedule: ["07:00", "19:30"]}];
 			
 			return new Promise((resolve) => {
 				resolve(new Response(200, true, data, "Corsi recuperati con successo"));

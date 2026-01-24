@@ -30,6 +30,7 @@ export default class CalendarPresenterV2 extends Presenter {
             this.#state.selectedSlots.clear();
 
             this._config.loadStrategy.load({date: data.selectedDate}).then(result => {
+                console.log("caricati dati per la data ", data.selectedDate)
                 const allSlots = result.data || {};
                 this.#state.occupiedSlots = allSlots[data.selectedDate] || []; 
                 this.#updateSlotPicker();
@@ -94,10 +95,13 @@ export default class CalendarPresenterV2 extends Presenter {
     }
 1
     #updateSlotPicker() {
+        const slots = this.#state.selectedSport.type === "course" ? this.#state.selectedSport.schedule : null;
+
         this.#views.slot.display({
             selectedDate: this.#state.selectedDate,
             selected: this.#state.selectedSlots,
-            occupied: this.#state.occupiedSlots
+            occupied: this.#state.occupiedSlots,
+            slots: slots
         });
     }
 

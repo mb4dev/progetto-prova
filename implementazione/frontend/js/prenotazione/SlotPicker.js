@@ -26,7 +26,7 @@
 			const grid = this.querySelector("#slot-grid");
 			if (!grid) return;
 			
-			const allSlots = this.#generateTimeSlots();
+			const allSlots = data.slots || this.#generateTimeSlots();
 			const occupied = data.occupied || [];
 			const selected = data.selected;
 			

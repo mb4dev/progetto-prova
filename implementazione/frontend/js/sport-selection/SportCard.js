@@ -63,7 +63,9 @@ export default class SportCard extends View {
 				id: this.#id,
 				title: this.#title,
 				price: this.#price,
-				unit: this.#unit
+				unit: this.#unit,
+                type: this.getAttribute("data-type"),
+                schedule: this.getAttribute("data-schedule") ? JSON.parse(this.getAttribute("data-schedule")) : null
 			});
 
 			eventBus.notify(this.#event);

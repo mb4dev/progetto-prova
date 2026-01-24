@@ -19,7 +19,6 @@
         }
         
         display(data){
-
             if(!data.items){
                 throw new Error("Data non contiente oggetti items");
             }
@@ -38,6 +37,12 @@
                 card.setAttribute('data-title', item.name);
                 card.setAttribute('data-image', item.img);
                 card.setAttribute('data-price', item.price);
+                card.setAttribute('data-type', this._config.itemType);
+                
+                if(item.schedule){
+                    card.setAttribute('data-schedule', JSON.stringify(item.schedule));
+                }
+
                 grid.appendChild(card);
             });
         }
