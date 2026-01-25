@@ -6,7 +6,7 @@ import SportSelectionPresenter from "../sport-selection/SportSelectionPresenter.
 import CalendarView from "../prenotazione/CalendarView.js";
 import ItemType from "./ItemType.js"
 import CalendarPresenterV2 from "../prenotazione/CalendarPresenterV2.js";
-import SlotLoadStrategy from "../strategy/SlotLoadStrategy.js";
+import CourseSlotLoadStrategy from "../strategy/CourseSlotLoadStrategy.js";
 import FieldsLoadStrategy from "../strategy/FieldsLoadStrategy.js";
 import CoursesLoadStrategy from "../strategy/CoursesLoadStrategy.js";
 import SubscriptionLoadStrategy from "../strategy/SubscriptionLoadStrategy.js";
@@ -140,7 +140,7 @@ export default class ViewFactory {
 	static #createCalendarView(){
 		const view  = new CalendarView();
 		const presenter = new CalendarPresenterV2(view, {
-			loadStrategy: new SlotLoadStrategy(),
+			loadStrategy: new CourseSlotLoadStrategy(),
 			onConfirmCommand: new NavigateCommand(Routes.MAIN_PAYMENT_SINGLE),
 		})
 		return {view : view, presenter: presenter};

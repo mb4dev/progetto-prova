@@ -1,5 +1,7 @@
-	<?php
-	
+<?php
+
+namespace core\model;
+
 final class Response {
 	public function __construct(
 	public int $code,

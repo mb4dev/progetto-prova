@@ -1,5 +1,9 @@
 <?php 
 
+namespace core\interfaces;
+
+use core\model\Response;
+
 abstract class Controller {
 	public function __construct() {}
 	

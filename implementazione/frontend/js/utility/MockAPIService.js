@@ -120,6 +120,52 @@ export class SuccessAPIService extends APIService {
 			new Response(200, true, result, "Slot occupati recuperati con successo")
 		);
 	}
+/*
+	getOccupiedSlotsForWeek(startDateString, resourceId = null, resourceType = null) {
+
+		if(resourceId && resourceType){
+			const body = {
+				resource_id: resourceId,
+				resource_type: resourceType,
+				start_day: startDateString
+			}
+			return fetch("/bookings/occupied_slots", {
+				method: "POST",
+				headers: {
+					"Content-Type": "application/json"
+				},
+				body: JSON.stringify(body)
+			}).then(response => response.json())
+		}
+
+
+		const startDate = new Date(startDateString);
+		startDate.setHours(0, 0, 0, 0);
+		
+		if (isNaN(startDate.getTime())) {
+			return Promise.resolve(
+				new Response(400, false, null, "Data non valida")
+			);
+		}
+		
+		const result = {};
+		
+		for (let i = 0; i < 7; i++) {
+			const current = new Date(startDate);
+			current.setDate(startDate.getDate() + i);
+			
+			const dateKey = current.toISOString().split("T")[0];
+			const slots = this.#generateTimeSlots();
+			const occupied = this.#generateOccupiedSlots(slots, dateKey);
+			
+			result[dateKey] = occupied;
+		}
+		
+		return Promise.resolve(
+			new Response(200, true, result, "Slot occupati recuperati con successo")
+		);
+	}
+		*/
 	
 	#generateTimeSlots(start = 8, end = 20, increment = 30){
 		const startH = start * 60;

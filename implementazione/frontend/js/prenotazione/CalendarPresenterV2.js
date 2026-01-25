@@ -29,7 +29,11 @@ export default class CalendarPresenterV2 extends Presenter {
             this.#state.selectedDate = data.selectedDate;
             this.#state.selectedSlots.clear();
 
-            this._config.loadStrategy.load({date: data.selectedDate}).then(result => {
+            this._config.loadStrategy.load({
+                date: data.selectedDate,
+                resourceId: this.#state.selectedSport.id,
+                resourceType: this.#state.selectedSport.type
+            }).then(result => {
                 console.log("caricati dati per la data ", data.selectedDate)
                 const allSlots = result.data || {};
                 this.#state.occupiedSlots = allSlots[data.selectedDate] || []; 

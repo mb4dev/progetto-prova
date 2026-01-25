@@ -1,38 +1,25 @@
 <?php
 
-class SportsController extends Controller {
+namespace sport;
 
-	public function __construct(
+use core\CommandController;
+use commands\sports\GetSportsCommand;
+use core\middlewares\AuthMiddleware;
 
-		private SportsService $sportsService
-	) {
+class SportsController extends CommandController {
+
+	public function __construct() {
 		parent::__construct();
 	}
-
 
 	public function getMiddlewares() : array {
 		return [
 			AuthMiddleware::class
 		];
 	}
-	
 
-	public function resolveAction(string $action): Response{
-		return match (strtolower($action)) {
-			"" => $this->getSports(),
-			default => new Response(404, false, ["error" => "Action non trovata"])
-		};
+	protected function registerCommands(): void {
+		$this->registry->register('', new GetSportsCommand()); // Default action
+		$this->registry->register('get_sports', new GetSportsCommand()); // Alternative name
 	}
-
-	private function getSports() : Response{
-		if($_SERVER['REQUEST_METHOD'] !== "GET") {
-			return new Response(405, false, ["error" => "Metodo non consentito"]);
-		}
-		$type = $_GET['type'] ?? null;
-		if (!$type || !in_array($type, ['campo', 'corso'])) {
-			return new Response(400, false, ["error" => "Tipo non valido"]);
-		}
-		return $this->sportsService->getSportsByType($type);
-	}
-
 }
