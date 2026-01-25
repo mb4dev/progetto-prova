@@ -2,7 +2,9 @@
 
 abstract class BookingsRepository extends Repository {
 	abstract public function getFieldOccupiedSlots(int $fieldId, string $startDay, string $endDay) : array;
-	abstract public function getCourseOccupiedSlots(int $courseId, string $startDay, string $endDay) : array;
+	abstract public function getCourseBookingsCount(int $courseId, string $startDay, string $endDay) : array;
+
+	abstract public function getCourseSlots(int $courseId, string $startDay, string $endDay) : array;
 	
 	//abstract public function addBooking(int $userId, string $tipo, ?int $campoId, ?int $corsoId, string $data, string $slotStart, string $stato, int $quantity = 1) : int;
 	//abstract public function updateBookingStatus(int $bookingId, string $stato) : bool;
