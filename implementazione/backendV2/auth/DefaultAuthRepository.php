@@ -20,18 +20,17 @@ class DefaultAuthRepository extends AuthRepository {
 		$stmt->execute([$email]);
 
 		$user = $stmt->fetch(PDO::FETCH_ASSOC);
-		if ($user === false) {
+		if ($user === false)
 			throw new UserNotFoundException();
-		}
+		
 		return new User($user["id"], $user["name"], $user["email"], $user["password"], Role::from($user["role"]));
 	}
 
 	public function register(string $name, string $email, string $password, Role $role = Role::USER) : User{
 		$stmt = $this->db->prepare("SELECT id FROM centro_sportivo.utenti WHERE email = ?");
 		$stmt->execute([$email]);
-		if ($stmt->fetch()) {
+		if ($stmt->fetch()) 
 			throw new UserAlreadyExistsException();
-		}
 
 		$hashedPassword = password_hash($password, PASSWORD_DEFAULT);
 		$stmt = $this->db->prepare("INSERT INTO centro_sportivo.utenti (name, email, password, role) VALUES (?, ?, ?, ?)");

@@ -12,8 +12,6 @@ abstract class Command {
 	abstract public function getRequiredHttpMethod() : string;
 	
 	public function validateBody(array $body) : bool {
-		print_r($body);
-		echo "<br>";
 		$required = $this->getRequiredBodyParameters();
 		foreach ($required as $param) {
 			if(empty($body[$param]))
@@ -22,7 +20,6 @@ abstract class Command {
 		return true;
 	}
 	public function validateHttpMethod(string $method): bool{
-		echo "metodo: $method" . "<br>";
 		return $this->getRequiredHttpMethod() === strtolower($method);
 	}
 }

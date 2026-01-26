@@ -2,19 +2,26 @@
 
 namespace commands\auth;
 
+use auth\interfaces\AuthService;
 use core\http\HttpMethods;
 use core\http\Response;
+use core\model\Role;
 use core\utility\interfaces\Command;
 
 class RegisterCommand extends Command {
 
-	public function __construct(){
+	public function __construct(private AuthService $service){
 		parent::__construct();
 	}
 
 	public function execute(array $params, array $query = []) : Response{
-		echo "execute()" . "<br>";
-		return new Response(200, true, []);
+		$result = $this->service->register(
+			$params["name"], 
+			$params["email"], 
+			$params["password"], 
+			Role::tryFrom($params["role"])
+		);
+		return new Response(200, true, $result);
 	}
 
 	public function getRequiredHttpMethod(): string{

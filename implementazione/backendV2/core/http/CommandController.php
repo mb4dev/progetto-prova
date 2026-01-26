@@ -2,6 +2,7 @@
 
 namespace core\http;
 
+use core\exceptions\ValidationException;
 use core\utility\CommandRegistry;
 use Exception;
 
@@ -23,74 +24,20 @@ abstract class CommandController {
 		return $_POST;
 	}
 
-    public function resolveAction(string $action): Response{
-        try {
-            $command = $this->registry->getCommand($action);
+    public function resolveAction(string $action): Response{    
+        $command = $this->registry->getCommand($action);
 
-            $httpMethod = $_SERVER["REQUEST_METHOD"] ?? "GET";
-            if(!$command->validateHttpMethod($httpMethod))
-                return new Response(405, false, ["errore" => "metodo non consentito"]);
-
-            $body = $this->getBody();
-            if(!$command->validateBody($body)){
-                $requiredParams = $command->getRequiredBodyParameters();
-                return new Response(400, false, [
-                    "error" => "body malformato",
-                    "required_parameters" => $requiredParams]);
-            }
-            return $command->execute([]);
-        }
-        catch(Exception $e){
-            return new Response(500, false, ["error" => $e->getMessage()]);
-        }
-		/*
-        try {
-            $command = $this->registry->getCommand($action);
+        $httpMethod = $_SERVER["REQUEST_METHOD"] ?? "GET";
+        if(!$command->validateHttpMethod($httpMethod))
+            throw new ValidationException("metodo $httpMethod non consentito", 400);
             
-            if (!$command) {
-                return new Response(404, false, [
-                    "error" => "Action non trovata",
-                    "available_actions" => $this->registry->getRegisteredActions()
-                ]);
-            }
-
-            $httpMethod = $_SERVER['REQUEST_METHOD'] ?? 'GET';
-            
-            if (!$command->validateHttpMethod($httpMethod)) {
-                return new Response(405, false, [
-                    "error" => "Metodo HTTP non consentito",
-                    "method" => $httpMethod,
-                    "allowed_methods" => $this->getAllowedMethodsForCommand($command)
-                ]);
-            }
-
-            $body = $this->getBody();
-            $query = $_GET;
-
-            // Validate required parameters
-            $requiredParams = $command->getRequiredParameters();
-            $validationResult = $this->validator->validateRequired($body, $requiredParams);
-            
-            if (!$validationResult['valid']) {
-                return new Response(400, false, [
-                    "error" => "Parametri mancanti",
-                    "missing_parameters" => $validationResult['missing']
-                ]);
-            }
-
-            // Set default values for optional parameters
-            $optionalParams = $command->getOptionalParameters();
-            foreach ($optionalParams as $param => $defaultValue) {
-                if (!isset($body[$param])) {
-                    $body[$param] = $defaultValue;
-                }
-            }
-
-            return $command->execute($body, $query);
-
-        } catch (\Exception $e) {
-            return GlobalExceptionHandler::handle($e);
+        $body = $this->getBody();
+        if(!$command->validateBody($body)){
+            $requiredParams = implode(', ', $command->getRequiredBodyParameters());
+            throw new ValidationException("body malformato, parametri richiesti $requiredParams", 400);
         }
-			*/
+        
+        $queryParams = $_GET;
+        return $command->execute($body, $queryParams);
     }
 }                                           

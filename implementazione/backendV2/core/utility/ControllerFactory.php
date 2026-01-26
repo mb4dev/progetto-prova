@@ -1,9 +1,14 @@
 <?php
 
-namespace core\http;
+namespace core\utility;
 
 
 use auth\AuthController;
+use auth\DefaultAuthRepository;
+use auth\DefaultAuthService;
+use core\http\CommandController;
+use core\http\ControllerTypes;
+use core\utility\interfaces\JwtTokenManager;
 use PDO;
 use InvalidArgumentException;
 
@@ -23,6 +28,14 @@ final class ControllerFactory {
 	}
 
 	private function createAuthController() : CommandController{
-		return new AuthController();
+		$repository = new DefaultAuthRepository($this->dbConnection);
+
+		$temp = new class implements JwtTokenManager {
+			public function encode(){}
+			public function decode(){}
+		};
+
+		$service = new DefaultAuthService($repository, new DefaultPasswordManager(), $temp);
+		return new AuthController($service);
 	}
 }

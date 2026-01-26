@@ -1,10 +1,10 @@
 <?php
 
 namespace core\exceptions;
-use Exception;
 
-class UserNotFoundException extends Exception {
-	public function __construct($message = "Utente non trovato") {
-		parent::__construct($message);
+
+class UserNotFoundException extends CustomException {
+	public function __construct() {
+		parent::__construct("Utente non trovato", 404);
 	}
 }

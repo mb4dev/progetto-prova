@@ -1,10 +1,9 @@
 <?php 
 
 namespace core\exceptions;
-use Exception;
 
-class UserAlreadyExistsException extends Exception {
-	public function __construct($message = "Utente già registrato") {
-		parent::__construct($message);
+class UserAlreadyExistsException extends CustomException {
+	public function __construct() {
+		parent::__construct("Utente già registrato", 409);
 	}
 }
