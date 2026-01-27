@@ -2,8 +2,8 @@
 
 namespace core\http\interfaces;
 
+use core\factory\ControllerFactory;
 use core\http\Response;
-use core\utility\ControllerFactory;
 use core\utility\interfaces\URLParser;
 
 abstract class Router {
