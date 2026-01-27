@@ -1,9 +1,9 @@
 <?php
+require_once("./autoload.php");
 
 use auth\AuthControllerCreator;
 use core\factory\ControllerCreatorRegistry;
 
-require_once("./autoload.php");
 
 use core\factory\ControllerFactory;
 use core\http\ControllerTypes;

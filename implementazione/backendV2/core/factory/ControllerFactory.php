@@ -8,6 +8,8 @@ use PDO;
 final class ControllerFactory {
 	public function __construct(private PDO $dbConnection, private ControllerCreatorRegistry $registry) {}
 	public function create($type) : CommandController{
-		return $this->registry->get($type)->create($this->dbConnection);
+		$controllerCreator = $this->registry->get($type);
+
+		return $controllerCreator->create($this->dbConnection);
 	}
 }

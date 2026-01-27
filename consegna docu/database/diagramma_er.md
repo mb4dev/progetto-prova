@@ -5,7 +5,7 @@ erDiagram
     utenti {
         int id PK
         varchar name
-        varchar email UK
+        varchar email
         varchar password
         varchar role
         timestamp created_at
@@ -25,6 +25,12 @@ erDiagram
         int capacity
     }
 
+    orari_corsi {
+        int id PK
+        int corso_id FK
+        time orario
+    }
+
     prenotazioni {
         int id PK
         int user_id FK
@@ -33,6 +39,8 @@ erDiagram
         int corso_id FK
         date data
         time slot_start
+        varchar stato
+        int quantity
     }
 
     abbonamenti {
@@ -49,6 +57,7 @@ erDiagram
         int abbonamento_id FK
         date data_inizio
         date data_fine
+        boolean attivo
     }
 
     pagamenti {
@@ -60,35 +69,32 @@ erDiagram
     }
 
     pagamenti_abbonamenti {
-        int pagamento_id PK,FK
+        int pagamento_id PK FK
         int abbonamento_utente_id FK
     }
 
     pagamenti_prenotazioni {
-        int pagamento_id FK
-        int prenotazione_id FK
+        int pagamento_id PK FK
+        int prenotazione_id PK FK
     }
 
-    utenti ||--o{ prenotazioni : "effettua"
-    utenti ||--o{ abbonamenti_utenti : "acquista"
-    utenti ||--o{ pagamenti : "paga"
+    %% Relazioni
+    utenti ||--o{ prenotazioni : "fa"
+    utenti ||--o{ abbonamenti_utenti : "ha"
+    utenti ||--o{ pagamenti : "effettua"
 
-    campi ||--o{ prenotazioni : "prenota"
-    corsi ||--o{ prenotazioni : "prenota"
+    campi ||--o{ prenotazioni : "prenotato in"
+    
+    corsi ||--o{ orari_corsi : "ha orari"
+    corsi ||--o{ prenotazioni : "prenotato come"
 
-    abbonamenti ||--o{ abbonamenti_utenti : "sottoscrive"
+    prenotazioni ||--o{ pagamenti_prenotazioni : "pagato in"
 
-    prenotazioni ||--o{ pagamenti_prenotazioni : "pagata da"
-    abbonamenti_utenti ||--o{ pagamenti_abbonamenti : "pagata da"
+    abbonamenti ||--o{ abbonamenti_utenti : "assegnato a"
 
-    pagamenti ||--|| pagamenti_abbonamenti : "riferisce"
-    pagamenti ||--o{ pagamenti_prenotazioni : "riferisce"
+    abbonamenti_utenti ||--o{ pagamenti_abbonamenti : "pagato con"
+
+    pagamenti ||--o{ pagamenti_abbonamenti : "per abbonamento"
+    pagamenti ||--o{ pagamenti_prenotazioni : "per prenotazione"
 ```
 
-## Legenda
-- **PK**: Primary Key
-- **FK**: Foreign Key
-- **UK**: Unique Key (Chiave Unica)
-- **||--o{**: Relazione uno a molti
-- **}o--||**: Relazione molti a uno
-- **||--||**: Relazione uno a uno

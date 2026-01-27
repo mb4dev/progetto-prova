@@ -1,30 +1,31 @@
 # Architettura Base
 
 Questo documento descrive l'architettura generale del sistema. Le interfacce e classi astratte sono documentate in file separati nella directory `architettura_base/`.
-I design pattern utilizzati sono documentati in [PATTERNS.MD](../architettura_base/PATTERNS.md)
+I design pattern utilizzati sono documentati in:
+- [Design Pattern Frontend](design_pattern/frontend.md)
+- [Design Pattern Backend](design_pattern/backend.md)
 
 ## Interfacce e Classi Astratte
 
 Per maggiori dettagli su ciascuna interfaccia o classe astratta, consultare i file dedicati:
 
 ### Backend
-- [Router](../architettura_base/Router.md) - Classe astratta per il routing delle richieste HTTP
-- [URLParser](../architettura_base/URLParser.md) - Interfaccia per il parsing delle URL
-- [ResponseStrategy](../architettura_base/ResponseStrategy.md) - Interfaccia per l'invio delle risposte (Strategy Pattern)
-- [Controller](../architettura_base/Controller.md) - Classe astratta per i controller
-- [Repository](../architettura_base/Repository.md) - Classe astratta per l'accesso ai dati
+- [Router](architettura_base/Router.md) - Classe astratta per il routing delle richieste HTTP (`DefaultRouter`)
+- [URLParser](architettura_base/URLParser.md) - Interfaccia per il parsing delle URL
+- [Controller](architettura_base/Controller.md) - Classe astratta per i controller (`CommandController`)
+- [Repository](architettura_base/Repository.md) - Classe astratta per l'accesso ai dati
 
 ### Frontend
-- [View](../architettura_base/View.md) - Interfaccia per le view (MVP Pattern)
-- [Presenter](../architettura_base/Presenter.md) - Classe astratta per i presenter (MVP Pattern)
-- [Observer](../architettura_base/Observer.md) - Interfaccia per il pattern Observer
-- [APIService](../architettura_base/APIService.md) - Interfaccia per le chiamate API
+- [View](architettura_base/View.md) - Interfaccia per le view (MVP Pattern)
+- [Presenter](architettura_base/Presenter.md) - Classe astratta per i presenter (MVP Pattern)
+- [Observer](architettura_base/Observer.md) - Interfaccia per il pattern Observer
+- [APIService](architettura_base/APIService.md) - Interfaccia per le chiamate API
 
 ---
 
 I seguenti diagrammi mostrano come viene gestita una chiamata HTTP dal backend. 
-Per la creazione del controller associato alla chiamata viene utilizzata una factory.
-Per motivi di debug, per l'invio della risposta al client viene utilizzato il design pattern "Strategy".
+Per la creazione del controller associato alla chiamata viene utilizzata una factory che delega a dei creator registrati.
+Ogni controller gestisce diverse azioni tramite il pattern **Command**.
 
 ## Backend - Flusso Request/Response
 
@@ -38,7 +39,10 @@ sequenceDiagram
     participant Router
     participant URLParser
     participant ControllerFactory
-    participant Controller
+    participant Registry as ControllerCreatorRegistry
+    participant Creator as ControllerCreator
+    participant Controller as CommandController
+    participant Command
     participant ResponseStrategy
 
     Client ->>+ Router: HTTP Request
@@ -46,9 +50,15 @@ sequenceDiagram
     URLParser -->>- Router: ParsedURL
 
     Router ->>+ ControllerFactory: create(controllerType)
-    ControllerFactory -->>- Router: Controller
+    ControllerFactory ->>+ Registry: get(type)
+    Registry -->>- ControllerFactory: ControllerCreator
+    ControllerFactory ->>+ Creator: create(db)
+    Creator -->>- ControllerFactory: CommandController
+    ControllerFactory -->>- Router: CommandController
 
     Router ->>+ Controller: resolveAction(action)
+    Controller ->>+ Command: execute(body, query)
+    Command -->>- Controller: Response
     Controller -->>- Router: Response
 
     Router ->>+ ResponseStrategy: response(Response)
@@ -62,6 +72,7 @@ classDiagram
 
 class Router {
     <<abstract>>
+    +dispatch()*
 }
 
 class DefaultRouter {
@@ -69,24 +80,34 @@ class DefaultRouter {
 }
 
 class URLParser {
-    <<URLParser>>
+    <<interface>>
+    +parse() ParsedURL
 }
 
 class ResponseStrategy {
-    <<ResponseStrategy>>
+    <<interface>>
+    +response(Response)
 }
 
 class ControllerFactory {
     -dbConnection: PDO
-    +create(type: string) Controller
+    -registry: ControllerCreatorRegistry
+    +create(type: ControllerTypes) CommandController
+}
+
+class CommandController {
+    <<abstract>>
+    #registry: CommandRegistry
+    #registerCommands()* void
+    +resolveAction(action: string) Response
 }
 
 Router <|-- DefaultRouter
 Router --> URLParser
 Router --> ControllerFactory
 Router --> ResponseStrategy
-ControllerFactory --> PDO
-ControllerFactory --> Controller
+ControllerFactory --> ControllerCreatorRegistry
+ControllerFactory ..> CommandController : crea
 ```
 
 ---
@@ -171,70 +192,3 @@ sequenceDiagram
 ## Model - Classi Comuni
 
 I seguenti model rappresentano le entità principali del sistema e sono utilizzati in diversi casi d'uso.
-
-```mermaid
-classDiagram
-
-class User {
-    +id: int
-    +name: string
-    +email: string
-    +password: string
-    +role: string
-    +createdAt: string
-}
-
-class Field {
-    +id: int
-    +name: string
-    +sport: string
-    +pricePerHour: float
-    +openingTime: string
-    +closingTime: string
-}
-
-class Slot {
-    +startTime: string
-    +endTime: string
-    +available: bool
-    +fieldId: int
-    +date: string
-}
-
-class Booking {
-    +id: int
-    +fieldId: int
-    +userId: int
-    +startTime: string
-    +endTime: string
-    +date: string
-    +status: string
-    +amount: float
-    +createdAt: string
-}
-
-class Payment {
-    +id: int
-    +bookingId: int
-    +userId: int
-    +amount: float
-    +status: string
-    +method: string
-    +transactionId: string
-    +createdAt: string
-}
-
-class Response {
-    +code: int
-    +success: bool
-    +data: mixed
-    +message: string
-}
-
-Booking --> Field : references
-Booking --> User : references
-Payment --> Booking : references
-Payment --> User : references
-```
-
----

@@ -36,7 +36,8 @@ class DefaultAuthService implements AuthService {
 	}
 
 	public function register(string $name, string $email, string $password, Role $role = Role::USER) : array{
-		$user = $this->authRepository->register($name, $email, $password, $role);
+		$hashedPassword = $this->passwordManager->hash($password);
+		$user = $this->authRepository->register($name, $email, $hashedPassword, $role);
 		$token = $this->jwtTokenManager->encode();
 		
 		return [
