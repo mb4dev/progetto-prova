@@ -10,7 +10,7 @@ use core\utility\interfaces\JwtTokenManager;
 
 final class AuthControllerCreator implements ControllerCreator {
 	public function create(PDO $dbConnection): CommandController{
-		$repository = new DefaultAuthRepository($dbConnection);
+		$repository = new PostgreAuthRepository($dbConnection);
 
 		$temp = new class implements JwtTokenManager{
 			public function encode(){}

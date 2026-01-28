@@ -2,9 +2,7 @@
 
 namespace core\http;
 
-use core\exceptions\ValidationException;
 use core\utility\CommandRegistry;
-use Exception;
 
 abstract class CommandController {
     protected CommandRegistry $registry;
@@ -24,20 +22,18 @@ abstract class CommandController {
 		return $_POST;
 	}
 
-    public function resolveAction(string $action): Response{    
+    public function resolveAction(string $action): Response{ 
         $command = $this->registry->getCommand($action);
-
+        
         $httpMethod = $_SERVER["REQUEST_METHOD"] ?? "GET";
-        if(!$command->validateHttpMethod($httpMethod))
-            throw new ValidationException("metodo $httpMethod non consentito", 400);
-            
+        $command->validateHttpMethod($httpMethod);
+        
         $body = $this->getBody();
-        if(!$command->validateBody($body)){
-            $requiredParams = implode(', ', $command->getRequiredBodyParameters());
-            throw new ValidationException("body malformato, parametri richiesti $requiredParams", 400);
-        }
+        $command->validateBody($body);
         
         $queryParams = $_GET;
+        $command->validateQueryParameters($queryParams);
+
         return $command->execute($body, $queryParams);
     }
 }                                           

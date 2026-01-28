@@ -9,7 +9,7 @@ use core\model\Role;
 use core\model\User;
 use PDO;
 
-class DefaultAuthRepository extends AuthRepository {
+class PostgreAuthRepository extends AuthRepository {
 
 	public function __construct(PDO $connection) {
 		parent::__construct($connection);

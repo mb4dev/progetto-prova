@@ -23,6 +23,10 @@ class LoginCommand extends Command {
 		return HttpMethods::POST->value;
 	}
 
+	public function getRequiredQueryParameters(): array{
+		return [];
+	}
+	
 	public function getRequiredBodyParameters(): array{
 		return ["email", "password"];
 	}

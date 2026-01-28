@@ -1,7 +1,9 @@
 <?php
+
 require_once("./autoload.php");
 
 use auth\AuthControllerCreator;
+use resources\ResourceControllerCreator;
 use core\factory\ControllerCreatorRegistry;
 
 
@@ -21,6 +23,7 @@ $connection->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 $registry = new ControllerCreatorRegistry();
 
 $registry->register(ControllerTypes::AUTH, new AuthControllerCreator());
+$registry->register(ControllerTypes::RESOURCE, new ResourceControllerCreator());
 
 $parser = new DefaultURLParser();
 $factory = new ControllerFactory($connection, $registry);
