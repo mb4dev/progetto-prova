@@ -3,6 +3,7 @@
 namespace auth;
 
 use auth\interfaces\AuthRepository;
+use core\exceptions\ResourceNotFoundException;
 use core\exceptions\UserAlreadyExistsException;
 use core\exceptions\UserNotFoundException;
 use core\model\Role;
@@ -15,13 +16,22 @@ class PostgreAuthRepository extends AuthRepository {
 		parent::__construct($connection);
 	}
 
+	public function getUserById(int $id): User{
+		$stmt = $this->db->prepare("SELECT * FROM centro_sportivo.utenti WHERE id = ?");
+		$stmt->execute([$id]);
+		$user = $stmt->fetch(PDO::FETCH_ASSOC);
+		if ($user === false)
+			throw new ResourceNotFoundException();
+		
+		return new User($user["id"], $user["name"], $user["email"], $user["password"], Role::from($user["role"]));
+	}
+
 	public function login(string $email, string $password) : User{
 		$stmt = $this->db->prepare("SELECT * FROM centro_sportivo.utenti WHERE email = ?");
 		$stmt->execute([$email]);
-
 		$user = $stmt->fetch(PDO::FETCH_ASSOC);
 		if ($user === false)
-			throw new UserNotFoundException();
+			throw new ResourceNotFoundException();
 		
 		return new User($user["id"], $user["name"], $user["email"], $user["password"], Role::from($user["role"]));
 	}
