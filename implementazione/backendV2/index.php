@@ -3,6 +3,7 @@
 require_once("./autoload.php");
 
 use auth\AuthControllerCreator;
+use booking\BookingControllerCreator;
 use resources\ResourceControllerCreator;
 use core\factory\ControllerCreatorRegistry;
 
@@ -24,6 +25,7 @@ $registry = new ControllerCreatorRegistry();
 
 $registry->register(ControllerTypes::AUTH, new AuthControllerCreator());
 $registry->register(ControllerTypes::RESOURCE, new ResourceControllerCreator());
+$registry->register(ControllerTypes::BOOKING, new BookingControllerCreator());
 
 $parser = new DefaultURLParser();
 $factory = new ControllerFactory($connection, $registry);

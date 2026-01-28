@@ -3,8 +3,8 @@
 namespace auth;
 
 use auth\interfaces\AuthService;
-use commands\auth\LoginCommand;
-use commands\auth\RegisterCommand;
+use auth\commands\LoginCommand;
+use auth\commands\RegisterCommand;
 use core\http\CommandController;
 
 final class AuthController extends CommandController {

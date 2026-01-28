@@ -3,7 +3,7 @@
 namespace core\exceptions;
 
 class ResourceNotFoundException extends CustomException {
-	public function __construct() {
-		parent::__construct("Risorsa non trovata", 404);
+	public function __construct(string $message = "Risorsa non esistente nel database") {
+		parent::__construct($message, 404);
 	}
 }

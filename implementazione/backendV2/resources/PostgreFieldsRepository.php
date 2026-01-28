@@ -26,7 +26,7 @@ final class PostgreFieldsRepository extends FieldsRepository {
 		$field = $stmt->fetch(PDO::FETCH_ASSOC);
 
 		if (!$field) {
-			throw new ResourceNotFoundException();
+			throw new ResourceNotFoundException("campo $id non esistente");
 		}
 
 		return $field;

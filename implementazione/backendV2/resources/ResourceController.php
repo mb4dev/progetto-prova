@@ -2,7 +2,7 @@
 
 namespace resources;
 
-use commands\resources\GetAllResourceCommand;
+use resources\commands\GetAllResourceCommand;
 use core\http\CommandController;
 use resources\interfaces\ResourceService;
 

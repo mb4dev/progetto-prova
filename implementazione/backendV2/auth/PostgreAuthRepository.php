@@ -21,7 +21,7 @@ class PostgreAuthRepository extends AuthRepository {
 		$stmt->execute([$id]);
 		$user = $stmt->fetch(PDO::FETCH_ASSOC);
 		if ($user === false)
-			throw new ResourceNotFoundException();
+			throw new ResourceNotFoundException("utente $id non esistente");
 		
 		return new User($user["id"], $user["name"], $user["email"], $user["password"], Role::from($user["role"]));
 	}
@@ -31,7 +31,7 @@ class PostgreAuthRepository extends AuthRepository {
 		$stmt->execute([$email]);
 		$user = $stmt->fetch(PDO::FETCH_ASSOC);
 		if ($user === false)
-			throw new ResourceNotFoundException();
+			throw new ResourceNotFoundException("utente non esistente");
 		
 		return new User($user["id"], $user["name"], $user["email"], $user["password"], Role::from($user["role"]));
 	}
