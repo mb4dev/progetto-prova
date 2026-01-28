@@ -19,7 +19,7 @@ final class GetAllResourceCommand extends Command {
 		$type = ResourceType::tryFrom($query["type"]);
 		if ($type === null) throw new InvalidSportTypeException();
 		
-		$result = $this->service->getResourceByType($type); 
+		$result = $this->service->getAllResourcesByType($type); 
 		return new Response(200, true, $result);
 	}
 

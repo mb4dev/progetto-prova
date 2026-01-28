@@ -10,7 +10,7 @@ final class StandardResourceService implements ResourceService {
 
 	}
 
-	public function getResourceByType(ResourceType $type) : array{
+	public function getAllResourcesByType(ResourceType $type) : array{
 	
 		return match($type){
 			ResourceType::FIELD => $this->repository->getFields(),
