@@ -43,4 +43,8 @@ class RegisterCommand extends Command {
 	public function getRequiredRoles(): array{
 		return [Role::USER->value, Role::ADMIN->value];
 	}
+
+	public function getMiddleware(): array {
+		return []; // Register non richiede middleware
+	}
 }

@@ -43,4 +43,9 @@ final class GetAllResourceCommand extends Command {
 	public function getRequiredRoles(): array{
 		return [Role::USER->value, Role::ADMIN->value];
 	}
+
+	public function getMiddleware(): array {
+		// Il middleware di autenticazione verrà iniettato dal container
+		return [];
+	}
 }

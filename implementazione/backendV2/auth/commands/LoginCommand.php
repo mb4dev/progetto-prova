@@ -38,4 +38,8 @@ class LoginCommand extends Command {
 	public function getRequiredRoles(): array{
 		return [Role::USER->value, Role::ADMIN->value];
 	}
+
+	public function getMiddleware(): array {
+		return []; // Login non richiede middleware
+	}
 }

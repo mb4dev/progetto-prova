@@ -2,21 +2,36 @@
 
 namespace core\http;
 
-use auth\interfaces\AuthRepository;
-use core\exceptions\AuthException;
 use core\utility\CommandRegistry;
-use core\utility\interfaces\JwtTokenService;
 
+/**
+ * Controller base per gestire i command
+ * 
+ * Questo controller:
+ * 1. Gestisce il registry dei command
+ * 2. Risolve l'action richiesta
+ * 3. Valida la request (HTTP method, body, query params)
+ * 4. Esegue i middleware del command
+ * 5. Esegue il command
+ */
 abstract class CommandController {
     protected CommandRegistry $registry;
 
-    public function __construct(private AuthRepository $authRepo, private JwtTokenService $tokenService){
+    public function __construct() {
         $this->registry = new CommandRegistry();
         $this->registerCommands();
     }
 
+    /**
+     * Registra i command specifici del controller
+     * Deve essere implementato dalle classi figlie
+     */
     abstract protected function registerCommands(): void;
 
+    /**
+     * Ottiene il body della request
+     * Supporta sia JSON che form data
+     */
     private function getBody(): array {
 		if ($_SERVER['CONTENT_TYPE'] ?? '' === 'application/json') {
 			$input = file_get_contents('php://input');
@@ -25,49 +40,40 @@ abstract class CommandController {
 		return $_POST;
 	}
 
-    public function resolveAction(string $action): Response{ 
+    /**
+     * Risolve e esegue l'action richiesta
+     * 
+     * @param string $action Nome dell'action da eseguire
+     * @return Response La risposta del command
+     */
+    public function resolveAction(string $action): Response { 
         $command = $this->registry->getCommand($action);
         
+        // Valida HTTP method
         $httpMethod = $_SERVER["REQUEST_METHOD"] ?? "GET";
         $command->validateHttpMethod($httpMethod);
         
+        // Ottiene e valida body e query params
         $body = $this->getBody();
         $command->validateBody($body);
         
         $queryParams = $_GET;
         $command->validateQueryParameters($queryParams);
 
-        if($command->requiresAuthentication()){
-            $this->authenticate();
+        // Crea il contesto della request
+        $context = [
+            'body' => $body,
+            'query' => $queryParams,
+        ];
+
+        // Esegue i middleware del command
+        $middleware = $command->getMiddleware();
+        foreach ($middleware as $mw) {
+            $context = $mw->handle($context);
         }
 
-        return $command->execute($body, $queryParams);
+        // Esegue il command passando il contesto aggiornato
+        return $command->execute($context['body'], $context['query']);
     }
-
-    private function authenticate(){
-        $token = $this->getToken();
-        if(!$token) throw new AuthException("token mancante", 401);
-        
-        $payload = $this->tokenService->decode($token);
-        $user = $this->authRepo->getUserById($payload->id); 
-        return $user;
-    }
-
-    private function getToken() : ?string{
-        $header = trim($_SERVER["HTTP_AUTHORIZATION"] ?? "");
-        if($header === "") return null;
-
-        $headerParts = explode(" ", $header);
-        if(count($headerParts) !== 2) return null;
-        
-        [$scheme, $token] = $headerParts;
-
-        if(strtolower($scheme) !== "bearer") return null;
-
-        return $token;   
-    }
-
 }        
-
-
 

@@ -15,6 +15,13 @@ abstract class Command {
 	abstract public function requiresAuthentication() : bool;
 	abstract public function getRequiredRoles() : array;
 	
+	/**
+	 * Restituisce i middleware da eseguire prima del command
+	 * 
+	 * @return array Array di istanze Middleware
+	 */
+	abstract public function getMiddleware(): array;
+	
 	public function validateBody(array $body): void {
 		$this->validate($body, $this->getRequiredBodyParameters(), 'body');
 	}
