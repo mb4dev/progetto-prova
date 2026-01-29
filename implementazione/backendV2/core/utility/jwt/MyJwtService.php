@@ -1,7 +1,7 @@
 <?php
 
 namespace core\utility\jwt;
-use core\exceptions\InvalidTokenException;
+use core\exceptions\CustomException;
 use core\model\Role;
 use core\model\User;
 use core\utility\interfaces\JwtTokenService;
@@ -48,21 +48,21 @@ final class MyJwtService implements JwtTokenService {
 	public function decode(string $token): User{
 		$parts = explode(".", $token);
 
-		if(count($parts) !== 3) throw new InvalidTokenException('Formato token non valido', 401);
+		if(count($parts) !== 3) throw new CustomException('Formato token non valido', 401);
 		
 		[$encodedHeader, $encodedPayload, $encodedSignature] = $parts;
 
 		$expectedSignature = $this->sign("$encodedHeader.$encodedPayload");
-		if(!hash_equals($expectedSignature, $encodedSignature)) throw new InvalidTokenException('Firma token non valida', 401);
+		if(!hash_equals($expectedSignature, $encodedSignature)) throw new CustomException('Firma token non valida', 401);
 
 		$payloadJson = $this->base64UrlDecode($encodedPayload);
 		$payload = json_decode($payloadJson, true);
 
-		if (!$payload) throw new InvalidTokenException('Payload token non valido', 401);
+		if (!$payload) throw new CustomException('Payload token non valido', 401);
 		
-		if (isset($payload['exp']) && time() > $payload['exp']) throw new InvalidTokenException('Token scaduto', 401);
+		if (isset($payload['exp']) && time() > $payload['exp']) throw new CustomException('Token scaduto', 401);
 		
-		if (!isset($payload['data'])) throw new InvalidTokenException('Token malformato: dati mancanti', 401);
+		if (!isset($payload['data'])) throw new CustomException('Token malformato: dati mancanti', 401);
 		
 				$userData = $payload['data'];
 		
@@ -97,7 +97,7 @@ final class MyJwtService implements JwtTokenService {
 		
 		$decoded = base64_decode($base64);
 		
-		if ($decoded === false) throw new InvalidTokenException('Decodifica base64 fallita', 401);
+		if ($decoded === false) throw new CustomException('Decodifica base64 fallita', 401);
 		
 		return $decoded;
 	}

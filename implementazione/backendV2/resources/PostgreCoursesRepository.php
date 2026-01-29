@@ -4,7 +4,7 @@ namespace resources;
 
 use PDO;
 use resources\interfaces\CoursesRepository;
-use core\exceptions\ResourceNotFoundException;
+use core\exceptions\CustomException;
 
 final class PostgreCoursesRepository extends CoursesRepository {
 	public function __construct(PDO $connection) {
@@ -38,7 +38,7 @@ final class PostgreCoursesRepository extends CoursesRepository {
 		$rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
 		if (empty($rows)) {
-			throw new ResourceNotFoundException("corso $id non esistente");
+			throw new CustomException("corso $id non esistente", 404);
 		}
 
 		$courses = $this->mapRowsToCourses($rows);

@@ -3,7 +3,7 @@
 namespace core\middleware;
 
 use auth\interfaces\AuthRepository;
-use core\exceptions\AuthException;
+use core\exceptions\CustomException;
 use core\middleware\interfaces\Middleware;
 use core\utility\interfaces\JwtTokenService;
 
@@ -15,6 +15,7 @@ use core\utility\interfaces\JwtTokenService;
  * 2. Verifica e decodifica il token
  * 3. Carica l'utente dal database
  * 4. Aggiunge l'utente al contesto
+ * 5. Verifica che l'utente esista nel database
  */
 class AuthMiddleware implements Middleware {
     
@@ -28,13 +29,13 @@ class AuthMiddleware implements Middleware {
      * 
      * @param array $context Contesto della request
      * @return array Contesto con l'utente aggiunto
-     * @throws AuthException Se l'autenticazione fallisce
+     * @throws CustomException Se l'autenticazione fallisce
      */
     public function handle(array $context): array {
         $token = $this->getToken();
         
         if (!$token) {
-            throw new AuthException("Token mancante", 401);
+            throw new CustomException("Token mancante", 401);
         }
 
         // Decodifica il token JWT

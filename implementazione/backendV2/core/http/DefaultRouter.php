@@ -3,7 +3,7 @@
 namespace core\http;
 
 use core\di\Container;
-use core\exceptions\ValidationException;
+use core\exceptions\CustomException;
 use core\http\interfaces\ResponseStrategy;
 use core\http\interfaces\Router;
 use core\utility\interfaces\URLParser;
@@ -27,7 +27,7 @@ final class DefaultRouter extends Router {
 		$controllerType = ControllerTypes::tryFrom(strtolower($parsedURL->controller));
 
 		if ($controllerType === null) 
-			throw new ValidationException("controller non trovato", 404);
+			throw new CustomException("controller non trovato", 404);
 
 		// Ottiene il controller dal Container
 		// (registrato tramite il Factory Method del controller)

@@ -4,7 +4,7 @@ namespace resources;
 
 use PDO;
 use resources\interfaces\FieldsRepository;
-use core\exceptions\ResourceNotFoundException;
+use core\exceptions\CustomException;
 use core\utility\interfaces\Repository;
 
 final class PostgreFieldsRepository extends FieldsRepository {
@@ -26,7 +26,7 @@ final class PostgreFieldsRepository extends FieldsRepository {
 		$field = $stmt->fetch(PDO::FETCH_ASSOC);
 
 		if (!$field) {
-			throw new ResourceNotFoundException("campo $id non esistente");
+			throw new CustomException("campo $id non esistente", 404);
 		}
 
 		return $field;

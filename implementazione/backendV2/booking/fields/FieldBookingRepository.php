@@ -4,7 +4,7 @@ namespace booking\fields;
 
 use booking\BookingState;
 use booking\interfaces\BookingRepository;
-use core\exceptions\BookingConflictException;
+use core\exceptions\CustomException;
 use PDOException;
 use resources\ResourceType;
 use PDO;
@@ -29,7 +29,7 @@ final class FieldBookingRepository extends BookingRepository {
 		}
 		catch(PDOException $e){
 			if($e->getCode() === "23505"){
-				throw new BookingConflictException();
+				throw new CustomException("la risorsa scelta è già stata prenotata", 409);
 			}
 		}	
 	}

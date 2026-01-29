@@ -4,7 +4,7 @@ namespace auth;
 
 use auth\interfaces\AuthRepository;
 use auth\interfaces\AuthService;
-use core\exceptions\ValidationException;
+use core\exceptions\CustomException;
 use core\model\Role;
 use core\utility\interfaces\JwtTokenService;
 use core\utility\interfaces\PasswordManager;
@@ -20,7 +20,7 @@ class DefaultAuthService implements AuthService {
 		$user = $this->authRepository->login($email, $password);
 
 		if (!$this->passwordManager->validate($password, $user->password))
-			throw new ValidationException("password non valida", 401);
+			throw new CustomException("password non valida", 401);
 
 		$token = $this->tokenService->encode($user);
 

@@ -3,9 +3,7 @@
 namespace auth;
 
 use auth\interfaces\AuthRepository;
-use core\exceptions\ResourceNotFoundException;
-use core\exceptions\UserAlreadyExistsException;
-use core\exceptions\UserNotFoundException;
+use core\exceptions\CustomException;
 use core\model\Role;
 use core\model\User;
 use PDO;
@@ -21,7 +19,7 @@ class PostgreAuthRepository extends AuthRepository {
 		$stmt->execute([$id]);
 		$user = $stmt->fetch(PDO::FETCH_ASSOC);
 		if ($user === false)
-			throw new ResourceNotFoundException("utente $id non esistente");
+			throw new CustomException("utente $id non esistente", 404);
 		
 		return new User($user["id"], $user["name"], $user["email"], $user["password"], Role::from($user["role"]));
 	}
@@ -31,7 +29,7 @@ class PostgreAuthRepository extends AuthRepository {
 		$stmt->execute([$email]);
 		$user = $stmt->fetch(PDO::FETCH_ASSOC);
 		if ($user === false)
-			throw new ResourceNotFoundException("utente non esistente");
+			throw new CustomException("utente non esistente", 404);
 		
 		return new User($user["id"], $user["name"], $user["email"], $user["password"], Role::from($user["role"]));
 	}
@@ -40,7 +38,7 @@ class PostgreAuthRepository extends AuthRepository {
 		$stmt = $this->db->prepare("SELECT id FROM centro_sportivo.utenti WHERE email = ?");
 		$stmt->execute([$email]);
 		if ($stmt->fetch()) 
-			throw new UserAlreadyExistsException();
+			throw new CustomException("Utente già registrato", 409);
 
 		$stmt = $this->db->prepare("INSERT INTO centro_sportivo.utenti (name, email, password, role) VALUES (?, ?, ?, ?)");
 		$stmt->execute([$name, $email, $password, $role->value]);

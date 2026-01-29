@@ -2,7 +2,7 @@
 
 namespace resources\commands;
 
-use core\exceptions\InvalidSportTypeException;
+use core\exceptions\CustomException;
 use core\http\HttpMethods;
 use core\http\Response;
 use core\model\Role;
@@ -18,7 +18,7 @@ final class GetAllResourceCommand extends Command {
 	public function execute(array $params, array $query = []): Response{
 
 		$type = ResourceType::tryFrom($query["type"]);
-		if ($type === null) throw new InvalidSportTypeException();
+		if ($type === null) throw new CustomException("parametro 'type' non valido", 400);
 		
 		$result = $this->service->getAllResourcesByType($type); 
 		return new Response(200, true, $result);

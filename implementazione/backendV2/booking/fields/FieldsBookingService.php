@@ -6,7 +6,7 @@ use InvalidArgumentException;
 use auth\interfaces\AuthRepository;
 use booking\interfaces\BookingRepository;
 use booking\interfaces\BookingService;
-use core\exceptions\ValidationException;
+use core\exceptions\CustomException;
 use resources\interfaces\FieldsRepository;
 
 class FieldsBookingService implements BookingService {
@@ -19,7 +19,7 @@ class FieldsBookingService implements BookingService {
 		$field = $this->fieldsRepo->getFieldById($resourceId);
 
 		if(strtotime($date) < strtotime('today')){
-			throw new ValidationException("$date non può essere una data passata", 400);
+			throw new CustomException("$date non può essere una data passata", 400);
 		}
 
 		$bookingId = $this->bookingRepo->insertBooking($userId, $resourceId, $date, $slot);

@@ -2,7 +2,7 @@
 
 namespace core\utility\interfaces;
 
-use core\exceptions\ValidationException;
+use core\exceptions\CustomException;
 use core\http\Response;
 
 abstract class Command {
@@ -25,16 +25,16 @@ abstract class Command {
 	public function validateBody(array $body): void {
 		$this->validate($body, $this->getRequiredBodyParameters(), 'body');
 	}
-
+	
 	public function validateQueryParameters(array $query): void {
 		$this->validate($query, $this->getRequiredQueryParameters(), 'query');
 	}
-
+	
 	private function validate(array $current, array $expected, string $type): void {
 		foreach ($expected as $param) {
 			if (empty($current[$param])) {
 				$requiredString = implode(', ', $expected);
-				throw new ValidationException(
+				throw new CustomException(
 					"Parametri $type malformati, parametri richiesti: $requiredString", 
 					400
 				);
@@ -44,7 +44,7 @@ abstract class Command {
 
 	public function validateHttpMethod(string $method): void {
 		if ($this->getRequiredHttpMethod() !== strtolower($method)) {
-			throw new ValidationException("Metodo $method non consentito", 405);
+			throw new CustomException("Metodo $method non consentito", 405);
 		}
 	}
 
