@@ -17,7 +17,7 @@ final class BookingControllerCreator implements ControllerCreator {
 		$fieldRepo = new PostgreFieldsRepository($dbConnection);
 		$fieldService = new FieldsBookingService( $fieldRepo,  $bookingRepo);
 
-		return new BookingController($fieldService);
+		return new BookingController($authRepo, $fieldService);
 	}
 
 }

@@ -39,7 +39,8 @@ final class MyJwtService implements JwtTokenService {
 
 		$encodedPayload = $this->base64UrlEncode(json_encode($payload));
 
-		$signature = $this->sign($encodedHeader . '.' . $encodedPayload);
+		$signature = $this->sign("$encodedHeader.$encodedPayload");
+		$signature = $this->sign("$encodedHeader.$encodedPayload");
 
 		return "$encodedHeader.$encodedPayload.$signature";
 	}
@@ -51,7 +52,7 @@ final class MyJwtService implements JwtTokenService {
 		
 		[$encodedHeader, $encodedPayload, $encodedSignature] = $parts;
 
-		$expectedSignature = $this->sign($encodedHeader . '.' . $encodedPayload);
+		$expectedSignature = $this->sign("$encodedHeader.$encodedPayload");
 		if(!hash_equals($expectedSignature, $encodedSignature)) throw new InvalidTokenException('Firma token non valida', 401);
 
 		$payloadJson = $this->base64UrlDecode($encodedPayload);

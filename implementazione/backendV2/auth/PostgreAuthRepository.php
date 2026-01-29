@@ -42,10 +42,9 @@ class PostgreAuthRepository extends AuthRepository {
 		if ($stmt->fetch()) 
 			throw new UserAlreadyExistsException();
 
-		$hashedPassword = password_hash($password, PASSWORD_DEFAULT);
 		$stmt = $this->db->prepare("INSERT INTO centro_sportivo.utenti (name, email, password, role) VALUES (?, ?, ?, ?)");
-		$stmt->execute([$name, $email, $hashedPassword, $role->value]);
-		return new User($this->db->lastInsertId(), $name, $email, $hashedPassword, $role);
+		$stmt->execute([$name, $email, $password, $role->value]);
+		return new User($this->db->lastInsertId(), $name, $email, $password, $role);
 	}
 }
 

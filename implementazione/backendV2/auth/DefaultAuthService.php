@@ -19,7 +19,7 @@ class DefaultAuthService implements AuthService {
 	public function login(string $email, string $password) : array{	
 		$user = $this->authRepository->login($email, $password);
 
-		if ($this->passwordManager->validate($password, $user->password))
+		if (!$this->passwordManager->validate($password, $user->password))
 			throw new ValidationException("password non valida", 401);
 
 		$token = $this->tokenService->encode($user);

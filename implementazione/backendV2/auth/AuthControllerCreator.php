@@ -14,9 +14,8 @@ final class AuthControllerCreator implements ControllerCreator {
 
 		$temp = new MyJwtService();
 
-
 		$service = new DefaultAuthService($repository, new DefaultPasswordManager(), $temp);
-		return new AuthController($service);
+		return new AuthController($repository, $service);
 		
 	}
 }
