@@ -5,6 +5,7 @@ namespace booking\commands;
 use booking\fields\FieldsBookingService;
 use core\http\HttpMethods;
 use core\http\Response;
+use core\model\Role;
 use core\utility\interfaces\Command;
 
 
@@ -31,5 +32,13 @@ final class InsertFieldBookingCommand extends Command {
 	public function execute(array $params, array $query = []): Response{
 		$result = $this->service->insertBooking($params["user_id"], $params["field_id"], $params["data"], $params["slot"]);
 		return new Response(201, true, $result);
+	}
+
+	public function requiresAuthentication(): bool{
+		return true;
+	}
+
+	public function getRequiredRoles(): array{
+		return [Role::USER->value];
 	}
 }

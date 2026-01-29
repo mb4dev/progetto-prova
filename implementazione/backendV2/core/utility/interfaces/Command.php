@@ -12,6 +12,8 @@ abstract class Command {
     abstract public function getRequiredBodyParameters(): array;
 	abstract public function getRequiredQueryParameters(): array;
 	abstract public function getRequiredHttpMethod() : string;
+	abstract public function requiresAuthentication() : bool;
+	abstract public function getRequiredRoles() : array;
 	
 	public function validateBody(array $body): void {
 		$this->validate($body, $this->getRequiredBodyParameters(), 'body');

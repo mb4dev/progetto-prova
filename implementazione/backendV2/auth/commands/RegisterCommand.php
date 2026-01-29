@@ -35,4 +35,12 @@ class RegisterCommand extends Command {
 	public function getRequiredBodyParameters(): array{
 		return ["name", "email", "password", "role"];
 	}
+
+	public function requiresAuthentication(): bool{
+		return false;
+	}
+
+	public function getRequiredRoles(): array{
+		return [Role::USER->value, Role::ADMIN->value];
+	}
 }

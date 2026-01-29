@@ -5,11 +5,11 @@ namespace auth\commands;
 use auth\interfaces\AuthService;
 use core\http\HttpMethods;
 use core\http\Response;
+use core\model\Role;
 use core\utility\interfaces\Command;
 
 class LoginCommand extends Command {
 	
-
 	public function __construct(private AuthService $service){
 		parent::__construct();
 	}
@@ -29,5 +29,13 @@ class LoginCommand extends Command {
 	
 	public function getRequiredBodyParameters(): array{
 		return ["email", "password"];
+	}
+
+	public function requiresAuthentication(): bool{
+		return false;
+	}
+
+	public function getRequiredRoles(): array{
+		return [Role::USER->value, Role::ADMIN->value];
 	}
 }

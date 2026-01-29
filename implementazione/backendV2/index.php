@@ -15,6 +15,7 @@ use core\utility\DefaultURLParser;
 use core\http\HttpResponse;
 use core\utility\GlobalExceptionHandler;
 
+
 $exceptionHandler = new GlobalExceptionHandler();
 $exceptionHandler->register();
 

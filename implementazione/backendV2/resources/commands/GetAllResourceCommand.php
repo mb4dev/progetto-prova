@@ -5,6 +5,7 @@ namespace resources\commands;
 use core\exceptions\InvalidSportTypeException;
 use core\http\HttpMethods;
 use core\http\Response;
+use core\model\Role;
 use core\utility\interfaces\Command;
 use resources\interfaces\ResourceService;
 use resources\ResourceType;
@@ -35,4 +36,11 @@ final class GetAllResourceCommand extends Command {
 		return HttpMethods::GET->value;
 	}
 
+	public function requiresAuthentication(): bool{
+		return true;
+	}
+
+	public function getRequiredRoles(): array{
+		return [Role::USER->value, Role::ADMIN->value];
+	}
 }
