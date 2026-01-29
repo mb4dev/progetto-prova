@@ -19,7 +19,8 @@ final class FieldBookingRepository extends BookingRepository {
 		try {
 			$query = '
 				INSERT INTO centro_sportivo.prenotazioni (user_id, tipo, campo_id, corso_id, data, slot_start, stato, quantity) 
-				VALUES (?, ?, ?, ?, ?, ?, ?, ?)';
+				VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+				RETURNING id';
 			$stmt = $this->db->prepare($query);
 			$stmt->execute([$userId, ResourceType::FIELD->value, $resourceId, null, $date, $slot, BookingState::CART->value, 1]);
 	
