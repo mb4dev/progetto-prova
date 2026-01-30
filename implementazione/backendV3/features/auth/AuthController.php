@@ -17,5 +17,5 @@ final class AuthController extends CommandController {
 		$this->registry->register("login", new LoginCommand($this->service));
 		$this->registry->register("register", new RegisterCommand($this->service));
 	}	
-		
+
 }
