@@ -47,17 +47,6 @@ abstract class CommandController {
         return $command->execute($body, $queryParams);
     }
 
-    /*
-    private function authenticate(){
-        $token = $this->getToken();
-        if(!$token) throw new AuthException("token mancante", 401);
-        
-        $payload = $this->tokenService->decode($token);
-        $user = $this->authRepo->getUserById($payload->id); 
-        return $user;
-    }
-    */
-
     private function getToken() : ?string{
         $header = trim($_SERVER["HTTP_AUTHORIZATION"] ?? "");
         if($header === "") return null;
@@ -72,7 +61,4 @@ abstract class CommandController {
         return $token;   
     }
 
-}        
-
-
-
+}

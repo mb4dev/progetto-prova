@@ -17,7 +17,6 @@ use core\utility\DefaultPasswordManager;
 use core\utility\jwt\JwtTokenService;
 use core\utility\StandardURLParser;
 
-
 return function(Factory $factory) {
 
 	$factory->register(ConfigurationService::class, new class implements FactoryMethod {
@@ -36,7 +35,6 @@ return function(Factory $factory) {
 			$dbname = $configService->get("database.dbname");
 			$username = $configService->get("database.username");
 			$password = $configService->get("database.password");
-			
 			
 			$dsn = "pgsql:host=$host;port=$port;dbname=$dbname";
 			$connection = new PDO($dsn, $username, $password);
@@ -57,7 +55,6 @@ return function(Factory $factory) {
 		}
 	});
 
-
 	$factory->register(Router::class, new class implements FactoryMethod{
 		public function __invoke(Factory $factory)		{
 			$urlParser = $factory->get(URLParser::class);
@@ -73,13 +70,11 @@ return function(Factory $factory) {
 		}
 	});
 
-
 	$factory->register(TokenService::class, new class implements FactoryMethod{
 		public function __invoke(Factory $factory)		{
 			return new JwtTokenService();
 		}
 	});
-
 
 	$factory->register(HttpSecurity::class, new class implements FactoryMethod{
 		public function __invoke(Factory $factory)		{
@@ -89,7 +84,5 @@ return function(Factory $factory) {
 			return new AuthMiddleware($tokenService, $authRepository);
 		}
 	});
-	
-
 
 };

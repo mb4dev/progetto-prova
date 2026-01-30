@@ -7,15 +7,11 @@ use core\http\Router;
 require_once("./autoload.php");
 
 $factory = new Factory();
-$coreConfig = require_once(__DIR__ . "/config/services/config.core.php");
-$controllerConfig = require_once(__DIR__ . "/config/services/config.controller.php");
-$repositoryConfig = require_once(__DIR__ . "/config/services/config.repository.php");
-$servicesConfig = require_once(__DIR__ . "/config/services/config.services.php");
+$infrastructureConfig = require_once(__DIR__ . "/config/services/config.infrastructure.php");
+$applicationConfig = require_once(__DIR__ . "/config/services/config.application.php");
 
-$coreConfig($factory);
-$controllerConfig($factory);
-$repositoryConfig($factory);
-$servicesConfig($factory);
+$infrastructureConfig($factory);
+$applicationConfig($factory);
 
 $exceptionHandler = new GlobalExceptionHandler();
 $exceptionHandler->register();
