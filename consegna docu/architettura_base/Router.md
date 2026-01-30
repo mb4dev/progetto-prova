@@ -36,18 +36,18 @@ Le seguenti classi estendono questa classe astratta:
 classDiagram
 class Router {
     <<abstract>>
+    #factory: Factory
     #urlParser: URLParser
-    #controllerFactory: ControllerFactory
     #responseStrategy: ResponseStrategy
     +dispatch()
     #sendResponse(response: Response)
 }
 
-class DefaultRouter {
+class StandardRouter {
     +dispatch()
 }
 
-DefaultRouter --|> Router
+StandardRouter --|> Router
 
 ```
 
@@ -59,44 +59,62 @@ Il seguente diagramma mostra le relazioni e dipendenze di questa classe:
 classDiagram
 class Router {
     <<abstract>>
+    #factory: Factory
     #urlParser: URLParser
-    #controllerFactory: ControllerFactory
     #responseStrategy: ResponseStrategy
     +dispatch()
 }
 
-class URLParser {
-    <<interface>>
+class Factory {
+    +get(className) object
 }
 
-class ControllerFactory {
-    +create(type: string) Controller
+class URLParser {
+    <<interface>>
+    +parse(uri) ParsedURL
 }
 
 class ResponseStrategy {
     <<interface>>
+    +response(Response)
 }
 
 class Response {
     +code: int
     +success: bool
-    +data: mixed
+    +jsonData: array
 }
 
-class DefaultRouter {
+class ParsedURL {
+    +controller: string
+    +action: string
+}
+
+class StandardRouter {
     +dispatch()
 }
 
+class ControllerType {
+    <<enum>>
+    AUTH
+    RESOURCE
+    BOOKING
+    +getClass() string
+}
+
+Router --> Factory : utilizza
 Router --> URLParser : utilizza
-Router --> ControllerFactory : utilizza
 Router --> ResponseStrategy : utilizza
 Router ..> Response : gestisce
-DefaultRouter --|> Router : estende
+Router --> ParsedURL : usa
+StandardRouter --|> Router : estende
+Router ..> ControllerType : mappa controller
 ```
 
 ### Relazioni
 
+- **Utilizza**: `Factory` - per la creazione dei controller tramite dependency injection
 - **Utilizza**: `URLParser` - per il parsing delle URL
-- **Utilizza**: `ControllerFactory` - per la creazione dei controller
 - **Utilizza**: `ResponseStrategy` - per l'invio delle risposte
 - **Gestisce**: `Response` - oggetto risposta HTTP
+- **Mappa**: `ControllerType` enum - converte stringa controller in classe PHP

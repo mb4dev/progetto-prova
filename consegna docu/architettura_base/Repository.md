@@ -1,86 +1,121 @@
-# Repository (Classe Astratta)
+# Repository (Interfacce)
 
-Questa è la classe astratta utilizzata nel progetto per l'**accesso ai dati** nel backend.
+Questo documento descrive le interfacce per l'**accesso ai dati** nel backend. Non esiste una classe base astratta; ogni repository implementa direttamente la propria interfaccia.
 
 ## Descrizione
 
-La classe astratta `Repository` definisce la struttura base per l'accesso al database. Fornisce metodi comuni per l'esecuzione di query SQL e gestisce la connessione al database.
+Ogni interfaccia `Repository` definisce i metodi per l'accesso a una specifica entità del dominio. Le implementazioni concrete gestiscono la logica di persistenza (tipicamente PostgreSQL).
 
-## Struttura
+## Interfacce
+
+### AuthRepository
 
 ```mermaid
 classDiagram
-class Repository {
-    <<abstract>>
-    #connection: PDO
-    #executeQuery(sql: string, params: array) array
+class AuthRepository {
+    <<interface>>
+    +getUserById(id: int) User
+    +login(email: string, password: string) User
+    +register(name: string, email: string, password: string, role: Role) User
 }
 ```
 
-## Responsabilità
-
-- Gestire la connessione al database (PDO)
-- Fornire metodi helper per eseguire query SQL
-
-## Pattern
-
-Implementa il **Repository Pattern** per separare la logica di accesso ai dati dalla logica di business.
-
-## Implementazioni
-
-Le seguenti classi estendono questa classe astratta:
+### BookingRepository
 
 ```mermaid
 classDiagram
-class Repository {
-    <<abstract>>
-    #connection: PDO
-    #executeQuery(sql: string, params: array) array
+class BookingRepository {
+    <<interface>>
+    +getBooking(resourceId: int, date: string, slot: string)
+    +insertBooking(userId: int, resourceId: int, date: string, slot: string) int
 }
+```
 
+### FieldsRepository
+
+```mermaid
+classDiagram
+class FieldsRepository {
+    <<interface>>
+    +getAll() array
+    +getResourceById(id: int) array
+}
+```
+
+### CoursesRepository
+
+```mermaid
+classDiagram
+class CoursesRepository {
+    <<interface>>
+    +getAll() array
+    +getResourceById(id: int) array
+}
+```
+
+### ResourcesRepository
+
+```mermaid
+classDiagram
+class ResourcesRepository {
+    <<interface>>
+    +getAll() array
+    +getResourceById(id: int) array
+}
+```
+
+## Implementazioni
+
+Le seguenti classi implementano le interfacce repository:
+
+```mermaid
+classDiagram
 class AuthRepository {
-    <<abstract>>
-    +login(email: string, password: string) User
-    +register(name: string, email: string, password: string) User
-}
-
-class UserRepository {
-    <<abstract>>
-    +getById(id: int) User
-    +update(user: User) bool
-}
-
-
-class FieldRepository {
-    <<abstract>>
-    +getFields() Field[]
-    +getById(fieldId: int) Field
+    <<interface>>
 }
 
 class BookingRepository {
-    <<abstract>>
-	+getOccupiedSlots(fieldId: int, startDate: Date, endDate: Date) Slot[]
-    +createBooking(booking: Booking) Booking
+    <<interface>>
 }
 
+class FieldsRepository {
+    <<interface>>
+}
 
+class CoursesRepository {
+    <<interface>>
+}
 
-AuthRepository --|> Repository
-UserRepository --|> Repository
-FieldRepository --|> Repository
-BookingRepository --|> Repository
+class PostgreAuthRepository {
+    -db: PDO
+}
+
+class FieldBookingRepository {
+    -db: PDO
+}
+
+class PostgreFieldsRepository {
+    -db: PDO
+}
+
+class PostgreCoursesRepository {
+    -db: PDO
+}
+
+AuthRepository <|.. PostgreAuthRepository
+BookingRepository <|.. FieldBookingRepository
+FieldsRepository <|.. PostgreFieldsRepository
+CoursesRepository <|.. PostgreCoursesRepository
+PostgreFieldsRepository ..|> ResourcesRepository
+PostgreCoursesRepository ..|> ResourcesRepository
 ```
 
 ## Dipendenze
 
-Il seguente diagramma mostra le relazioni e dipendenze di questa classe:
-
 ```mermaid
 classDiagram
 class Repository {
-    <<abstract>>
-    #connection: PDO
-    #executeQuery(sql: string, params: array) array
+    <<interface>>
 }
 
 class PDO {
@@ -90,21 +125,17 @@ class Service {
     -repository: Repository
 }
 
-class IRepository {
-    <<abstract>>
-}
-
-class ImplRepository {
+class CustomException {
 }
 
 Repository --> PDO : utilizza
 Service --> Repository : utilizza
-IRepository --|> Repository : estende
-ImplRepository --|> IRepository : estende
+Repository --> CustomException : lancia
 ```
 
 ### Relazioni
 
-- **Utilizza**: `PDO` - per la connessione e query al database
-- **Utilizzata da**: Service layer (AuthService, UserService, ecc)
-- **Estesa da**: `AuthRepository`, `UserRepository`, ...  
+- **Utilizza**: `PDO` - per la connessione e query al database PostgreSQL
+- **Utilizzata da**: Service layer (AuthService, BookingService, ecc)
+- **Implementata da**: Classi concrete (PostgreAuthRepository, ecc)
+- **Lancia**: `CustomException` - per errori di accesso ai dati ...  
