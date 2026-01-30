@@ -21,7 +21,6 @@ final class Factory {
 	 * @return T
 	 */
 	public function get(string $className) : object {
-		echo "richiesto: $className\n";
 		if(isset($this->instances[$className])) return $this->instances[$className];
 
 		if(!isset($this->factories[$className])) throw new CustomException("Nessun servizio di creazione registrato per $className", 500);

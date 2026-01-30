@@ -10,8 +10,13 @@ final class StandardRouter extends Router {
 
 		$parserdUrl = $this->urlParser->parse($requestUri);
 
+		$controllerClass = ControllerType::tryFrom($parserdUrl->controller)->getClass();
+	
+		$controller = $this->factory->get($controllerClass);
 
-		$this->sendResponse(new Response(200, true, [$parserdUrl]));
+		$response= $controller->resolveAction($parserdUrl->action);
+
+		$this->sendResponse(new Response(200, true, [$response]));
 	}
 }
 /*
