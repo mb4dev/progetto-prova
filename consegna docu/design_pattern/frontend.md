@@ -1,4 +1,4 @@
-# Design Patterns Frontend
+    # Design Patterns Frontend
 
 Questo documento descrive i principali design pattern implementati nell'architettura frontend del sistema.
 

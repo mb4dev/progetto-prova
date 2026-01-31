@@ -2,36 +2,32 @@
 
 ```mermaid
 erDiagram
-    utenti {
+    UTENTI {
         int id PK
         varchar name
-        varchar email
+        varchar email UK
         varchar password
         varchar role
         timestamp created_at
     }
-
-    campi {
+    CAMPI {
         int id PK
         varchar sport
         numeric price
     }
-
-    corsi {
+    CORSI {
         int id PK
         varchar name
         text description
         numeric price
         int capacity
     }
-
-    orari_corsi {
+    ORARI_CORSI {
         int id PK
         int corso_id FK
         time orario
     }
-
-    prenotazioni {
+    PRENOTAZIONI {
         int id PK
         int user_id FK
         varchar tipo
@@ -42,16 +38,14 @@ erDiagram
         varchar stato
         int quantity
     }
-
-    abbonamenti {
+    ABBONAMENTI {
         int id PK
         varchar nome
         numeric prezzo
         int durata_giorni
         text descrizione
     }
-
-    abbonamenti_utenti {
+    ABBONAMENTI_UTENTI {
         int id PK
         int user_id FK
         int abbonamento_id FK
@@ -59,42 +53,32 @@ erDiagram
         date data_fine
         boolean attivo
     }
-
-    pagamenti {
+    PAGAMENTI {
         int id PK
         int user_id FK
         numeric totale
         timestamp data_pagamento
         varchar tipo
     }
-
-    pagamenti_abbonamenti {
-        int pagamento_id PK FK
+    PAGAMENTI_ABBONAMENTI {
+        int pagamento_id PK,FK
         int abbonamento_utente_id FK
     }
-
-    pagamenti_prenotazioni {
-        int pagamento_id PK FK
-        int prenotazione_id PK FK
+    PAGAMENTI_PRENOTAZIONI {
+        int pagamento_id PK,FK
+        int prenotazione_id PK,FK
     }
 
-    %% Relazioni
-    utenti ||--o{ prenotazioni : "fa"
-    utenti ||--o{ abbonamenti_utenti : "ha"
-    utenti ||--o{ pagamenti : "effettua"
-
-    campi ||--o{ prenotazioni : "prenotato in"
-    
-    corsi ||--o{ orari_corsi : "ha orari"
-    corsi ||--o{ prenotazioni : "prenotato come"
-
-    prenotazioni ||--o{ pagamenti_prenotazioni : "pagato in"
-
-    abbonamenti ||--o{ abbonamenti_utenti : "assegnato a"
-
-    abbonamenti_utenti ||--o{ pagamenti_abbonamenti : "pagato con"
-
-    pagamenti ||--o{ pagamenti_abbonamenti : "per abbonamento"
-    pagamenti ||--o{ pagamenti_prenotazioni : "per prenotazione"
+    UTENTI ||--o{ PRENOTAZIONI : "effettua"
+    UTENTI ||--o{ ABBONAMENTI_UTENTI : "possiede"
+    UTENTI ||--o{ PAGAMENTI : "effettua"
+    CAMPI ||--o{ PRENOTAZIONI : "viene_prenotato"
+    CORSI ||--o{ ORARI_CORSI : "ha"
+    CORSI ||--o{ PRENOTAZIONI : "viene_prenotato"
+    ABBONAMENTI ||--o{ ABBONAMENTI_UTENTI : "è_sottoscritto"
+    PAGAMENTI ||--|| PAGAMENTI_ABBONAMENTI : "riferisce_a"
+    PAGAMENTI ||--o{ PAGAMENTI_PRENOTAZIONI : "riferisce_a"
+    ABBONAMENTI_UTENTI ||--|| PAGAMENTI_ABBONAMENTI : "è_pagato"
+    PRENOTAZIONI ||--o{ PAGAMENTI_PRENOTAZIONI : "è_pagata"
 ```
 

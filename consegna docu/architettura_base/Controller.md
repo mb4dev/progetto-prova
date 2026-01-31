@@ -59,57 +59,6 @@ CommandController <|-- ResourceController
 CommandController <|-- BookingController
 ```
 
-## Responsabilità
-
-- **resolveAction()**: Esegue l'action richiesta (metodo astratto da implementare)
-- **getBody()**: Recupera i dati dal body della richiesta
-
-## Implementazioni
-
-Le seguenti classi estendono questa classe astratta:
-
-```mermaid
-classDiagram
-class Controller {
-    <<abstract>>
-    +resolveAction(action: string) Response
-    #getBody() array
-}
-
-class AuthController {
-    -authService: AuthService
-    +resolveAction(action: string) Response
-    -handleLogin() Response
-    -handleRegister() Response
-}
-
-class UserController {
-    -userService: UserService
-    +resolveAction(action: string) Response
-    -handleGetProfile() Response
-    -handleUpdateProfile() Response
-}
-
-class FieldController {
-    -fieldService: FieldService
-    +resolveAction(action: string) Response
-
-
-}
-
-class BookingController {
-    -bookingService: BookingService
-    +resolveAction(action: string) Response
-}
-
-
-
-AuthController --|> Controller
-UserController --|> Controller
-FieldController --|> Controller
-BookingController --|> Controller
-```
-
 ## Dipendenze
 
 Il seguente diagramma mostra le relazioni e dipendenze di questa classe:
@@ -165,7 +114,6 @@ CommandController --> CommandRegistry : utilizza
 CommandController --> HttpSecurity : utilizza
 CommandController --> Response : restituisce
 CommandRegistry --> Command : gestisce
-Command ..|> Command : estende
 Factory --> CommandController : crea
 CommandType --> Factory : mappa classe
 ```
@@ -178,7 +126,7 @@ CommandType --> Factory : mappa classe
 - **Creato da**: `Factory` - tramite dependency injection
 - **Mappato da**: `ControllerType` enum - converte stringa controller in classe
 
-## Flusso di Resoluzione Action
+## Flusso di Risoluzione Action
 
 ```mermaid
 sequenceDiagram
@@ -209,4 +157,3 @@ sequenceDiagram
     Command -->> Controller: Response
     Controller -->> Router: Response
 ```
-

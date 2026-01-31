@@ -6,31 +6,16 @@ Questa è la classe astratta utilizzata nel progetto per il **routing delle rich
 
 La classe astratta `Router` definisce la struttura base per gestire il routing delle richieste HTTP. Coordina il parsing dell'URL, la creazione del controller e l'invio della risposta.
 
-## Struttura
-
-```mermaid
-classDiagram
-class Router {
-    <<abstract>>
-    #urlParser: URLParser
-    #controllerFactory: ControllerFactory
-    #responseStrategy: ResponseStrategy
-    +dispatch() 
-    #sendResponse(response: Response) 
-}
-```
 
 ## Responsabilità
 
 - Ricevere le richieste HTTP
 - Delegare il parsing dell'URL a `URLParser`
-- Ottenere il controller appropriato tramite `ControllerFactory`
+- Ottenere il controller appropriato tramite `Factory`
 - Invocare l'action sul controller
 - Inviare la risposta tramite `ResponseStrategy`
 
 ## Implementazioni
-
-Le seguenti classi estendono questa classe astratta:
 
 ```mermaid
 classDiagram
@@ -113,8 +98,8 @@ Router ..> ControllerType : mappa controller
 
 ### Relazioni
 
-- **Utilizza**: `Factory` - per la creazione dei controller tramite dependency injection
-- **Utilizza**: `URLParser` - per il parsing delle URL
+- **Utilizza**: `Factory` - per la creazione dei controller
+- **Utilizza**: `URLParser` - per il parsing URL
 - **Utilizza**: `ResponseStrategy` - per l'invio delle risposte
 - **Gestisce**: `Response` - oggetto risposta HTTP
 - **Mappa**: `ControllerType` enum - converte stringa controller in classe PHP

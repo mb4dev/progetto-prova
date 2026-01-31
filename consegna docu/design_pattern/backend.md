@@ -73,7 +73,7 @@ Service --> ResourcesRepository
 
 ---
 
-## Strategy Pattern (Backend)
+## Strategy Pattern
 
 ### Scopo
 Permettere di cambiare dinamicamente l'algoritmo di invio delle risposte HTTP (es. per debug, logging, formati diversi).
@@ -88,7 +88,6 @@ class ResponseStrategy {
 }
 
 class HttpResponseStrategy {
-    -corsOrigin: string
     +response(response: Response)
 }
 
@@ -127,7 +126,7 @@ class Factory {
 
 class FactoryMethod {
     <<interface>>
-    __invoke(factory: Factory) object
+    create(factory: Factory) object
 }
 
 class ControllerType {
@@ -172,21 +171,21 @@ Factory --> JwtTokenService : crea
 ```mermaid
 sequenceDiagram
     autonumber
-    participant Config
+    participant App
     participant Factory
     participant FactoryMethod
     participant Dependency
 
-    Config ->> Factory: register(Interface::class, FactoryMethod)
+    App ->> Factory: register(Interface::class, FactoryMethod)
     
     Note over Factory: Quando serve un'istanza
     
-    Factory ->> FactoryMethod: __invoke(factory)
+    Factory ->> FactoryMethod: create(factory)
     FactoryMethod ->> Factory: get(Dependency::class)
     Factory -->> FactoryMethod: Dependency instance
     FactoryMethod -->> Factory: new Instance()
     Factory ->> Factory: instances[className] = instance
-    Factory -->> Config: instance
+    Factory -->> App: instance
 ```
 
 ---

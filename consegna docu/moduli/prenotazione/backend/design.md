@@ -1,9 +1,3 @@
-# Modulo prenotazione - Backend
-
-## Panoramica
-
-Questo modulo gestisce le prenotazioni dei campi sportivi. Utilizza il pattern Command per incapsulare le operazioni di prenotazione.
-
 ## Diagramma delle Classi
 
 ```mermaid
@@ -102,14 +96,14 @@ sequenceDiagram
     Note over Service: Validazione campo esistente
     
     Service ->> FieldsRepo: getResourceById(resourceId)
-    FieldsRepo ->> DB: SELECT * FROM centro_sportivo.campi WHERE id = ?
+    FieldsRepo ->> DB: query
     DB -->> FieldsRepo: campo row
     FieldsRepo -->> Service: campo data
     
-    Note over Service: Validazione data non passata
+    Note over Service: Validazione data e disponibilità
     
     Service ->> BookingRepo: insertBooking(userId, resourceId, date, slot)
-    BookingRepo ->> DB: INSERT INTO centro_sportivo.prenotazioni...
+    BookingRepo ->> DB: query
     DB -->> BookingRepo: new booking id
     BookingRepo -->> Service: {booking_id}
     
@@ -119,66 +113,3 @@ sequenceDiagram
     Router -->> Client: HTTP 201 {booking_id}
 ```
 
-## Endpoint
-
-| Metodo | Path | Descrizione |
-|--------|------|-------------|
-| POST | `/booking/field` | Prenota un campo sportivo |
-
-## Comandi
-
-### InsertFieldBookingCommand
-
-```php
-class InsertFieldBookingCommand extends Command {
-    public function __construct(private BookingService $service) {}
-    
-    public function execute(array $params, array $query = []): Response {
-        $userId = $params['userId'];  // From JWT token
-        $resourceId = (int)$params['resourceId'];
-        $date = $params['date'];
-        $slot = $params['slot'];
-        
-        $result = $this->service->insertBooking($userId, $resourceId, $date, $slot);
-        return new Response(201, true, $result);
-    }
-    
-    public function getRequiredBodyParameters(): array { 
-        return ['resourceId', 'date', 'slot']; 
-    }
-    
-    public function getRequiredQueryParameters(): array { return []; }
-    public function getRequiredHttpMethod(): string { return 'post'; }
-    public function requiresAuthentication(): bool { return true; }
-    public function getRequiredRoles(): array { return ['user', 'admin']; }
-}
-```
-
-## Dipendenze del Modulo
-
-```mermaid
-classDiagram
-    class BookingController {
-        <<depends on>>
-    }
-    class BookingService {
-        <<depends on>>
-    }
-    class BookingRepository {
-        <<depends on>>
-    }
-    class FieldsRepository {
-        <<depends on>>
-    }
-    class HttpSecurity {
-        <<depends on>>
-    }
-```
-
-## Note
-
-- Il modulo utilizza **PostgreSQL** come database
-- Le prenotazioni sono salvate con stato iniziale `carrello`
-- Ogni campo può essere prenotato solo se lo slot è libero
-- La validazione impedisce prenotazioni per date passate
-- Gli ID degli utenti vengono estratti dal token JWT

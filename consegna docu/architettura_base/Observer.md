@@ -49,10 +49,6 @@ class DefaultObserver {
 DefaultObserver ..|> Observer
 ```
 
-### DefaultObserver
-- **Scopo**: Implementazione standard del pattern Observer
-- **Utilizzo**: Comunicazione View-Presenter in tutta l'applicazione
-
 ## Utilizzo
 
 - Le **View** usano `notify()` per comunicare eventi (es. click, submit)
@@ -94,6 +90,6 @@ DefaultObserver ..|> Observer : implementa
 ### Relazioni
 - **Utilizzata da**: `View` - per notificare eventi (metodo `notify`)
 - **Utilizzata da**: `Presenter` - per sottoscriversi agli eventi (metodo `subscribe`)
-- **Implementata da**: `DefaultObserver`, `LoggingObserver`
-- **Pattern**: Mediatore tra View e Presenter
+- **Implementata da**: `DefaultObserver`
+
 

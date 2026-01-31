@@ -7,13 +7,9 @@ I design pattern utilizzati sono documentati in:
 
 ## Interfacce e Classi Astratte
 
-Per maggiori dettagli su ciascuna interfaccia o classe astratta, consultare i file dedicati:
-
 ### Backend
 - [Router](architettura_base/Router.md) - Classe astratta per il routing delle richieste HTTP (`DefaultRouter`)
-- [URLParser](architettura_base/URLParser.md) - Interfaccia per il parsing delle URL
 - [Controller](architettura_base/Controller.md) - Classe astratta per i controller (`CommandController`)
-- [Repository](architettura_base/Repository.md) - Classe astratta per l'accesso ai dati
 
 ### Frontend
 - [View](architettura_base/View.md) - Interfaccia per le view (MVP Pattern)
@@ -27,88 +23,6 @@ I seguenti diagrammi mostrano come viene gestita una chiamata HTTP dal backend.
 Per la creazione del controller associato alla chiamata viene utilizzata una factory che delega a dei creator registrati.
 Ogni controller gestisce diverse azioni tramite il pattern **Command**.
 
-## Backend - Flusso Request/Response
-
-### Diagramma di Sequenza
-
-```mermaid 
-sequenceDiagram
-    autonumber
-
-    participant Client
-    participant Router
-    participant URLParser
-    participant ControllerFactory
-    participant Registry as ControllerCreatorRegistry
-    participant Creator as ControllerCreator
-    participant Controller as CommandController
-    participant Command
-    participant ResponseStrategy
-
-    Client ->>+ Router: HTTP Request
-    Router ->>+ URLParser: parse()
-    URLParser -->>- Router: ParsedURL
-
-    Router ->>+ ControllerFactory: create(controllerType)
-    ControllerFactory ->>+ Registry: get(type)
-    Registry -->>- ControllerFactory: ControllerCreator
-    ControllerFactory ->>+ Creator: create(db)
-    Creator -->>- ControllerFactory: CommandController
-    ControllerFactory -->>- Router: CommandController
-
-    Router ->>+ Controller: resolveAction(action)
-    Controller ->>+ Command: execute(body, query)
-    Command -->>- Controller: Response
-    Controller -->>- Router: Response
-
-    Router ->>+ ResponseStrategy: response(Response)
-    ResponseStrategy -->>- Client: HTTP Response
-```
-
-### Diagramma delle Classi
-
-```mermaid 
-classDiagram
-
-class Router {
-    <<abstract>>
-    +dispatch()*
-}
-
-class DefaultRouter {
-    +dispatch() 
-}
-
-class URLParser {
-    <<interface>>
-    +parse() ParsedURL
-}
-
-class ResponseStrategy {
-    <<interface>>
-    +response(Response)
-}
-
-class ControllerFactory {
-    -dbConnection: PDO
-    -registry: ControllerCreatorRegistry
-    +create(type: ControllerTypes) CommandController
-}
-
-class CommandController {
-    <<abstract>>
-    #registry: CommandRegistry
-    #registerCommands()* void
-    +resolveAction(action: string) Response
-}
-
-Router <|-- DefaultRouter
-Router --> URLParser
-Router --> ControllerFactory
-Router --> ResponseStrategy
-ControllerFactory --> ControllerCreatorRegistry
-ControllerFactory ..> CommandController : crea
-```
 
 ---
 
