@@ -12,8 +12,24 @@ use PDOException;
 final class FieldBookingRepository implements BookingRepository {
 
 	public function __construct(private PDO $db){}
-	public function getBooking(int $resourceId, string $date, string $slot){
-		throw new \Exception('Not implemented');	
+	public function getBooking(int $resourceId, string $date){
+		$query = "
+			SELECT slot_start 
+			FROM centro_sportivo.prenotazioni 
+			WHERE tipo = 'campo' 
+				AND campo_id = :resourceId
+				AND data= :date
+				AND stato in ('carrello', 'confermata')" ; 
+
+		$stmt = $this->db->prepare($query);
+		$stmt->bindParam(":resourceId", $resourceId);
+		$stmt->bindParam(":date", $date);
+
+		$stmt->execute();
+	
+		$result = $stmt->fetchAll(PDO::FETCH_COLUMN);
+
+		return $result;
 	}
 
 	public function insertBooking(int $userId, int $resourceId, string $date, string $slot){
