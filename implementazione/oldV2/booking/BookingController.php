@@ -14,5 +14,5 @@ class BookingController extends CommandController {
 	}
 	protected function registerCommands(): void{
 		$this->registry->register("field", new InsertFieldBookingCommand($this->fieldService));
-	}
+		}
 }

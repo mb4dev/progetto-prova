@@ -2,12 +2,13 @@
 
 namespace core\http;
 
+use core\di\Container;
 use core\exceptions\ValidationException;
 use core\http\interfaces\ResponseStrategy;
 use core\http\interfaces\Router;
 use core\factory\ControllerFactory;
 use core\utility\interfaces\URLParser;
-
+/*
 final class DefaultRouter extends Router {
 	public function __construct(
 		URLParser $urlParser, 
@@ -23,6 +24,29 @@ final class DefaultRouter extends Router {
 			throw new ValidationException("controller non trovato", 404);
 
 		$controller = $this->controllerFactory->create($controllerType);
+		$response = $controller->resolveAction($parsedURL->action);
+		$this->sendResponse($response);
+	}
+}
+
+*/
+
+final class DefaultRouter extends Router {
+	public function __construct(
+		URLParser $urlParser, 
+		Container $container, 
+		ControllerFactory $factory,
+		ResponseStrategy $responseStrategy) {
+		parent::__construct($urlParser, $container, $factory, $responseStrategy);
+	}
+	public function dispatch(): void {
+		$parsedURL = $this->urlParser->parse();
+		$controllerType = ControllerTypes::tryFrom(strtolower($parsedURL->controller));
+
+		if ($controllerType === null) 
+			throw new ValidationException("controller non trovato", 404);
+
+		$controller = $this->factory->create($controllerType, $this->container);
 		$response = $controller->resolveAction($parsedURL->action);
 		$this->sendResponse($response);
 	}
