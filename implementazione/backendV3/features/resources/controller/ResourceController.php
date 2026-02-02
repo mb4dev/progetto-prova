@@ -6,7 +6,7 @@ use core\factory\Factory;
 use core\interfaces\HttpSecurity;
 use core\utility\CommandController;
 use features\resources\commands\GetResourcesCommand;
-use features\resources\ResourceRegistry;
+use features\resources\registry\ResourceRegistry;
 
 final class ResourceController extends CommandController {
     public function __construct(

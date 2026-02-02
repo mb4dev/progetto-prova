@@ -10,23 +10,25 @@ use core\interfaces\HttpSecurity;
 use core\interfaces\PasswordManager;
 use core\interfaces\TokenService;
 use core\utility\CommandController;
-use core\utility\Context;
 use features\auth\controller\AuthController;
-use features\auth\factory\AuthStrategyFactory;
+use features\auth\registry\LoginStrategyRegistry;
+use features\auth\registry\RegisterStrategyRegistry;
 use features\auth\repository\PostgreAuthRepository;
+use features\auth\strategies\EmailLoginStrategy;
+use features\auth\strategies\EmailRegisterStrategy;
 use features\booking\BookingController;
-use features\booking\fields\FieldBookingRepository;
 use features\booking\fields\FieldsBookingService;
 use features\booking\PostgreBookingRepository;
 use features\resources\controller\ResourceController;
-use features\resources\ResourceRegistry;
+use features\resources\registry\ResourceRegistry;
 use features\resources\repository\PostgreCoursesRepository;
 use features\resources\repository\PostgreFieldsRepository;
 
 return function(Factory $factory) {
 	registerRepositories($factory);
 	registerServices($factory);
-	registerFactories($factory);
+	registerLoginStrategyRegistry($factory);
+	registerRegisterStrategyRegistry($factory);
 	registerResourceRegistry($factory);
 	registerControllers($factory);
 };
@@ -76,20 +78,46 @@ function registerRepositories(Factory $factory): void {
 }
 
 
-function registerFactories(Factory $factory) : void {
-	$factory->register(AuthStrategyFactory::class, new class implements FactoryMethod {
-		public function __invoke(Factory $factory): AuthStrategyFactory {
-			return new AuthStrategyFactory(
-				$factory->get(AuthRepository::class),
-				$factory->get(PasswordManager::class),
-				$factory->get(TokenService::class)
-			);
+function registerLoginStrategyRegistry(Factory $factory): void {
+	$factory->register(LoginStrategyRegistry::class, new class implements FactoryMethod {
+		public function __invoke(Factory $factory): LoginStrategyRegistry {
+			$registry = new LoginStrategyRegistry();
+
+			$registry->register("email", function(Factory $factory) {
+				return new EmailLoginStrategy(
+					$factory->get(AuthRepository::class),
+					$factory->get(PasswordManager::class),
+					$factory->get(TokenService::class)
+				);
+			});
+
+			return $registry;
+		}
+	});
+}
+
+
+function registerRegisterStrategyRegistry(Factory $factory): void {
+	$factory->register(RegisterStrategyRegistry::class, new class implements FactoryMethod {
+		public function __invoke(Factory $factory): RegisterStrategyRegistry {
+			$registry = new RegisterStrategyRegistry();
+
+			$registry->register("email", function(Factory $factory) {
+				return new EmailRegisterStrategy(
+					$factory->get(AuthRepository::class),
+					$factory->get(PasswordManager::class),
+					$factory->get(TokenService::class)
+				);
+			});
+
+			return $registry;
 		}
 	});
 }
 
 
 function registerResourceRegistry(Factory $factory): void {
+
 	$factory->register(ResourceRegistry::class, new class implements FactoryMethod {
 		public function __invoke(Factory $factory): ResourceRegistry {
 			$registry = new ResourceRegistry();
@@ -118,10 +146,10 @@ function registerControllers(Factory $factory): void {
 
 	$factory->register(AuthController::class, new class implements FactoryMethod {
 		public function __invoke(Factory $factory): CommandController {
-			$context = $factory->get(Context::class);
-			$strategyFactory = $factory->get(AuthStrategyFactory::class);
+			$loginRegistry = $factory->get(LoginStrategyRegistry::class);
+			$registerRegistry = $factory->get(RegisterStrategyRegistry::class);
 			$security = $factory->get(HttpSecurity::class);
-			return new AuthController($security, $context, $strategyFactory);
+			return new AuthController($security, $loginRegistry, $registerRegistry, $factory);
 		}
 	});
 
