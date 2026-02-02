@@ -21,3 +21,4 @@ $exceptionHandler->register();
 
 $repo = $factory->get(BookingRepository::class);
 
+var_dump(json_encode($repo->getBookingsForUser(1)));

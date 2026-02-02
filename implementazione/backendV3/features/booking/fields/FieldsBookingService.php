@@ -39,4 +39,8 @@ class FieldsBookingService implements BookingService {
 
 		return ["occupied" => $this->bookingRepo->getBooking($resourceId, $date)];
 	}
+
+	public function getBookingsForUser(int $userId): array{
+		return $this->bookingRepo->getBookingsForUser($userId);
+	}
 }

@@ -10,6 +10,7 @@ use core\utility\CommandRegistry;
 abstract class CommandController {
     
     protected CommandRegistry $registry;
+    protected ?\core\model\User $currentUser = null;
 
     public function __construct(private HttpSecurity $authMiddleware){
         $this->registry = new CommandRegistry();
@@ -41,10 +42,10 @@ abstract class CommandController {
         if($command->requiresAuthentication()){
             $token = $this->getToken();
             if(!$token) throw new CustomException("token autorizzazione mancante", 400);
-            $this->authMiddleware->authenticate($this->getToken());
+            $this->currentUser = $this->authMiddleware->authenticate($this->getToken());
         }
 
-        return $command->execute($body, $queryParams);
+        return $command->execute($body, $queryParams, $this->currentUser);
     }
 
     private function getToken() : ?string{

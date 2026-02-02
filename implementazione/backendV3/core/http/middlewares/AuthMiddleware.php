@@ -13,6 +13,7 @@ final class AuthMiddleware implements HttpSecurity {
 	public function authenticate(string $token) :?User{
         $payload = $this->tokenService->decode($token);
         $user = $this->authRepository->getUserById($payload->id); 
+		$user->password = "";
         return $user;
 	}
 

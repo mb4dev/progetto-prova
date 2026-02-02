@@ -19,6 +19,7 @@ use features\auth\StandardAuthService;
 use features\booking\BookingController;
 use features\booking\fields\FieldBookingRepository;
 use features\booking\fields\FieldsBookingService;
+use features\booking\PostgreBookingRepository;
 use features\resources\PostgreCoursesRepository;
 use features\resources\PostgreFieldsRepository;
 use features\resources\ResourceController;
@@ -55,7 +56,7 @@ function registerRepositories(Factory $factory): void {
 	$factory->register(BookingRepository::class, new class implements FactoryMethod {
 		public function __invoke(Factory $factory) : BookingRepository{
 			$dbconnection = $factory->get(PDO::class);
-			return new FieldBookingRepository($dbconnection);
+			return new PostgreBookingRepository($dbconnection);
 		}
 	});
 }

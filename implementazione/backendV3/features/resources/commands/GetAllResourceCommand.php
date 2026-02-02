@@ -8,6 +8,7 @@ use core\http\Response;
 use core\interfaces\Command;
 use core\interfaces\ResourceService;
 use core\model\Role;
+use core\model\User;
 use features\resources\ResourceType;
 
 final class GetAllResourceCommand extends Command {
@@ -16,7 +17,7 @@ final class GetAllResourceCommand extends Command {
 		parent::__construct();
 	}
 
-	public function execute(array $params, array $query = []): Response{
+	public function execute(array $params, array $query = [], ?User $user = null): Response{
 
 		$type = ResourceType::tryFrom($query["type"]);
 		if ($type === null) throw new CustomException("parametro type=$type non valido", 400);
@@ -25,20 +26,12 @@ final class GetAllResourceCommand extends Command {
 		return new Response(200, true, $result);
 	}
 
-	public function getRequiredBodyParameters(): array{
-		return [];
-	}
-
 	public function getRequiredQueryParameters(): array{
 		return ["type"];
 	}
 
 	public function getRequiredHttpMethod(): string{
 		return HttpMethod::GET->value;
-	}
-
-	public function requiresAuthentication(): bool{
-		return true;
 	}
 
 	public function getRequiredRoles(): array{

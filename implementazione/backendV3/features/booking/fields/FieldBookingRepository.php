@@ -1,5 +1,5 @@
 <?php 
-
+/*
 namespace features\booking\fields;
 
 use core\exceptions\CustomException;
@@ -51,4 +51,32 @@ final class FieldBookingRepository implements BookingRepository {
 		}	
 	}
 
+	public function getBookingsForUser(int $userId){
+		
+		$query = "
+			SELECT 
+				pr.user_id,
+				pr.data,
+				pr.slot_start,
+				pa.totale,
+				pa.id,
+				pr.stato
+			FROM prenotazioni pr
+			LEFT JOIN pagamenti_prenotazioni pp 
+				ON pr.id = pp.prenotazione_id
+			LEFT JOIN pagamenti pa 
+				ON pp.pagamento_id = pa.id;";
+
+		$query = "SELECT * FROM centro_sportivo.prenotazioni WHERE user_id = :userId";
+
+		$stmt = $this->db->prepare($query);
+		$stmt->bindParam(":userId", $userId);
+
+		$stmt->execute();
+		$result = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+		return $result;
+	}
+
 }
+*/

@@ -7,6 +7,7 @@ use core\http\Response;
 use core\interfaces\AuthService;
 use core\interfaces\Command;
 use core\model\Role;
+use core\model\User;
 
 class LoginCommand extends Command {
 	
@@ -14,17 +15,13 @@ class LoginCommand extends Command {
 		parent::__construct();
 	}
 
-	public function execute(array $params, array $query = []) : Response{
+	public function execute(array $params, array $query = [], ?User $user = null) : Response{
 		$result = $this->service->login($params["email"], $params["password"]);
 		return new Response(200, true, $result);
 	}
 
 	public function getRequiredHttpMethod(): string{
 		return HttpMethod::POST->value;
-	}
-
-	public function getRequiredQueryParameters(): array{
-		return [];
 	}
 	
 	public function getRequiredBodyParameters(): array{
