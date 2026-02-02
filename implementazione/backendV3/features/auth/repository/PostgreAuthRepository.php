@@ -1,6 +1,6 @@
 <?php
 
-namespace features\auth;
+namespace features\auth\repository;
 
 use core\interfaces\AuthRepository;
 use core\exceptions\CustomException;
@@ -43,4 +43,3 @@ class PostgreAuthRepository implements AuthRepository {
 		return new User($this->db->lastInsertId(), $name, $email, $password, $role);
 	}
 }
-

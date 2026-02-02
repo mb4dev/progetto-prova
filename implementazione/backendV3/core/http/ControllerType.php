@@ -3,12 +3,14 @@
 namespace core\http;
 
 use core\exceptions\CustomException;
-use features\auth\AuthController;
+use features\auth\controller\AuthController;
 use features\booking\BookingController;
-use features\resources\ResourceController;
+use features\resources\controller\ResourceController;
 
 enum ControllerType: string {
 	case AUTH = "auth";
+	case AUTHV2 = "authv2";
+	case RESOURCES = "resources";
     case RESOURCE = 'resource';
     case BOOKING = 'booking';
 
@@ -22,4 +24,3 @@ enum ControllerType: string {
     }
 }
 
-// Nel Router:

@@ -2,8 +2,8 @@
 
 | Metodo | Path            | Descrizione                  | Request Body                           | Autenticazione | Successo      | Errori Principali                  |
 |--------|-----------------|------------------------------|----------------------------------------|----------------|---------------|------------------------------------|
-| POST   | `/auth/login`   | Login utente                 | `{"email": "...", "password": "..."}`  | No             | 200 OK        | 400, 401                           |
-| POST   | `/auth/register`| Registrazione nuovo utente   | `{"name": "...", "email": "...", "password": "...", "role": "..."}` | No | 201 Created   | 400, 409                           |
+| POST   | `/authv2/login`   | Login utente (AUTHV2)         | `{"email": "...", "password": "..."}`  | No             | 200 OK        | 400, 401                           |
+| POST   | `/authv2/register`| Registrazione nuovo utente (AUTHV2)   | `{"name": "...", "email": "...", "password": "...", "role": "..."}` | No | 201 Created   | 400, 409                           |
 | GET    | `/resource?type=field` | Ottiene i campi sportivi | | Sì | 200 OK | 400 |
 | GET    | `/resource?type=course` | Ottiene i corsi | | Sì | 200 OK | 400 |
 | POST   | `/booking/field` | Prenotazione campo | `{"resource_id": ..., "date": "...", "slot": "..."}` | Sì | 201 Created | 400, 401, 409 |

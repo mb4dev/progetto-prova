@@ -1,6 +1,6 @@
 <?php
 
-namespace features\resources;
+namespace features\resources\repository;
 
 use core\exceptions\CustomException;
 use core\interfaces\FieldsRepository;

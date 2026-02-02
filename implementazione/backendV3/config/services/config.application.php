@@ -3,31 +3,31 @@
 use core\factory\Factory;
 use core\factory\FactoryMethod;
 use core\interfaces\AuthRepository;
-use core\interfaces\AuthService;
 use core\interfaces\BookingRepository;
-use core\interfaces\BookingService;
 use core\interfaces\CoursesRepository;
 use core\interfaces\FieldsRepository;
 use core\interfaces\HttpSecurity;
 use core\interfaces\PasswordManager;
-use core\interfaces\ResourceService;
 use core\interfaces\TokenService;
 use core\utility\CommandController;
-use features\auth\AuthController;
-use features\auth\PostgreAuthRepository;
-use features\auth\StandardAuthService;
+use core\utility\Context;
+use features\auth\controller\AuthController;
+use features\auth\factory\AuthStrategyFactory;
+use features\auth\repository\PostgreAuthRepository;
 use features\booking\BookingController;
 use features\booking\fields\FieldBookingRepository;
 use features\booking\fields\FieldsBookingService;
 use features\booking\PostgreBookingRepository;
-use features\resources\PostgreCoursesRepository;
-use features\resources\PostgreFieldsRepository;
-use features\resources\ResourceController;
-use features\resources\StandardResourceService;
+use features\resources\controller\ResourceController;
+use features\resources\ResourceRegistry;
+use features\resources\repository\PostgreCoursesRepository;
+use features\resources\repository\PostgreFieldsRepository;
 
 return function(Factory $factory) {
 	registerRepositories($factory);
 	registerServices($factory);
+	registerFactories($factory);
+	registerResourceRegistry($factory);
 	registerControllers($factory);
 };
 
@@ -46,8 +46,22 @@ function registerRepositories(Factory $factory): void {
 		}
 	});
 
+	$factory->register(PostgreFieldsRepository::class, new class implements FactoryMethod {
+		public function __invoke(Factory $factory): PostgreFieldsRepository {
+			$dbconnection = $factory->get(PDO::class);
+			return new PostgreFieldsRepository($dbconnection);
+		}
+	});
+
 	$factory->register(CoursesRepository::class, new class implements FactoryMethod {
 		public function __invoke(Factory $factory) : CoursesRepository{
+			$dbconnection = $factory->get(PDO::class);
+			return new PostgreCoursesRepository($dbconnection);
+		}
+	});
+
+	$factory->register(PostgreCoursesRepository::class, new class implements FactoryMethod {
+		public function __invoke(Factory $factory): PostgreCoursesRepository {
 			$dbconnection = $factory->get(PDO::class);
 			return new PostgreCoursesRepository($dbconnection);
 		}
@@ -61,26 +75,38 @@ function registerRepositories(Factory $factory): void {
 	});
 }
 
+
+function registerFactories(Factory $factory) : void {
+	$factory->register(AuthStrategyFactory::class, new class implements FactoryMethod {
+		public function __invoke(Factory $factory): AuthStrategyFactory {
+			return new AuthStrategyFactory(
+				$factory->get(AuthRepository::class),
+				$factory->get(PasswordManager::class),
+				$factory->get(TokenService::class)
+			);
+		}
+	});
+}
+
+
+function registerResourceRegistry(Factory $factory): void {
+	$factory->register(ResourceRegistry::class, new class implements FactoryMethod {
+		public function __invoke(Factory $factory): ResourceRegistry {
+			$registry = new ResourceRegistry();
+
+			$registry->register("campi", PostgreFieldsRepository::class);
+			$registry->register("corsi", PostgreCoursesRepository::class);
+
+			return $registry;
+		}
+	});
+}
+
+
 function registerServices(Factory $factory): void {
-	$factory->register(AuthService::class, new class implements FactoryMethod {
-		public function __invoke(Factory $factory) : AuthService{
-			$repository = $factory->get(AuthRepository::class);
-			$passwordManager = $factory->get(PasswordManager::class);
-			$tokenService = $factory->get(TokenService::class);
-			return new StandardAuthService($repository, $passwordManager, $tokenService);
-		}
-	});
 
-	$factory->register(ResourceService::class, new class implements FactoryMethod {
-		public function __invoke(Factory $factory) : ResourceService{
-			$fieldRepo = $factory->get(FieldsRepository::class);
-			$coursesRepo = $factory->get(CoursesRepository::class);
-			return new StandardResourceService($fieldRepo, $coursesRepo);
-		}
-	});
-
-	$factory->register(BookingService::class, new class implements FactoryMethod {
-		public function __invoke(Factory $factory) : BookingService{
+	$factory->register(\core\interfaces\BookingService::class, new class implements FactoryMethod {
+		public function __invoke(Factory $factory): \core\interfaces\BookingService {
 			$fieldsRepo = $factory->get(FieldsRepository::class);
 			$bookingRepo = $factory->get(BookingRepository::class);
 			return new FieldsBookingService($fieldsRepo, $bookingRepo);
@@ -89,26 +115,29 @@ function registerServices(Factory $factory): void {
 }
 
 function registerControllers(Factory $factory): void {
+
 	$factory->register(AuthController::class, new class implements FactoryMethod {
-		public function __invoke(Factory $factory) : CommandController{
-			$service = $factory->get(AuthService::class);
+		public function __invoke(Factory $factory): CommandController {
+			$context = $factory->get(Context::class);
+			$strategyFactory = $factory->get(AuthStrategyFactory::class);
 			$security = $factory->get(HttpSecurity::class);
-			return new AuthController($security, $service);
+			return new AuthController($security, $context, $strategyFactory);
 		}
 	});
 
 	$factory->register(ResourceController::class, new class implements FactoryMethod {
-		public function __invoke(Factory $factory) : CommandController{
-			$service = $factory->get(ResourceService::class);
+		public function __invoke(Factory $factory): CommandController {
+			$resourceRegistry = $factory->get(ResourceRegistry::class);
 			$security = $factory->get(HttpSecurity::class);
 
-			return new ResourceController($security, $service);
+			return new ResourceController($security, $resourceRegistry, $factory);
 		}
 	});
 
+
 	$factory->register(BookingController::class, new class implements FactoryMethod {
-		public function __invoke(Factory $factory) : CommandController{
-			$service = $factory->get(BookingService::class);
+		public function __invoke(Factory $factory): CommandController {
+			$service = $factory->get(\core\interfaces\BookingService::class);
 			$security = $factory->get(HttpSecurity::class);
 
 			return new BookingController($security, $service);

@@ -13,6 +13,7 @@ use core\interfaces\ResponseStrategy;
 use core\interfaces\TokenService;
 use core\interfaces\URLParser;
 use core\utility\ConfigurationService;
+use core\utility\Context;
 use core\utility\DefaultPasswordManager;
 use core\utility\jwt\JwtTokenService;
 use core\utility\StandardURLParser;
@@ -42,6 +43,13 @@ return function(Factory $factory) {
 			return $connection;
 		}
 	});
+
+	$factory->register(Context::class, new class implements FactoryMethod {
+		public function __invoke(Factory $factory): Context {
+			return new Context();
+		}
+	});
+
 
 	$factory->register(URLParser::class, new class implements FactoryMethod {
 		public function __invoke(Factory $factory){
