@@ -2,25 +2,22 @@
 
 namespace features\resources\commands;
 
-use core\exceptions\CustomException;
-use core\factory\Factory;
 use core\http\HttpMethod;
 use core\http\Response;
 use core\interfaces\Command;
+use core\interfaces\Selector;
 use core\model\Role;
 use core\model\User;
-use features\resources\ResourceRegistry;
 
 final class GetResourcesCommand extends Command {
     public function __construct(
-        private ResourceRegistry $registry,
-        private Factory $factory
+        private Selector $resourceSelector
     ) {
         parent::__construct();
     }
 
     public function execute(array $params, array $query = [], ?User $user = null): Response {
-        $repository = $this->registry->get($query["type"], $this->factory);
+        $repository = $this->resourceSelector->select($query["type"]);
 
         $result = $repository->getAll();
 

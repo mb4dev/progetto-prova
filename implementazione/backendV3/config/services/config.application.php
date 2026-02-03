@@ -8,11 +8,13 @@ use core\interfaces\CoursesRepository;
 use core\interfaces\FieldsRepository;
 use core\interfaces\HttpSecurity;
 use core\interfaces\PasswordManager;
+use core\interfaces\Selector;
+use core\interfaces\Strategy;
 use core\interfaces\TokenService;
 use core\utility\CommandController;
 use features\auth\controller\AuthController;
-use features\auth\registry\LoginStrategyRegistry;
-use features\auth\registry\RegisterStrategyRegistry;
+use features\auth\selectors\SimpleLoginStrategySelector;
+use features\auth\selectors\SimpleRegisterStrategySelector;
 use features\auth\repository\PostgreAuthRepository;
 use features\auth\strategies\EmailLoginStrategy;
 use features\auth\strategies\EmailRegisterStrategy;
@@ -20,17 +22,16 @@ use features\booking\BookingController;
 use features\booking\fields\FieldsBookingService;
 use features\booking\PostgreBookingRepository;
 use features\resources\controller\ResourceController;
-use features\resources\registry\ResourceRegistry;
+use features\resources\selectors\SimpleResourceSelector;
 use features\resources\repository\PostgreCoursesRepository;
 use features\resources\repository\PostgreFieldsRepository;
 
 return function(Factory $factory) {
 	registerRepositories($factory);
 	registerServices($factory);
-	registerLoginStrategyRegistry($factory);
-	registerRegisterStrategyRegistry($factory);
-	registerResourceRegistry($factory);
+	registerSelectors($factory);
 	registerControllers($factory);
+	registerStrategies($factory);
 };
 
 function registerRepositories(Factory $factory): void {
@@ -78,58 +79,25 @@ function registerRepositories(Factory $factory): void {
 }
 
 
-function registerLoginStrategyRegistry(Factory $factory): void {
-	$factory->register(LoginStrategyRegistry::class, new class implements FactoryMethod {
-		public function __invoke(Factory $factory): LoginStrategyRegistry {
-			$registry = new LoginStrategyRegistry();
+function registerSelectors(Factory $factory): void {
+	$factory->register(SimpleLoginStrategySelector::class, new class implements FactoryMethod {
+		public function __invoke(Factory $factory): Selector {
+			return new SimpleLoginStrategySelector($factory);
+		}
+	});
 
-			$registry->register("email", function(Factory $factory) {
-				return new EmailLoginStrategy(
-					$factory->get(AuthRepository::class),
-					$factory->get(PasswordManager::class),
-					$factory->get(TokenService::class)
-				);
-			});
+	$factory->register(SimpleRegisterStrategySelector::class, new class implements FactoryMethod {
+		public function __invoke(Factory $factory): Selector {
+			return new SimpleRegisterStrategySelector($factory);
+		}
+	});
 
-			return $registry;
+	$factory->register(SimpleResourceSelector::class, new class implements FactoryMethod {
+		public function __invoke(Factory $factory): Selector {
+			return new SimpleResourceSelector($factory);
 		}
 	});
 }
-
-
-function registerRegisterStrategyRegistry(Factory $factory): void {
-	$factory->register(RegisterStrategyRegistry::class, new class implements FactoryMethod {
-		public function __invoke(Factory $factory): RegisterStrategyRegistry {
-			$registry = new RegisterStrategyRegistry();
-
-			$registry->register("email", function(Factory $factory) {
-				return new EmailRegisterStrategy(
-					$factory->get(AuthRepository::class),
-					$factory->get(PasswordManager::class),
-					$factory->get(TokenService::class)
-				);
-			});
-
-			return $registry;
-		}
-	});
-}
-
-
-function registerResourceRegistry(Factory $factory): void {
-
-	$factory->register(ResourceRegistry::class, new class implements FactoryMethod {
-		public function __invoke(Factory $factory): ResourceRegistry {
-			$registry = new ResourceRegistry();
-
-			$registry->register("campi", PostgreFieldsRepository::class);
-			$registry->register("corsi", PostgreCoursesRepository::class);
-
-			return $registry;
-		}
-	});
-}
-
 
 function registerServices(Factory $factory): void {
 
@@ -146,19 +114,19 @@ function registerControllers(Factory $factory): void {
 
 	$factory->register(AuthController::class, new class implements FactoryMethod {
 		public function __invoke(Factory $factory): CommandController {
-			$loginRegistry = $factory->get(LoginStrategyRegistry::class);
-			$registerRegistry = $factory->get(RegisterStrategyRegistry::class);
+			$loginSelector = $factory->get(SimpleLoginStrategySelector::class);
+			$registerSelector = $factory->get(SimpleRegisterStrategySelector::class);
 			$security = $factory->get(HttpSecurity::class);
-			return new AuthController($security, $loginRegistry, $registerRegistry, $factory);
+			return new AuthController($security, $loginSelector, $registerSelector);
 		}
 	});
 
 	$factory->register(ResourceController::class, new class implements FactoryMethod {
 		public function __invoke(Factory $factory): CommandController {
-			$resourceRegistry = $factory->get(ResourceRegistry::class);
+			$resourceSelector = $factory->get(SimpleResourceSelector::class);
 			$security = $factory->get(HttpSecurity::class);
 
-			return new ResourceController($security, $resourceRegistry, $factory);
+			return new ResourceController($security, $resourceSelector);
 		}
 	});
 
@@ -170,5 +138,27 @@ function registerControllers(Factory $factory): void {
 
 			return new BookingController($security, $service);
 		}
-	});
+		});	
+	}
+
+
+function registerStrategies(Factory $factory){
+	$factory->register(EmailLoginStrategy::class, new class implements FactoryMethod {
+		public function __invoke(Factory $factory): Strategy {
+			$repository = $factory->get(AuthRepository::class);
+			$passwordManager = $factory->get(PasswordManager::class);
+			$tokenService = $factory->get(TokenService::class);
+			return new EmailLoginStrategy($repository, $passwordManager, $tokenService);
+		}
+	});	
+
+
+	$factory->register(EmailRegisterStrategy::class, new class implements FactoryMethod {
+		public function __invoke(Factory $factory): Strategy {
+			$repository = $factory->get(AuthRepository::class);
+			$passwordManager = $factory->get(PasswordManager::class);
+			$tokenService = $factory->get(TokenService::class);
+			return new EmailRegisterStrategy($repository, $passwordManager, $tokenService);
+		}
+	});	
 }

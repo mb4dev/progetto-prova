@@ -4,20 +4,19 @@ namespace features\resources\controller;
 
 use core\factory\Factory;
 use core\interfaces\HttpSecurity;
+use core\interfaces\Selector;
 use core\utility\CommandController;
 use features\resources\commands\GetResourcesCommand;
-use features\resources\registry\ResourceRegistry;
 
 final class ResourceController extends CommandController {
     public function __construct(
         HttpSecurity $authMiddleware,
-        private ResourceRegistry $resourceRegistry,
-        private Factory $factory
+        private Selector $resourceSelector
     ) {
         parent::__construct($authMiddleware);
     }
     
     protected function registerCommands(): void {
-        $this->registry->register("", new GetResourcesCommand($this->resourceRegistry, $this->factory));
+        $this->registry->register("", new GetResourcesCommand($this->resourceSelector));
     }
 }

@@ -2,25 +2,23 @@
 
 namespace features\auth\commands;
 
-use core\factory\Factory;
 use core\http\HttpMethod;
 use core\http\Response;
 use core\interfaces\Command;
+use core\interfaces\Selector;
 use core\model\Role;
 use core\model\User;
-use features\auth\registry\RegisterStrategyRegistry;
 
 class RegisterCommand extends Command {
 
     public function __construct(
-        private RegisterStrategyRegistry $registry,
-        private Factory $factory
-    ) {
+        private Selector $strategySelector) {
+            
         parent::__construct();
     }
 
     public function execute(array $params, array $query = [], ?User $user = null): Response {
-        $strategy = $this->registry->get($params["register_type"], $this->factory);
+        $strategy = $this->strategySelector->select($params["register_type"]);
         $result = $strategy->execute($params);
         return new Response(200, true, $result);
     }

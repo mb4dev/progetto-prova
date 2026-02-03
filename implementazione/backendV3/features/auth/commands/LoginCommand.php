@@ -2,25 +2,23 @@
 
 namespace features\auth\commands;
 
-use core\factory\Factory;
 use core\http\HttpMethod;
 use core\http\Response;
 use core\interfaces\Command;
+use core\interfaces\Selector;
 use core\model\Role;
 use core\model\User;
-use features\auth\registry\LoginStrategyRegistry;
 
 class LoginCommand extends Command {
 
     public function __construct(
-        private LoginStrategyRegistry $registry,
-        private Factory $factory
-    ) {
+        private Selector $strategySelector) {
+            
         parent::__construct();
     }
 
     public function execute(array $params, array $query = [], ?User $user = null): Response {
-        $strategy = $this->registry->get($params["login_type"], $this->factory);
+        $strategy = $this->strategySelector->select($params["login_type"]);
         $result = $strategy->execute($params);
         return new Response(200, true, $result);
     }
