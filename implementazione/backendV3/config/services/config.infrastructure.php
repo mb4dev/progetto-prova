@@ -13,6 +13,7 @@ use core\interfaces\ResponseStrategy;
 use core\interfaces\TokenService;
 use core\interfaces\URLParser;
 use core\utility\ConfigurationService;
+use core\utility\ConsoleResponseStrategy;
 use core\utility\DefaultPasswordManager;
 use core\utility\jwt\JwtTokenService;
 use core\utility\StandardURLParser;
@@ -52,8 +53,10 @@ return function(Factory $factory) {
 	$factory->register(ResponseStrategy::class, new class implements FactoryMethod{
 		public function __invoke(Factory $factory){
 			return new HttpResponseStrategy();
+			//return new ConsoleResponseStrategy();
 		}
 	});
+
 
 	$factory->register(Router::class, new class implements FactoryMethod{
 		public function __invoke(Factory $factory)		{

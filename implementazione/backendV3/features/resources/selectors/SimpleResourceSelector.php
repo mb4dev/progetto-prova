@@ -4,6 +4,8 @@ namespace features\resources\selectors;
 
 use core\exceptions\CustomException;
 use core\factory\Factory;
+use core\interfaces\CoursesRepository;
+use core\interfaces\FieldsRepository;
 use core\interfaces\ResourcesRepository;
 use core\interfaces\Selector;
 use features\resources\repository\PostgreFieldsRepository;
@@ -15,8 +17,8 @@ class SimpleResourceSelector implements Selector {
 
     public function select(string $type): object {
         return match($type) {
-            'campi' => $this->factory->get(PostgreFieldsRepository::class),
-            'corsi' => $this->factory->get(PostgreCoursesRepository::class),
+            'campi' => $this->factory->get(FieldsRepository::class),
+            'corsi' => $this->factory->get(CoursesRepository::class),
             default => throw new CustomException("Tipo di risorsa non supportato: $type", 400)
         };
     }

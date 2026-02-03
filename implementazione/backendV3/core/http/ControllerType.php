@@ -4,7 +4,7 @@ namespace core\http;
 
 use core\exceptions\CustomException;
 use features\auth\controller\AuthController;
-use features\booking\BookingController;
+use features\booking\controller\BookingController;
 use features\resources\controller\ResourceController;
 
 enum ControllerType: string {

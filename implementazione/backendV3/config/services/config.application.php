@@ -3,32 +3,40 @@
 use core\factory\Factory;
 use core\factory\FactoryMethod;
 use core\interfaces\AuthRepository;
-use core\interfaces\BookingRepository;
+use core\interfaces\BookingHistoryRepository;
+use core\interfaces\BookingStrategy;
+use core\interfaces\CourseBookingRepository;
+use core\interfaces\FieldBookingRepository;
 use core\interfaces\CoursesRepository;
 use core\interfaces\FieldsRepository;
 use core\interfaces\HttpSecurity;
 use core\interfaces\PasswordManager;
 use core\interfaces\Selector;
 use core\interfaces\Strategy;
+use core\interfaces\SubscriptionsRepository;
 use core\interfaces\TokenService;
 use core\utility\CommandController;
 use features\auth\controller\AuthController;
-use features\auth\selectors\SimpleLoginStrategySelector;
-use features\auth\selectors\SimpleRegisterStrategySelector;
+use features\auth\selectors\LoginStrategySelector;
+use features\auth\selectors\RegisterStrategySelector;
 use features\auth\repository\PostgreAuthRepository;
 use features\auth\strategies\EmailLoginStrategy;
 use features\auth\strategies\EmailRegisterStrategy;
-use features\booking\BookingController;
-use features\booking\fields\FieldsBookingService;
-use features\booking\PostgreBookingRepository;
+use features\booking\controller\BookingController;
+use features\booking\selectors\BookingStrategySelector;
+use features\booking\repository\PostgreBookingHistoryRepository;
+use features\booking\repository\PostgreFieldBookingRepository;
+use features\booking\repository\PostgreCourseBookingRepository;
+use features\booking\strategies\FieldBookingStrategy;
+use features\booking\strategies\CourseBookingStrategy;
 use features\resources\controller\ResourceController;
 use features\resources\selectors\SimpleResourceSelector;
 use features\resources\repository\PostgreCoursesRepository;
 use features\resources\repository\PostgreFieldsRepository;
+use features\resources\repository\PostgreSubscriptionsRepository;
 
 return function(Factory $factory) {
 	registerRepositories($factory);
-	registerServices($factory);
 	registerSelectors($factory);
 	registerControllers($factory);
 	registerStrategies($factory);
@@ -49,13 +57,6 @@ function registerRepositories(Factory $factory): void {
 		}
 	});
 
-	$factory->register(PostgreFieldsRepository::class, new class implements FactoryMethod {
-		public function __invoke(Factory $factory): PostgreFieldsRepository {
-			$dbconnection = $factory->get(PDO::class);
-			return new PostgreFieldsRepository($dbconnection);
-		}
-	});
-
 	$factory->register(CoursesRepository::class, new class implements FactoryMethod {
 		public function __invoke(Factory $factory) : CoursesRepository{
 			$dbconnection = $factory->get(PDO::class);
@@ -63,32 +64,47 @@ function registerRepositories(Factory $factory): void {
 		}
 	});
 
-	$factory->register(PostgreCoursesRepository::class, new class implements FactoryMethod {
-		public function __invoke(Factory $factory): PostgreCoursesRepository {
-			$dbconnection = $factory->get(PDO::class);
-			return new PostgreCoursesRepository($dbconnection);
+	$factory->register(SubscriptionsRepository::class, new class implements FactoryMethod {
+		public function __invoke(Factory $factory) : SubscriptionsRepository{
+			$dbconnection = $factory->get(PDO::class);	
+			return new PostgreSubscriptionsRepository($dbconnection);
 		}
 	});
 
-	$factory->register(BookingRepository::class, new class implements FactoryMethod {
-		public function __invoke(Factory $factory) : BookingRepository{
+	// Booking repositories
+	$factory->register(BookingHistoryRepository::class, new class implements FactoryMethod {
+		public function __invoke(Factory $factory): BookingHistoryRepository {
 			$dbconnection = $factory->get(PDO::class);
-			return new PostgreBookingRepository($dbconnection);
+			return new PostgreBookingHistoryRepository($dbconnection);
+		}
+	});
+
+	$factory->register(FieldBookingRepository::class, new class implements FactoryMethod {
+		public function __invoke(Factory $factory): FieldBookingRepository {
+			$dbconnection = $factory->get(PDO::class);
+			return new PostgreFieldBookingRepository($dbconnection);
+		}
+	});
+
+	$factory->register(CourseBookingRepository::class, new class implements FactoryMethod {
+		public function __invoke(Factory $factory): CourseBookingRepository {
+			$dbconnection = $factory->get(PDO::class);
+			return new PostgreCourseBookingRepository($dbconnection);
 		}
 	});
 }
 
 
 function registerSelectors(Factory $factory): void {
-	$factory->register(SimpleLoginStrategySelector::class, new class implements FactoryMethod {
+	$factory->register(LoginStrategySelector::class, new class implements FactoryMethod {
 		public function __invoke(Factory $factory): Selector {
-			return new SimpleLoginStrategySelector($factory);
+			return new LoginStrategySelector($factory);
 		}
 	});
 
-	$factory->register(SimpleRegisterStrategySelector::class, new class implements FactoryMethod {
+	$factory->register(RegisterStrategySelector::class, new class implements FactoryMethod {
 		public function __invoke(Factory $factory): Selector {
-			return new SimpleRegisterStrategySelector($factory);
+			return new RegisterStrategySelector($factory);
 		}
 	});
 
@@ -97,25 +113,21 @@ function registerSelectors(Factory $factory): void {
 			return new SimpleResourceSelector($factory);
 		}
 	});
-}
 
-function registerServices(Factory $factory): void {
-
-	$factory->register(\core\interfaces\BookingService::class, new class implements FactoryMethod {
-		public function __invoke(Factory $factory): \core\interfaces\BookingService {
-			$fieldsRepo = $factory->get(FieldsRepository::class);
-			$bookingRepo = $factory->get(BookingRepository::class);
-			return new FieldsBookingService($fieldsRepo, $bookingRepo);
+	$factory->register(BookingStrategySelector::class, new class implements FactoryMethod {
+		public function __invoke(Factory $factory): Selector {
+			return new BookingStrategySelector($factory);
 		}
 	});
 }
+
 
 function registerControllers(Factory $factory): void {
 
 	$factory->register(AuthController::class, new class implements FactoryMethod {
 		public function __invoke(Factory $factory): CommandController {
-			$loginSelector = $factory->get(SimpleLoginStrategySelector::class);
-			$registerSelector = $factory->get(SimpleRegisterStrategySelector::class);
+			$loginSelector = $factory->get(LoginStrategySelector::class);
+			$registerSelector = $factory->get(RegisterStrategySelector::class);
 			$security = $factory->get(HttpSecurity::class);
 			return new AuthController($security, $loginSelector, $registerSelector);
 		}
@@ -133,13 +145,14 @@ function registerControllers(Factory $factory): void {
 
 	$factory->register(BookingController::class, new class implements FactoryMethod {
 		public function __invoke(Factory $factory): CommandController {
-			$service = $factory->get(\core\interfaces\BookingService::class);
+			$bookingSelector = $factory->get(BookingStrategySelector::class);
+			$historyRepo = $factory->get(BookingHistoryRepository::class);
 			$security = $factory->get(HttpSecurity::class);
 
-			return new BookingController($security, $service);
+			return new BookingController($security, $bookingSelector, $historyRepo);
 		}
-		});	
-	}
+	});	
+}
 
 
 function registerStrategies(Factory $factory){
@@ -160,5 +173,22 @@ function registerStrategies(Factory $factory){
 			$tokenService = $factory->get(TokenService::class);
 			return new EmailRegisterStrategy($repository, $passwordManager, $tokenService);
 		}
-	});	
+	});
+
+	// Booking strategies
+	$factory->register(FieldBookingStrategy::class, new class implements FactoryMethod {
+		public function __invoke(Factory $factory): BookingStrategy {
+			$fieldsRepo = $factory->get(FieldsRepository::class);
+			$bookingRepo = $factory->get(FieldBookingRepository::class);
+			return new FieldBookingStrategy($fieldsRepo, $bookingRepo);
+		}
+	});
+
+	$factory->register(CourseBookingStrategy::class, new class implements FactoryMethod {
+		public function __invoke(Factory $factory): BookingStrategy {
+			$coursesRepo = $factory->get(CoursesRepository::class);
+			$bookingRepo = $factory->get(CourseBookingRepository::class);
+			return new CourseBookingStrategy($coursesRepo, $bookingRepo);
+		}
+	});
 }

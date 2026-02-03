@@ -4,7 +4,11 @@ use core\exceptions\GlobalExceptionHandler;
 use core\factory\Factory;
 use core\http\Router;
 use core\interfaces\BookingRepository;
+use core\interfaces\FieldsRepository;
+use core\interfaces\SubscriptionsRepository;
 use features\booking\fields\FieldBookingRepository;
+use features\booking\repository\PostgreFieldBookingRepository;
+use features\resources\repository\PostgreFieldsRepository;
 
 require_once("./autoload.php");
 
@@ -19,6 +23,7 @@ $exceptionHandler = new GlobalExceptionHandler();
 $exceptionHandler->register();
 
 
-$repo = $factory->get(BookingRepository::class);
+$repo = $factory->get(FieldsRepository::class);
 
-var_dump(json_encode($repo->getBookingsForUser(1)));
+//var_dump(json_encode($repo->getAll()));
+var_dump(json_encode($repo->getResourceById(-1)));

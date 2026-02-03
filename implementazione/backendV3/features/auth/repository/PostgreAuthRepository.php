@@ -22,7 +22,7 @@ class PostgreAuthRepository implements AuthRepository {
 		return new User($user["id"], $user["name"], $user["email"], $user["password"], Role::from($user["role"]));
 	}
 
-	public function login(string $email, string $password) : User{
+	public function login(string $email) : User{
 		$stmt = $this->db->prepare("SELECT * FROM centro_sportivo.utenti WHERE email = ?");
 		$stmt->execute([$email]);
 		$user = $stmt->fetch(PDO::FETCH_ASSOC);
