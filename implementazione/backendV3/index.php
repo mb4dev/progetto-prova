@@ -3,6 +3,7 @@
 use core\exceptions\GlobalExceptionHandler;
 use core\factory\Factory;
 use core\http\Router;
+use core\interfaces\ResponseStrategy;
 
 require_once("./autoload.php");
 
@@ -13,7 +14,7 @@ $applicationConfig = require_once(__DIR__ . "/config/services/config.application
 $infrastructureConfig($factory);
 $applicationConfig($factory);
 
-$exceptionHandler = new GlobalExceptionHandler();
+$exceptionHandler = new GlobalExceptionHandler($factory->get(ResponseStrategy::class));
 $exceptionHandler->register();
 
 $router = $factory->get(Router::class);

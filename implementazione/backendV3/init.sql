@@ -60,7 +60,7 @@ INSERT INTO orari_corsi (corso_id, orario) VALUES
 CREATE TABLE prenotazioni_campi (
     id SERIAL PRIMARY KEY,
     user_id INT NOT NULL REFERENCES utenti(id) ON DELETE CASCADE,
-    campo_id INT REFERENCES campi(id),
+    campo_id INT NOT NULL REFERENCES campi(id),
     data DATE NOT NULL,
     slot_start TIME NOT NULL,
     stato VARCHAR(15) DEFAULT 'confermata' CHECK (stato IN ('carrello', 'confermata', 'cancellata'))
@@ -69,32 +69,31 @@ CREATE TABLE prenotazioni_campi (
 CREATE TABLE prenotazioni_corsi (
     id SERIAL PRIMARY KEY,
     user_id INT NOT NULL REFERENCES utenti(id) ON DELETE CASCADE,
-    corso_id INT REFERENCES corsi(id),
+    corso_id INT NOT NULL REFERENCES corsi(id),
     data DATE NOT NULL,
     slot_start TIME NOT NULL,
     stato VARCHAR(15) DEFAULT 'confermata' CHECK (stato IN ('carrello', 'confermata', 'cancellata'))
 );
 
 INSERT INTO prenotazioni_campi (user_id, campo_id, data, slot_start, stato) VALUES
-(1, 'campo', 2, '2026-02-10', '10:00', 'confermata'),
-(1, 'campo', 2, '2026-02-04', '14:00', 'confermata'),
-(1, 'campo', 1, '2026-02-07', '14:00', 'confermata'),
-(2, 'campo', 1, '2026-02-06', '14:30', 'confermata'),
-(2, 'campo', 3, '2026-02-06', '09:00', 'confermata'),
-(1, 'campo', 4, '2026-02-06', '11:00', 'confermata');
+(1, 2, '2026-02-10', '10:00', 'confermata'),
+(1, 2, '2026-02-04', '14:00', 'confermata'),
+(1, 1, '2026-02-07', '14:00', 'confermata'),
+(2, 1, '2026-02-06', '14:30', 'confermata'),
+(2, 3, '2026-02-06', '09:00', 'confermata'),
+(1, 4, '2026-02-06', '11:00', 'confermata');
 
-INSERT INTO prenotazioni (user_id, corso_id, data, slot_start, stato) VALUES
-(1, 'corso', 2, '2026-02-05', '16:00', 'confermata'),
-(1, 'corso', 2, '2026-02-04', '14:00', 'confermata'),
-(3, 'corso', 1, '2026-02-07', '16:00', 'confermata');
+INSERT INTO prenotazioni_corsi (user_id, corso_id, data, slot_start, stato) VALUES
+(1, 2, '2026-02-05', '16:00', 'confermata'),
+(1, 2, '2026-02-04', '14:00', 'confermata'),
+(3, 1, '2026-02-07', '16:00', 'confermata');
 
 CREATE UNIQUE INDEX unique_campo_data_slot
-ON prenotazioni_c (campo_id, data, slot_start)
+ON prenotazioni_campi (campo_id, data, slot_start)
 WHERE stato IN ('confermata', 'carrello');
 
 CREATE UNIQUE INDEX unique_corso_data_slot
-ON prenotazioni (user_id, corso_id, data, slot_start)
-WHERE tipo = 'corso';
+ON prenotazioni_corsi (corso_id, data, slot_start);
 
 CREATE TABLE abbonamenti (
     id SERIAL PRIMARY KEY,
@@ -176,7 +175,7 @@ INSERT INTO pagamenti_prenotazioni_campi (pagamento_id, prenotazione_campo_id) V
 
 CREATE TABLE pagamenti_iscrizioni_corsi (
     pagamento_id INT NOT NULL REFERENCES pagamenti(id) ON DELETE CASCADE,
-    iscrizione_corso_id INT NOT NULL REFERENCES iscrizioni_corsi(id) ON DELETE CASCADE,
+    iscrizione_corso_id INT NOT NULL REFERENCES prenotazioni_corsi(id) ON DELETE CASCADE,
     PRIMARY KEY (pagamento_id, iscrizione_corso_id)
 );
 

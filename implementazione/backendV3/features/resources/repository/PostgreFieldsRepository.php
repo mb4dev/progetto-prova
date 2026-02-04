@@ -23,7 +23,7 @@ final class PostgreFieldsRepository implements FieldsRepository {
 		$stmt->execute([$id]);
 		$field = $stmt->fetch(PDO::FETCH_ASSOC);
 
-		var_dump($field);
+		//var_dump($field);
 		if (!$field) 
 			throw new CustomException("campo $id non esistente", 404);
 	
