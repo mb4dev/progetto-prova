@@ -19,7 +19,7 @@ class CourseBookingStrategy implements BookingStrategy {
 	}
 
 	public function insertBooking(int $userId, int $courseId, string $date, string $slot): array {
-
+	
 		$course = $this->coursesRepo->getResourceById($courseId);
 
 		if (strtotime($date) < strtotime('today')) {
@@ -27,30 +27,31 @@ class CourseBookingStrategy implements BookingStrategy {
 		}
 
 		$this->validateCourseSlot($course, $slot);
-		//$this->checkCapacity($courseId, $date, $slot, $course['capacity']);
+		$this->checkCapacity($courseId, $date, $slot, $course['capacity']);
 		
 		$bookingId = $this->bookingRepo->insertBooking($userId, $courseId, $date, $slot);
 		return ["booking_id" => $bookingId];
-		
+	
 	}
 
 	public function getOccupiedSlots(int $courseId, string $date): array {
-		// Valida corso esiste
+	
 		$course = $this->coursesRepo->getResourceById($courseId);
-
 		$booked = $this->bookingRepo->getOccupiedSlots($courseId, $date);
-		
-		// Calcola posti rimanenti per ogni slot del corso
+
 		$available = [];
 		foreach ($course['schedule'] as $slot) {
 			$bookedCount = $booked[$slot] ?? 0;
 			$available[$slot] = [
 				"booked" => $bookedCount,
-				"available" => max(0, $course['capacity'] - $bookedCount)
+				"available" => max(0, $course['capacity'] - $bookedCount),
+				"capacity" => $course['capacity'] ,
+				"is_full" => $course['capacity'] === $bookedCount
 			];
 		}
 
-		return ["slots" => $available];
+		return [$available];
+		
 	}
 
 	private function validateCourseSlot(array $course, string $slot): void {

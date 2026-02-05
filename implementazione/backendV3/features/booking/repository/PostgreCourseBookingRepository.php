@@ -5,7 +5,6 @@ namespace features\booking\repository;
 use core\exceptions\CustomException;
 use core\interfaces\CourseBookingRepository;
 use features\booking\BookingState;
-use features\resources\ResourceType;
 use PDO;
 use PDOException;
 
@@ -16,7 +15,7 @@ final class PostgreCourseBookingRepository implements CourseBookingRepository {
 	public function getOccupiedSlots(int $resourceId, string $date): array {
 		$query = "
 			SELECT 
-				slot_start,
+				TO_CHAR(slot_start, 'HH24:MI') as slot_start,
 				COUNT(*) as booked_count
 			FROM centro_sportivo.prenotazioni_corsi
 			WHERE corso_id = :resourceId
