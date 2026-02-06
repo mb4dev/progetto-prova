@@ -16,7 +16,7 @@ class EmailLoginStrategy implements Strategy {
     ) {}
 
     public function execute(array $params): array {
-        $user = $this->repository->login($params["email"], $params["password"]);
+        $user = $this->repository->login($params["email"]);
         
         if (!$this->passwordManager->validate($params["password"], $user->password)) {
             throw new CustomException("password non valida", 401);

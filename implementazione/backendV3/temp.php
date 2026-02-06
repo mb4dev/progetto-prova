@@ -2,14 +2,8 @@
 
 use core\exceptions\GlobalExceptionHandler;
 use core\factory\Factory;
-use core\http\Router;
-use core\interfaces\BookingRepository;
-use core\interfaces\FieldsRepository;
+use core\interfaces\PaymentsRepository;
 use core\interfaces\ResponseStrategy;
-use core\interfaces\SubscriptionsRepository;
-use features\booking\fields\FieldBookingRepository;
-use features\booking\repository\PostgreFieldBookingRepository;
-use features\resources\repository\PostgreFieldsRepository;
 
 require_once("./autoload.php");
 
@@ -23,7 +17,8 @@ $applicationConfig($factory);
 $exceptionHandler = new GlobalExceptionHandler($factory->get(ResponseStrategy::class));
 $exceptionHandler->register();
 
-$repo = $factory->get(FieldsRepository::class);
+$repo = $factory->get(PaymentsRepository::class);
 
 //var_dump(json_encode($repo->getAll()));
-var_dump(json_encode($repo->getResourceById(-1)));
+//var_dump(json_encode($repo->insertPagamento(1, 1000.00)));
+var_dump(json_encode($repo->insertVocePagamento(1, "campo", 100, 1)));

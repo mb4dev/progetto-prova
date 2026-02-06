@@ -2,7 +2,7 @@
 
 namespace features\resources\controller;
 
-use core\factory\Factory;
+
 use core\interfaces\HttpSecurity;
 use core\interfaces\Selector;
 use core\utility\CommandController;

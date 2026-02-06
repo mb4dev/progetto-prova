@@ -55,4 +55,17 @@ final class PostgreFieldBookingRepository implements FieldBookingRepository {
 			throw $e;
 		}
 	}
+
+		public function getBooking(int $id) : array{
+		$query = "
+			SELECT *
+			FROM centro_sportivo.prenotazioni_campi
+			WHERE campo_id = :id";
+
+		$stmt = $this->db->prepare($query);
+		$stmt->bindParam(":id", $id);
+
+		$stmt->execute();
+		return $stmt->fetch(PDO::FETCH_ASSOC);
+	}
 }

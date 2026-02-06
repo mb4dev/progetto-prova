@@ -11,6 +11,8 @@ use core\interfaces\CoursesRepository;
 use core\interfaces\FieldsRepository;
 use core\interfaces\HttpSecurity;
 use core\interfaces\PasswordManager;
+use core\interfaces\PaymentsRepository;
+use core\interfaces\PaymentStrategy;
 use core\interfaces\Selector;
 use core\interfaces\Strategy;
 use core\interfaces\SubscriptionsRepository;
@@ -29,6 +31,11 @@ use features\booking\repository\PostgreFieldBookingRepository;
 use features\booking\repository\PostgreCourseBookingRepository;
 use features\booking\strategies\FieldBookingStrategy;
 use features\booking\strategies\CourseBookingStrategy;
+use features\payments\controller\PaymentController;
+use features\payments\repository\PostgrePaymentsRepository;
+use features\payments\selectors\PaymentStrategySelector;
+use features\payments\strategies\NormalPaymentStrategy;
+use features\payments\strategies\SubscriptionPaymentStrategy;
 use features\resources\controller\ResourceController;
 use features\resources\selectors\SimpleResourceSelector;
 use features\resources\repository\PostgreCoursesRepository;
@@ -71,7 +78,6 @@ function registerRepositories(Factory $factory): void {
 		}
 	});
 
-	// Booking repositories
 	$factory->register(BookingHistoryRepository::class, new class implements FactoryMethod {
 		public function __invoke(Factory $factory): BookingHistoryRepository {
 			$dbconnection = $factory->get(PDO::class);
@@ -92,7 +98,15 @@ function registerRepositories(Factory $factory): void {
 			return new PostgreCourseBookingRepository($dbconnection);
 		}
 	});
+
+	$factory->register(PaymentsRepository::class, new class implements FactoryMethod {
+		public function __invoke(Factory $factory): PaymentsRepository {
+			$dbconnection = $factory->get(PDO::class);
+			return new PostgrePaymentsRepository($dbconnection);
+		}
+	});
 }
+
 
 
 function registerSelectors(Factory $factory): void {
@@ -117,6 +131,12 @@ function registerSelectors(Factory $factory): void {
 	$factory->register(BookingStrategySelector::class, new class implements FactoryMethod {
 		public function __invoke(Factory $factory): Selector {
 			return new BookingStrategySelector($factory);
+		}
+	});
+
+	$factory->register(PaymentStrategySelector::class, new class implements FactoryMethod {
+		public function __invoke(Factory $factory): Selector {
+			return new PaymentStrategySelector($factory);
 		}
 	});
 }
@@ -150,6 +170,15 @@ function registerControllers(Factory $factory): void {
 			$security = $factory->get(HttpSecurity::class);
 
 			return new BookingController($security, $bookingSelector, $historyRepo);
+		}
+	});	
+
+	$factory->register(PaymentController::class, new class implements FactoryMethod {
+		public function __invoke(Factory $factory): CommandController {
+			$selector = $factory->get(PaymentStrategySelector::class);
+			$security = $factory->get(HttpSecurity::class);
+
+			return new PaymentController($security, $selector);
 		}
 	});	
 }
@@ -189,6 +218,22 @@ function registerStrategies(Factory $factory){
 			$coursesRepo = $factory->get(CoursesRepository::class);
 			$bookingRepo = $factory->get(CourseBookingRepository::class);
 			return new CourseBookingStrategy($coursesRepo, $bookingRepo);
+		}
+	});
+
+	$factory->register(NormalPaymentStrategy::class, new class implements FactoryMethod {
+		public function __invoke(Factory $factory): PaymentStrategy {
+			$db = $factory->get(PDO::class);
+			$paymentsRepo = $factory->get(PaymentsRepository::class);
+			$fieldRepo = $factory->get(FieldBookingRepository::class);
+			$courseRepo = $factory->get(CourseBookingRepository::class);
+			return new NormalPaymentStrategy($db, $paymentsRepo, $courseRepo, $fieldRepo);
+		}
+	});
+
+	$factory->register(SubscriptionPaymentStrategy::class, new class implements FactoryMethod {
+		public function __invoke(Factory $factory): PaymentStrategy {
+			return new SubscriptionPaymentStrategy();
 		}
 	});
 }

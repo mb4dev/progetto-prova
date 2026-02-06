@@ -83,4 +83,17 @@ final class PostgreCourseBookingRepository implements CourseBookingRepository {
 		}
 	}
 
+	public function getBooking(int $id) : array{
+		$query = "
+			SELECT *
+			FROM centro_sportivo.prenotazioni_corsi
+			WHERE corso_id = :id";
+
+		$stmt = $this->db->prepare($query);
+		$stmt->bindParam(":id", $id);
+
+		$stmt->execute();
+		return $stmt->fetch(PDO::FETCH_ASSOC);
+	}
+
 }
