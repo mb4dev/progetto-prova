@@ -86,8 +86,8 @@ final class PostgreCourseBookingRepository implements CourseBookingRepository {
 	public function getBooking(int $id) : array{
 		$query = "
 			SELECT *
-			FROM centro_sportivo.prenotazioni_corsi
-			WHERE corso_id = :id";
+			FROM centro_sportivo.prenotazioni_corsi pc, centro_sportivo.corsi c 
+			WHERE pc.id = :id AND pc.corso_id = c.id";
 
 		$stmt = $this->db->prepare($query);
 		$stmt->bindParam(":id", $id);

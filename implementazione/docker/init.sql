@@ -60,41 +60,42 @@ INSERT INTO orari_corsi (corso_id, orario) VALUES
 CREATE TABLE prenotazioni_campi (
     id SERIAL PRIMARY KEY,
     user_id INT NOT NULL REFERENCES utenti(id) ON DELETE CASCADE,
-    campo_id INT REFERENCES campi(id),
+    campo_id INT NOT NULL REFERENCES campi(id),
     data DATE NOT NULL,
     slot_start TIME NOT NULL,
-    stato VARCHAR(15) DEFAULT 'confermata' CHECK (stato IN ('carrello', 'confermata', 'cancellata'))
+    stato VARCHAR(15) DEFAULT 'carrello' CHECK (stato IN ('carrello', 'confermata', 'cancellata'))
 );
 
 CREATE TABLE prenotazioni_corsi (
     id SERIAL PRIMARY KEY,
     user_id INT NOT NULL REFERENCES utenti(id) ON DELETE CASCADE,
-    corso_id INT REFERENCES corsi(id),
+    corso_id INT NOT NULL REFERENCES corsi(id),
     data DATE NOT NULL,
     slot_start TIME NOT NULL,
-    stato VARCHAR(15) DEFAULT 'confermata' CHECK (stato IN ('carrello', 'confermata', 'cancellata'))
+    stato VARCHAR(15) DEFAULT 'carrello' CHECK (stato IN ('carrello', 'confermata', 'cancellata'))
 );
 
 INSERT INTO prenotazioni_campi (user_id, campo_id, data, slot_start, stato) VALUES
-(1, 'campo', 2, '2026-02-10', '10:00', 'confermata'),
-(1, 'campo', 2, '2026-02-04', '14:00', 'confermata'),
-(1, 'campo', 1, '2026-02-07', '14:00', 'confermata'),
-(2, 'campo', 1, '2026-02-06', '14:30', 'confermata'),
-(2, 'campo', 3, '2026-02-06', '09:00', 'confermata'),
-(1, 'campo', 4, '2026-02-06', '11:00', 'confermata');
+(1, 2, '2026-02-10', '10:00', 'confermata'),
+(1, 2, '2026-02-04', '14:00', 'confermata'),
+(1, 1, '2026-02-07', '14:00', 'confermata'),
+(2, 1, '2026-02-06', '14:30', 'confermata'),
+(2, 3, '2026-02-06', '09:00', 'confermata'),
+(1, 4, '2026-02-06', '11:00', 'confermata');
 
-INSERT INTO prenotazioni (user_id, corso_id, data, slot_start, stato) VALUES
-(1, 'corso', 2, '2026-02-05', '16:00', 'confermata'),
-(1, 'corso', 2, '2026-02-04', '14:00', 'confermata'),
-(3, 'corso', 1, '2026-02-07', '16:00', 'confermata');
+INSERT INTO prenotazioni_corsi (user_id, corso_id, data, slot_start, stato) VALUES
+(1, 2, '2026-02-05', '18:00', 'confermata'),
+(1, 2, '2026-02-04', '18:00', 'confermata'),
+(3, 1, '2026-02-07', '09:00', 'confermata');
 
+-- Indici univoci per evitare doppie prenotazioni
 CREATE UNIQUE INDEX unique_campo_data_slot
-ON prenotazioni_c (campo_id, data, slot_start)
+ON prenotazioni_campi (campo_id, data, slot_start)
 WHERE stato IN ('confermata', 'carrello');
 
 CREATE UNIQUE INDEX unique_corso_data_slot
-ON prenotazioni (user_id, corso_id, data, slot_start)
-WHERE tipo = 'corso';
+ON prenotazioni_corsi (user_id, corso_id, data, slot_start)
+WHERE stato IN ('confermata', 'carrello');
 
 CREATE TABLE abbonamenti (
     id SERIAL PRIMARY KEY,
@@ -129,58 +130,97 @@ CREATE UNIQUE INDEX unique_abbonamento_attivo_per_utente
 ON abbonamenti_utenti (user_id)
 WHERE attivo = true;
 
+
 CREATE TABLE pagamenti (
     id SERIAL PRIMARY KEY,
     user_id INT NOT NULL REFERENCES utenti(id) ON DELETE CASCADE,
     totale NUMERIC(10,2) NOT NULL CHECK (totale >= 0),
-    data_pagamento TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    tipo VARCHAR(15) NOT NULL CHECK (tipo IN ('abbonamento', 'prenotazione_campo', 'prenotazione_corso'))
+    data_pagamento TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
-INSERT INTO pagamenti (user_id, totale, tipo) VALUES
-(1, 50.00, 'abbonamento'),
-(2, 140.00, 'abbonamento'),
-(1, 30.00, 'prenotazione_campo'),
-(1, 30.00, 'prenotazione_campo'),
-(1, 50.00, 'prenotazione_campo'),
-(2, 50.00, 'prenotazione_campo'),
-(2, 40.00, 'prenotazione_campo'),
-(1, 35.00, 'prenotazione_campo'),
-(1, 160.00, 'prenotazione_corso'),
-(2, 160.00, 'prenotazione_corso'),
-(3, 90.00, 'prenotazione_corso');
-
-CREATE TABLE pagamenti_abbonamenti (
-    pagamento_id INT PRIMARY KEY REFERENCES pagamenti(id) ON DELETE CASCADE,
-    abbonamento_utente_id INT NOT NULL REFERENCES abbonamenti_utenti(id)
-);
-
-INSERT INTO pagamenti_abbonamenti (pagamento_id, abbonamento_utente_id) VALUES
-(1, 1),
-(2, 2);
-
-
-CREATE TABLE pagamenti_prenotazioni_campi (
+CREATE TABLE voci_pagamento (
+    id SERIAL PRIMARY KEY,
     pagamento_id INT NOT NULL REFERENCES pagamenti(id) ON DELETE CASCADE,
-    prenotazione_campo_id INT NOT NULL REFERENCES prenotazioni_campi(id) ON DELETE CASCADE,
-    PRIMARY KEY (pagamento_id, prenotazione_campo_id)
+    tipo VARCHAR(30) NOT NULL CHECK (tipo IN ('abbonamento', 'campo', 'corso')),
+    importo NUMERIC(10,2) NOT NULL CHECK (importo >= 0),
+    
+
+    abbonamento_utente_id INT REFERENCES abbonamenti_utenti(id),
+    prenotazione_campo_id INT REFERENCES prenotazioni_campi(id),
+    prenotazione_corso_id INT REFERENCES prenotazioni_corsi(id),
+    
+
+    CHECK (
+        (CASE WHEN abbonamento_utente_id IS NOT NULL THEN 1 ELSE 0 END +
+         CASE WHEN prenotazione_campo_id IS NOT NULL THEN 1 ELSE 0 END +
+         CASE WHEN prenotazione_corso_id IS NOT NULL THEN 1 ELSE 0 END) = 1
+    )
 );
 
-INSERT INTO pagamenti_prenotazioni_campi (pagamento_id, prenotazione_campo_id) VALUES
-(3, 1),
-(4, 2),
-(5, 3),
-(6, 4),
-(7, 5),
-(8, 6);
 
-CREATE TABLE pagamenti_iscrizioni_corsi (
-    pagamento_id INT NOT NULL REFERENCES pagamenti(id) ON DELETE CASCADE,
-    iscrizione_corso_id INT NOT NULL REFERENCES iscrizioni_corsi(id) ON DELETE CASCADE,
-    PRIMARY KEY (pagamento_id, iscrizione_corso_id)
-);
+INSERT INTO pagamenti (user_id, totale) VALUES (1, 50.00);
+INSERT INTO voci_pagamento (pagamento_id, tipo, importo, abbonamento_utente_id)
+VALUES (1, 'abbonamento', 50.00, 1);
 
-INSERT INTO pagamenti_iscrizioni_corsi (pagamento_id, iscrizione_corso_id) VALUES
-(9, 1),
-(10, 2),
-(11, 3);
+
+INSERT INTO pagamenti (user_id, totale) VALUES (2, 140.00);
+INSERT INTO voci_pagamento (pagamento_id, tipo, importo, abbonamento_utente_id)
+VALUES (2, 'abbonamento', 140.00, 2);
+
+
+INSERT INTO pagamenti (user_id, totale) VALUES (1, 30.00);
+INSERT INTO voci_pagamento (pagamento_id, tipo, importo, prenotazione_campo_id)
+VALUES (3, 'campo', 30.00, 1);
+
+
+INSERT INTO pagamenti (user_id, totale) VALUES (1, 30.00);
+INSERT INTO voci_pagamento (pagamento_id, tipo, importo, prenotazione_campo_id)
+VALUES (4, 'campo', 30.00, 2);
+
+
+INSERT INTO pagamenti (user_id, totale) VALUES (1, 50.00);
+INSERT INTO voci_pagamento (pagamento_id, tipo, importo, prenotazione_campo_id)
+VALUES (5, 'campo', 50.00, 3);
+
+INSERT INTO pagamenti (user_id, totale) VALUES (2, 50.00);
+INSERT INTO voci_pagamento (pagamento_id, tipo, importo, prenotazione_campo_id)
+VALUES (6, 'campo', 50.00, 4);
+
+INSERT INTO pagamenti (user_id, totale) VALUES (2, 40.00);
+INSERT INTO voci_pagamento (pagamento_id, tipo, importo, prenotazione_campo_id)
+VALUES (7, 'campo', 40.00, 5);
+
+
+INSERT INTO pagamenti (user_id, totale) VALUES (1, 35.00);
+INSERT INTO voci_pagamento (pagamento_id, tipo, importo, prenotazione_campo_id)
+VALUES (8, 'campo', 35.00, 6);
+
+INSERT INTO pagamenti (user_id, totale) VALUES (1, 160.00);
+INSERT INTO voci_pagamento (pagamento_id, tipo, importo, prenotazione_corso_id)
+VALUES (9, 'corso', 160.00, 1);
+
+
+INSERT INTO pagamenti (user_id, totale) VALUES (1, 160.00);
+INSERT INTO voci_pagamento (pagamento_id, tipo, importo, prenotazione_corso_id)
+VALUES (10, 'corso', 160.00, 2);
+
+INSERT INTO pagamenti (user_id, totale) VALUES (3, 90.00);
+INSERT INTO voci_pagamento (pagamento_id, tipo, importo, prenotazione_corso_id)
+VALUES (11, 'corso', 90.00, 3);
+
+
+INSERT INTO prenotazioni_campi (user_id, campo_id, data, slot_start, stato)
+VALUES (1, 3, '2026-02-15', '10:00', 'carrello');
+
+
+INSERT INTO prenotazioni_corsi (user_id, corso_id, data, slot_start, stato)
+VALUES (1, 3, '2026-02-16', '08:00', 'carrello');
+
+INSERT INTO pagamenti (user_id, totale) 
+VALUES (1, 110.00);
+
+INSERT INTO voci_pagamento (pagamento_id, tipo, importo, prenotazione_campo_id)
+VALUES (12, 'campo', 40.00, 7);
+
+INSERT INTO voci_pagamento (pagamento_id, tipo, importo, prenotazione_corso_id)
+VALUES (12, 'corso', 70.00, 4);

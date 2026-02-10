@@ -52,8 +52,8 @@ return function(Factory $factory) {
 
 	$factory->register(ResponseStrategy::class, new class implements FactoryMethod{
 		public function __invoke(Factory $factory){
-			return new HttpResponseStrategy();
-			//return new ConsoleResponseStrategy();
+			//return new HttpResponseStrategy();
+			return new ConsoleResponseStrategy();
 		}
 	});
 

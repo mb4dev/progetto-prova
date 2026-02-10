@@ -4,6 +4,7 @@ use core\exceptions\GlobalExceptionHandler;
 use core\factory\Factory;
 use core\interfaces\PaymentsRepository;
 use core\interfaces\ResponseStrategy;
+use features\payments\strategies\NormalPaymentStrategy;
 
 require_once("./autoload.php");
 
@@ -17,8 +18,9 @@ $applicationConfig($factory);
 $exceptionHandler = new GlobalExceptionHandler($factory->get(ResponseStrategy::class));
 $exceptionHandler->register();
 
-$repo = $factory->get(PaymentsRepository::class);
+$strategy = $factory->get(NormalPaymentStrategy::class);
 
-//var_dump(json_encode($repo->getAll()));
-//var_dump(json_encode($repo->insertPagamento(1, 1000.00)));
-var_dump(json_encode($repo->insertVocePagamento(1, "campo", 100, 1)));
+$strategy->pay(1, 110.00,[
+	["tipo" => "campo", "prenotazione_id" => 7],
+    ["tipo" => "corso", "prenotazione_id" => 4]
+]);

@@ -2,12 +2,14 @@
 
 namespace features\payments\strategies;
 
+use core\exceptions\CustomException;
 use core\interfaces\CourseBookingRepository;
 use core\interfaces\FieldBookingRepository;
 use core\interfaces\PaymentsRepository;
 use core\interfaces\PaymentStrategy;
 use PDO;
 use Exception;
+use features\booking\BookingState;
 
 final class NormalPaymentStrategy implements PaymentStrategy{
 
@@ -17,21 +19,37 @@ final class NormalPaymentStrategy implements PaymentStrategy{
 		private CourseBookingRepository $courseBookingRepo,
 		private FieldBookingRepository $fieldBoolingRepo){}
 
-	public function pay(int $userId, array $order) : array{
+	public function pay(int $userId, float $total, array $order) : array{
 		try {
 			$this->db->beginTransaction();
-
 			$amount = 0;
+			$vociPagamento = [];
 			foreach($order as $item){
-				var_dump($item);
-				$booking = $this->getBookingDetails($item["tipo"], $item["booking_id"]);
+				$prenotazioneId = $item["prenotazione_id"];
+				$booking = $this->getBookingDetails($item["tipo"], $prenotazioneId);
 
-				var_dump($booking);
+				if($booking["stato"] !== BookingState::CART) throw new CustomException("prenotazione $prenotazioneId pagata/cancellata", 400);
+				if($booking["user_id"] !== $userId) throw new CustomException("prenotazione non autorizzata", 400);
+				
+				
+				$amount += $booking["price"];
+				
+				$vociPagamento[] = [
+                    'tipo' => $item['tipo'],
+                    'importo' => $booking["price"],
+                    'prenotazione_id' => $prenotazioneId
+                ];
 			}
-			
+	
+			if($amount !== $total)	throw new CustomException("errore calcolo totale", 400);
 
-			//$this->paymentsRepository->insertPagamento($userId, );
+			$paymentId = $this->paymentsRepository->insertPagamento($userId, $amount);
 
+			foreach($vociPagamento as $voce) {		
+				$this->paymentsRepository->insertVocePagamento($paymentId, $voce["tipo"], $voce["importo"], $voce["prenotazione_id"]);
+			}
+
+			//todo aggiornare prenotazione
 
 			$this->db->commit();
 			return [];
