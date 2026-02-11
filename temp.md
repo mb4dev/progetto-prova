@@ -1,3 +1,4 @@
+modifia
 # Modifiche ai Diagrammi
 
 In base all'analisi del codice presente nella cartella `implementazione/frontend`, ecco le proposte di modifica ai diagrammi.
