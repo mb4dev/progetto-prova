@@ -19,3 +19,4 @@ $exceptionHandler->register();
 
 $router = $factory->get(Router::class);
 $router->dispatch();
+
